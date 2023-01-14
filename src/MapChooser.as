@@ -18,6 +18,11 @@ namespace MapChooser {
         @filteredMaps = array<CGameCtnChallengeInfo@>();
         filterString = "";
         @chosenMap = null;
+        auto app = cast<CGameManiaPlanet>(GetApp());
+        // only refresh maps if we do not have a map loaded
+        if (app !is null && app.CurrentPlayground is null && app.Editor is null && app.RootMap is null) {
+            cast<CGameManiaPlanet>(GetApp()).MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr.Map_RefreshFromDisk();
+        }
         startnew(RefreshMaps);
     }
 
