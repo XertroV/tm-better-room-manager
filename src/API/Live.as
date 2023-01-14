@@ -44,6 +44,16 @@ void SaveActivityPublicStatus(uint clubId, uint roomId, Json::Value@ data) {
     PostLiveApiPath("/api/token/club/" + clubId + "/activity/" + roomId + "/edit", data);
 }
 
+// https://live-services.trackmania.nadeo.live/api/token/club/{TTG_CLUB_ID}/room/create -- same payload as SaveEditedRoomConfig
+Json::Value@ CreateClubRoom(uint clubId, Json::Value@ data) {
+    return PostLiveApiPath("/api/token/club/" + clubId + "/room/create", data);
+}
+
+// returns {password: string}
+Json::Value@ GetRoomPassword(uint clubId, uint roomId) {
+    return CallLiveApiPath("/api/token/club/" + clubId + "/room/" + roomId + "/get-password");
+}
+
 // https://webservices.openplanet.dev/live/maps/uploaded
 Json::Value@ GetYourUploadedMaps(uint length = 100, uint offset = 0) {
     return CallLiveApiPath("/api/token/map?" + LengthAndOffset(length, offset));

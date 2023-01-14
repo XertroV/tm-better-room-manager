@@ -62,6 +62,7 @@ bool IsAnyChooserActive() {
         || RandomMapsChooser::active
         || ScriptOptChooser::active
         || MapChooser::active
+        || PresetSaver::active
         ;
 }
 

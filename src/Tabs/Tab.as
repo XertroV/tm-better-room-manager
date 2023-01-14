@@ -13,7 +13,7 @@ class Tab {
 
     Tab(const string &in tabName, bool canPopOut = false) {
         this.tabName = tabName;
-        this.canPopOut = false;
+        this.canPopOut = canPopOut;
     }
 
     int get_TabFlags() {
@@ -58,8 +58,11 @@ class Tab {
     void DrawTab() {
         if (!tabOpen) return;
         if (BeginTabItem()) {
-            DrawTogglePop();
-            DrawInner();
+            if (UI::BeginChild("tab-" + tabName)) {
+                DrawTogglePop();
+                DrawInner();
+            }
+            UI::EndChild();
             UI::EndTabItem();
         }
     }

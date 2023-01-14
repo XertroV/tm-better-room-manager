@@ -28,6 +28,7 @@ void RenderInterface() {
 
     RenderMainUI();
     MapChooser::Render();
+    PresetSaver::Render();
     PresetChooser::Render();
     ScriptOptChooser::Render();
     RandomMapsChooser::Render();

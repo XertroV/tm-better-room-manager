@@ -51,7 +51,7 @@ namespace RandomMapsChooser {
     void Render() {
         if (!active) return;
         UI::SetNextWindowSize(500, 300, UI::Cond::Appearing);
-        if (UI::Begin("Preset Chooser", WindowOpen)) {
+        if (UI::Begin("Add Random Maps", WindowOpen)) {
             DrawInner();
         }
         UI::End();
@@ -63,7 +63,7 @@ namespace RandomMapsChooser {
 
     void DrawInner() {
         if (!loadingMaps)
-            SubHeading("Choose Map Constraints:");
+            SubHeading("Map Constraints:");
         else {
             float progWidth = UI::GetContentRegionMax().x - btnWidth - 2. * UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing).x;
             // SubHeading("Progress: " + gotMaps.Length + " / " + nbMaps + Text::Format("  (%.1f%%)", float(100 * gotMaps.Length) / float(nbMaps)));
@@ -76,15 +76,20 @@ namespace RandomMapsChooser {
         if (UI::Button("Add Maps##add game opt")) OnChooseRandomSettings();
         btnWidth = UI::GetItemRect().z;
 
-        // UI::Separator();
+        UI::Separator();
+        SubHeading("Length (seconds)");
         minLen = LengthInput('Min: ', minLen);
         if (minLen > maxLen) maxLen = minLen;
         maxLen = LengthInput('Max: ', maxLen);
         if (maxLen < minLen) minLen = maxLen;
 
+
+        UI::Separator();
+        SubHeading("Difficulty (TMX)");
         minDifficulty = DifficultyCombo('Min: ', minDifficulty);
         maxDifficulty = DifficultyCombo('Max: ', maxDifficulty);
 
+        UI::Separator();
         UI::AlignTextToFramePadding();
         UI::Text("Nb Maps: ");
         UI::SameLine();

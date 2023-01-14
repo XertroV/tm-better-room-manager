@@ -1,6 +1,5 @@
 funcdef void PresetChosenCallback(Json::Value@ preset);
 
-
 namespace PresetChooser {
     bool active = false;
     PresetChosenCallback@ cb = null;
@@ -16,7 +15,11 @@ namespace PresetChooser {
     string[]@ presetFiles = null;
 
     void RefreshPresets() {
-        @presetFiles = IO::IndexFolder(IO::FromStorageFolder("presets"), true);
+        string folder = IO::FromStorageFolder("presets/").Replace("\\", "/");
+        @presetFiles = IO::IndexFolder(folder, true);
+        for (uint i = 0; i < presetFiles.Length; i++) {
+            presetFiles[i] = presetFiles[i].Replace("\\", "/").Replace(folder, "").Replace(".json", "");
+        }
     }
 
     bool WindowOpen {
@@ -70,7 +73,6 @@ namespace PresetChooser {
     }
 
     void OnChoosePreset() {
-        // todo load preset
         startnew(LoadPresetAndCB);
         active = false;
     }
@@ -80,7 +82,7 @@ namespace PresetChooser {
             cb(null);
             return;
         }
-        Json::Value@ preset = Json::FromFile(IO::FromStorageFolder("presets/" + chosenPreset));
+        Json::Value@ preset = Json::FromFile(IO::FromStorageFolder("presets/" + chosenPreset + ".json"));
         cb(preset);
     }
 }

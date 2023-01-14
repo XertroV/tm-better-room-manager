@@ -11,12 +11,13 @@ class RoomTab : Tab {
     bool isEditing = true;
 
     // roomId = -1 to create a new room
-    RoomTab(RoomsTab@ parent, int roomId, const string &in roomName, bool public) {
-        // string inParens = clubTag.Length > 0 ? clubTag : clubName;
-        isEditing = roomId > 0;
+    RoomTab(RoomsTab@ parent, int _roomId, const string &in roomName, bool public) {
+        isEditing = _roomId > 0;
         this.roomName = isEditing ? roomName : "New Room";
-        super(Icons::Server + " " + this.roomName + "\\$z (" + roomId + ")", false);
-        this.roomId = roomId;
+        super(Icons::Server + " " + this.roomName + "\\$z (" + _roomId + ")", false);
+        // have to set isEditing again for some reason -- weird.
+        isEditing = _roomId > 0;
+        this.roomId = _roomId;
         @this.parent = parent;
         this.public = public;
         if (isEditing)
@@ -241,7 +242,24 @@ class RoomTab : Tab {
     }
 
     void OnClickAddScriptStdOpts() {
-        // todo
+        string[][]@ defaults = scriptDefaults[mode];
+        for (uint i = 0; i < defaults.Length; i++) {
+            AddScriptOptIfNotExists(defaults[i][0], defaults[i][1]);
+        }
+    }
+
+    void AddScriptOptIfNotExists(const string &in key, const string &in value) {
+        bool found = false;
+        for (uint i = 0; i < gameOpts.Length; i++) {
+            auto go = gameOpts[i];
+            if (go.key == key) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            gameOpts.InsertLast(GameOpt(key, value, GetScriptOptType(key)));
+        }
     }
 
     void OnClickAddScriptOpt() {
@@ -269,12 +287,16 @@ class RoomTab : Tab {
 
     void OnClickSaveRoom() {
         saving = true;
-        ConstructAndSaveRoomConfig();
+        if (isEditing) {
+            ConstructAndSaveRoomConfig();
+        } else {
+            ConstructAndSaveNewRoom();
+        }
         SetRoomPublicStatus();
         LoadRoom();
     }
 
-    void ConstructAndSaveRoomConfig() {
+    Json::Value@ GenRoomConfigJson() {
         auto data = Json::Object();
         data['name'] = name.Replace('\\', '');
         data['region'] = SvrLocStr(region);
@@ -292,7 +314,18 @@ class RoomTab : Tab {
         for (uint i = 0; i < lazyMaps.Length; i++) {
             data['maps'].Add(lazyMaps[i].uid);
         }
-        SaveEditedRoomConfig(parent.clubId, roomId, data);
+        return data;
+    }
+
+    void ConstructAndSaveRoomConfig() {
+        SaveEditedRoomConfig(parent.clubId, roomId, GenRoomConfigJson());
+    }
+
+    void ConstructAndSaveNewRoom() {
+        auto resp = CreateClubRoom(parent.clubId, GenRoomConfigJson());
+        roomId = resp['activityId'];
+        tabName = Icons::Server + " " + name + "\\$z (" + roomId + ")";
+        startnew(CoroutineFunc(LoadRoom));
     }
 
     void SetRoomPublicStatus() {
@@ -371,10 +404,12 @@ class RoomTab : Tab {
         // ControlButton(Icons::Plus + "##room-add", CoroutineFunc(this.OnClickAddRoom));
         ControlButton(Icons::Refresh + "##room-refresh" + roomId, CoroutineFunc(this.LoadRoom));
         ctrlBtnRect = UI::GetItemRect();
-        ControlButton(Icons::FolderOpen + "##room-from-preset" + roomId, CoroutineFunc(OnClickChoosePreset));
-        AddSimpleTooltip("Load Preset");
+        // UI::BeginDisabled(true);
         ControlButton(Icons::FloppyO + "##room-save-preset" + roomId, CoroutineFunc(OnClickSavePreset));
         AddSimpleTooltip("Save Preset");
+        ControlButton(Icons::FolderOpen + "##room-from-preset" + roomId, CoroutineFunc(OnClickChoosePreset));
+        AddSimpleTooltip("Load Preset");
+        // UI::EndDisabled();
 
         UI::AlignTextToFramePadding();
 
@@ -412,14 +447,29 @@ class RoomTab : Tab {
     }
 
     void OnChosenPreset(Json::Value@ preset) {
-        print('on chosen preset cb');
         loading = false;
         if (preset is null) return;
-
+        print('on chosen preset cb: ' + Json::Write(preset));
+        region = SvrLocFromString(preset['region']);
+        maxPlayers = preset['maxPlayersPerServer'];
+        mode = GameModeFromStr(preset['script']);
+        scalable = int(preset['scalable']) == 1;
+        gameOpts.RemoveRange(0, gameOpts.Length);
+        auto presetScriptOpts = preset['settings'];
+        for (uint i = 0; i < presetScriptOpts.Length; i++) {
+            auto opts = presetScriptOpts[i];
+            gameOpts.InsertLast(GameOpt(opts['key'], opts['value'], opts['type']));
+        }
     }
 
     void OnClickSavePreset() {
         // todo
+        loading = true;
+        PresetSaver::Open(CoroutineFunc(OnSavedPreset), this);
+    }
+
+    void OnSavedPreset() {
+        loading = false;
     }
 }
 

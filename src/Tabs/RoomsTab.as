@@ -146,12 +146,31 @@ class RoomsTab : Tab {
             if (UI::Button(Icons::PencilSquareO + "##" + roomId)) OnClickEditRoom(roomId, room['name'], room['public']);
     }
 
+    int pwGetRoomId;
     void OnClickCopyPassword(int roomId) {
-
+        pwGetRoomId = roomId;
+        startnew(CoroutineFunc(GetAndCopyPassword));
     }
 
-    void OnClickAddRoom() {
+    void GetAndCopyPassword() {
+        auto roomId = pwGetRoomId;
+        auto resp = GetRoomPassword(clubId, roomId);
+        if (resp is null || resp.GetType() != Json::Type::Object) {
+            NotifyWarning("Could not get password for room: " + roomId);
+        } else {
+            string pw = resp.Get('password', '');
+            if (pw.Length == 0) {
+                NotifyWarning("Could not get password for room: " + roomId);
+            } else {
+                IO::SetClipboard(pw);
+                Notify("Copied password for room " + roomId + " to clipboard.");
+            }
+        }
+    }
 
+
+    void OnClickAddRoom() {
+        mainTabs.InsertLast(RoomTab(this, -1, "", true));
     }
 
     void OnClickEditRoom(int roomId, const string &in roomName, bool public) {
