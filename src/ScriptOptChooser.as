@@ -103,6 +103,6 @@ namespace ScriptOptChooser {
             return;
         }
         auto type = GetScriptOptType(chosenKey);
-        cb(GameOpt(chosenKey, "", type));
+        cb(GameOpt(chosenKey, GetScriptDefaultFor(mode, chosenKey), type));
     }
 }

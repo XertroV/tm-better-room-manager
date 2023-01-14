@@ -8,15 +8,19 @@ class RoomTab : Tab {
     bool saving = false;
     LazyMap@[] lazyMaps;
     GameOpt@[] gameOpts;
+    bool isEditing = true;
 
+    // roomId = -1 to create a new room
     RoomTab(RoomsTab@ parent, int roomId, const string &in roomName, bool public) {
         // string inParens = clubTag.Length > 0 ? clubTag : clubName;
-        super(Icons::Server + " " + roomName + "\\$z (" + roomId + ")", false);
+        isEditing = roomId > 0;
+        this.roomName = isEditing ? roomName : "New Room";
+        super(Icons::Server + " " + this.roomName + "\\$z (" + roomId + ")", false);
         this.roomId = roomId;
-        this.roomName = roomName;
         @this.parent = parent;
         this.public = public;
-        startnew(CoroutineFunc(LoadRoom));
+        if (isEditing)
+            startnew(CoroutineFunc(LoadRoom));
         canCloseTab = true;
     }
 
@@ -114,7 +118,14 @@ class RoomTab : Tab {
     }
 
     void OnClickAddMap() {
+        loading = true;
+        MapChooser::Open(MapChosenCallback(OnMapChosen));
+    }
 
+    void OnMapChosen(LazyMap@ map) {
+        loading = false;
+        if (map is null) return;
+        this.lazyMaps.InsertLast(map);
     }
 
     void ResetFormFromRoomInfo() {
@@ -148,7 +159,13 @@ class RoomTab : Tab {
         DrawLocationCombo();
         maxPlayers = UI::SliderInt("Max. Players", maxPlayers, 2, 100);
         scalable = UI::Checkbox("Scalable?", scalable);
-        passworded = UI::Checkbox("Passworded?", passworded);
+        UI::BeginDisabled(isEditing);
+        passworded = UI::Checkbox("Password?", passworded);
+        if (isEditing) {
+            UI::SameLine();
+            UI::Text("Cannot be changed after the room has been created.");
+        }
+        UI::EndDisabled();
         DrawGameModeSettings();
         // DrawSaveButton();
     }
@@ -189,7 +206,7 @@ class RoomTab : Tab {
                     UI::TableSetupColumn("delete", UI::TableColumnFlags::WidthFixed);
                     UI::ListClipper modeOptClipper(gameOpts.Length);
                     while (modeOptClipper.Step()) {
-                        for (uint i = modeOptClipper.DisplayStart; i < modeOptClipper.DisplayEnd; i++) {
+                        for (uint i = modeOptClipper.DisplayStart; i < modeOptClipper.DisplayEnd && i < gameOpts.Length; i++) {
                             auto go = gameOpts[i];
                             UI::TableNextColumn();
                             UI::AlignTextToFramePadding();
@@ -448,4 +465,20 @@ class LazyMap {
                 UI::Image(tex);
         }
     }
+}
+
+
+
+enum SvrLoc {
+    EuWest, CaCentral
+}
+
+const string SvrLocStr(SvrLoc s) {
+    if (s == SvrLoc::EuWest) return "eu-west";
+    return "ca-central";
+}
+
+SvrLoc SvrLocFromString(const string &in str) {
+    if (str == "eu-west") return SvrLoc::EuWest;
+    return SvrLoc::CaCentral;
 }

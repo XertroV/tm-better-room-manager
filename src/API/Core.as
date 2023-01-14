@@ -107,6 +107,14 @@ CNadeoServicesMap@ GetMapFromUid(const string &in mapUid) {
 
 
 
+void UploadMapToNadeo(const string &in mapUid) {
+    auto app = cast<CGameManiaPlanet>(GetApp());
+    auto userId = app.MenuManager.MenuCustom_CurrentManiaApp.UserMgr.Users[0].Id;
+    auto resp = app.MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr.Map_NadeoServices_Register(userId, mapUid);
+    WaitAndClearTaskLater(resp, app.MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr);
+    return;
+}
+
 
 
 // uint Get_MapLeaderBoard_PlayerCount(const string &in uid) {

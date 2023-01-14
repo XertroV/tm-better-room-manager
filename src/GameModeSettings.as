@@ -299,6 +299,16 @@ class GameOpt {
 
 
 
+string GetScriptDefaultFor(GameMode mode, const string &in optName) {
+    string[][]@ tmp = scriptDefaults[mode];
+    for (uint i = 0; i < tmp.Length; i++) {
+        auto item = tmp[i];
+        if (item[0] == optName) return item[1];
+    }
+    return "";
+}
+
+
 
 
 // Zeroth array is empty, otherwise corresponds to int(GameMode)

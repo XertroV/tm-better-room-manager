@@ -23,12 +23,16 @@ void MainCoro() {
 
 /** Render function called every frame.
 */
-void Render() {
+void RenderInterface() {
+    UI::PushStyleColor(UI::Col::FrameBg, vec4(.2, .2, .2, .5));
+
     RenderMainUI();
-    RoomOpts::Render();
+    MapChooser::Render();
     PresetChooser::Render();
     ScriptOptChooser::Render();
     RandomMapsChooser::Render();
+
+    UI::PopStyleColor();
 }
 
 

@@ -35,16 +35,16 @@ void RenderMapMonitorWindow() {
     vec2 pos = (vec2(Draw::GetWidth(), Draw::GetHeight()) - size) / 2.;
     UI::SetNextWindowSize(int(size.x), int(size.y), UI::Cond::FirstUseEver);
     UI::SetNextWindowPos(int(pos.x), int(pos.y), UI::Cond::FirstUseEver);
-    UI::PushStyleColor(UI::Col::FrameBg, vec4(.2, .2, .2, .5));
     if (UI::Begin(MenuTitle, WindowOpen)) {
+        UI::BeginDisabled(IsAnyChooserActive());
         UI::BeginTabBar("rm-tabs", UI::TabBarFlags::AutoSelectNewTabs);
         for (uint i = 0; i < mainTabs.Length; i++) {
             mainTabs[i].DrawTab();
         }
         UI::EndTabBar();
+        UI::EndDisabled();
     }
     UI::End();
-    UI::PopStyleColor();
 }
 
 array<Tab@> mainTabs;
@@ -52,6 +52,17 @@ array<Tab@> mainTabs;
 void SetUpTabs() {
     // mainTabs.InsertLast(AboutTab());
     mainTabs.InsertLast(ClubsTab());
+}
+
+
+
+
+bool IsAnyChooserActive() {
+    return PresetChooser::active
+        || RandomMapsChooser::active
+        || ScriptOptChooser::active
+        || MapChooser::active
+        ;
 }
 
 
