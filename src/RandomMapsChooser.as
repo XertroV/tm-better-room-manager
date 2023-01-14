@@ -60,15 +60,18 @@ namespace RandomMapsChooser {
     string chosenKey;
     float btnWidth = 100;
 
-    void DrawInner() {
-        UI::BeginDisabled(loadingMaps);
 
+    void DrawInner() {
         if (!loadingMaps)
             SubHeading("Choose Map Constraints:");
         else {
-            SubHeading("Progress: " + gotMaps.Length + " / " + nbMaps + Text::Format("  (%.1f%%)", float(100 * gotMaps.Length) / float(nbMaps)));
+            float progWidth = UI::GetContentRegionMax().x - btnWidth - 2. * UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing).x;
+            // SubHeading("Progress: " + gotMaps.Length + " / " + nbMaps + Text::Format("  (%.1f%%)", float(100 * gotMaps.Length) / float(nbMaps)));
+            UI::ProgressBar(float(gotMaps.Length) / float(nbMaps), vec2(progWidth, 0), "Random Maps: " + gotMaps.Length + " / " + nbMaps);
         }
+
         UI::SameLine();
+        UI::BeginDisabled(loadingMaps);
         UI::SetCursorPos(vec2(UI::GetContentRegionMax().x - btnWidth, UI::GetCursorPos().y));
         if (UI::Button("Add Maps##add game opt")) OnChooseRandomSettings();
         btnWidth = UI::GetItemRect().z;

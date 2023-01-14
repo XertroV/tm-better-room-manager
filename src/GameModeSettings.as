@@ -170,6 +170,77 @@ const string GetScriptOptType(const string &in key) {
 }
 
 
+
+
+string[][][]@ _GetScriptDefaults() {
+    string[][][] scriptDefaults;
+    scriptDefaults.Resize(7);
+    string[][] @tmp;
+
+    @tmp = scriptDefaults[GameMode::TimeAttack];
+    tmp.InsertLast({'S_TimeLimit', '300'});
+    tmp.InsertLast({'S_WarmUpNb', '0'});
+    tmp.InsertLast({'S_WarmUpDuration', '0'});
+    tmp.InsertLast({'S_WarmUpTimeout', '-1'});
+    tmp.InsertLast({'S_ForceLapsNb', '-1'});
+    @tmp = scriptDefaults[GameMode::Rounds];
+    tmp.InsertLast({'S_PointsRepartition', ''});
+    tmp.InsertLast({'S_PointsLimit', '50'});
+    tmp.InsertLast({'S_FinishTimeout', '-1'});
+    tmp.InsertLast({'S_RoundsPerMap', '-1'});
+    tmp.InsertLast({'S_MapsPerMatch', '-1'});
+    tmp.InsertLast({'S_UseTieBreak', 'true'});
+    tmp.InsertLast({'S_WarmUpNb', '0'});
+    tmp.InsertLast({'S_WarmUpDuration', '0'});
+    tmp.InsertLast({'S_WarmUpTimeout', '-1'});
+    @tmp = scriptDefaults[GameMode::Laps];
+    tmp.InsertLast({'S_TimeLimit', '0'});
+    tmp.InsertLast({'S_ForceLapsNb', '-1'});
+    tmp.InsertLast({'S_InfiniteLaps', 'false'});
+    tmp.InsertLast({'S_FinishTimeout', '-1'});
+    tmp.InsertLast({'S_DisableGiveUp', 'false'});
+    tmp.InsertLast({'S_WarmUpNb', '0'});
+    tmp.InsertLast({'S_WarmUpDuration', '0'});
+    tmp.InsertLast({'S_WarmUpTimeout', '-1'});
+    @tmp = scriptDefaults[GameMode::Knockout];
+    tmp.InsertLast({'S_PointsRepartition', ''});
+    tmp.InsertLast({'S_FinishTimeout', '5'});
+    tmp.InsertLast({'S_RoundsPerMap', '-1'});
+    tmp.InsertLast({'S_WarmUpNb', '0'});
+    tmp.InsertLast({'S_WarmUpDuration', '0'});
+    tmp.InsertLast({'S_WarmUpTimeout', '-1'});
+    tmp.InsertLast({'S_ChatTime', '6'});
+    tmp.InsertLast({'S_EliminatedPlayersNbRanks', '4,16,16'});
+    tmp.InsertLast({'S_RoundsWithoutElimination', '1'});
+    @tmp = scriptDefaults[GameMode::Cup];
+    tmp.InsertLast({'S_PointsRepartition', ''});
+    tmp.InsertLast({'S_PointsLimit', '100'});
+    tmp.InsertLast({'S_FinishTimeout', '-1'});
+    tmp.InsertLast({'S_RoundsPerMap', '5'});
+    tmp.InsertLast({'S_NbOfWinners', '3'});
+    tmp.InsertLast({'S_WarmUpNb', '0'});
+    tmp.InsertLast({'S_WarmUpDuration', '0'});
+    tmp.InsertLast({'S_WarmUpTimeout', '-1'});
+    @tmp = scriptDefaults[GameMode::Teams];
+    tmp.InsertLast({'S_PointsLimit', '100'});
+    tmp.InsertLast({'S_FinishTimeout', '-1'});
+    tmp.InsertLast({'S_MaxPointsPerRound', '6'});
+    tmp.InsertLast({'S_PointsGap', '1'});
+    tmp.InsertLast({'S_UseCustomPointsRepartition', 'false'});
+    tmp.InsertLast({'S_PointsRepartition', ''});
+    tmp.InsertLast({'S_CumulatePoints', 'false'});
+    tmp.InsertLast({'S_RoundsPerMap', '-1'});
+    tmp.InsertLast({'S_MapsPerMatch', '-1'});
+    tmp.InsertLast({'S_WarmUpNb', '0'});
+    tmp.InsertLast({'S_WarmUpDuration', '0'});
+    tmp.InsertLast({'S_WarmUpTimeout', '-1'});
+    tmp.InsertLast({'S_UseAlternateRules', 'true'});
+    // @tmp = scriptDefaults[GameMode::RoyalTimeAttack];
+    // tmp.InsertLast({'S_TimeLimit', '150'});
+    return scriptDefaults;
+}
+
+
 class GameOpt {
     string key, value, type;
     bool boolVal;
@@ -216,6 +287,14 @@ class GameOpt {
     const string DocsUrl() {
         return "https://wiki.trackmania.io/en/dedicated-server/Usage/OfficialGameModesSettings#" + key.ToLower();
     }
+
+    Json::Value@ ToJson() {
+        auto j = Json::Object();
+        j['key'] = key;
+        j['value'] = value;
+        j['type'] = type;
+        return j;
+    }
 }
 
 
@@ -226,3 +305,5 @@ class GameOpt {
 string[][]@ GameModeOpts = _GetGameModeValidOpts();
 
 dictionary@ settingToType = _GetSettingsToType();
+
+string[][][]@ scriptDefaults = _GetScriptDefaults();

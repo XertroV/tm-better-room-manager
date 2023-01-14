@@ -1,9 +1,15 @@
 bool UserHasPermissions = false;
 
 void Main() {
+    InitDirectories();
     AddAudiences();
     SetUpTabs();
     startnew(MainCoro);
+}
+
+void InitDirectories() {
+    string presets = IO::FromStorageFolder("presets");
+    if (!IO::FolderExists(presets)) IO::CreateFolder(presets, true);
 }
 
 void MainCoro() {

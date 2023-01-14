@@ -13,6 +13,14 @@ Json::Value@ FetchLiveEndpoint(const string &in route) {
     return Json::Parse(req.String());
 }
 
+Json::Value@ PostLiveEndpoint(const string &in route, Json::Value@ data) {
+    trace("[FetchLiveEndpoint] Requesting: " + route);
+    auto req = NadeoServices::Post("NadeoLiveServices", route, Json::Write(data));
+    req.Start();
+    while(!req.Finished()) { yield(); }
+    return Json::Parse(req.String());
+}
+
 Json::Value@ FetchClubEndpoint(const string &in route) {
     trace("[FetchClubEndpoint] Requesting: " + route);
     auto req = NadeoServices::Get("NadeoClubServices", route);
@@ -24,6 +32,11 @@ Json::Value@ FetchClubEndpoint(const string &in route) {
 Json::Value@ CallLiveApiPath(const string &in path) {
     AssertGoodPath(path);
     return FetchLiveEndpoint(NadeoServices::BaseURL() + path);
+}
+
+Json::Value@ PostLiveApiPath(const string &in path, Json::Value@ data) {
+    AssertGoodPath(path);
+    return PostLiveEndpoint(NadeoServices::BaseURL() + path, data);
 }
 
 Json::Value@ CallCompApiPath(const string &in path) {
@@ -61,10 +74,20 @@ const string LengthAndOffset(uint length, uint offset) {
 }
 
 
-Net::HttpRequest@ PluginGetRequest(const string &in url) {
+Net::HttpRequest@ PluginRequest(const string &in url) {
     auto r = Net::HttpRequest();
     r.Url = url;
-    r.Method = Net::HttpMethod::Get;
     r.Headers['User-Agent'] = "TM_Plugin:RoomManager / contact=@XertroV,cgf@xk.io / client_version=" + Meta::ExecutingPlugin().Version;
+    return r;
+}
+Net::HttpRequest@ PluginPostRequest(const string &in url) {
+    auto r = PluginRequest(url);
+    r.Method = Net::HttpMethod::Post;
+    return r;
+}
+
+Net::HttpRequest@ PluginGetRequest(const string &in url) {
+    auto r = PluginRequest(url);
+    r.Method = Net::HttpMethod::Get;
     return r;
 }

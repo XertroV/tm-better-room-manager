@@ -44,3 +44,79 @@
     "scalable": 0,
     "password": 0
 }
+
+
+{
+    "name": "asdftest",
+    "region": "eu-west",
+    "maxPlayersPerServer": 16,
+    "script": "TrackMania/TM_Rounds_Online.Script.txt",
+    "settings": [
+        {
+            "key": "S_UseTieBreak",
+            "value": "false",
+            "type": "boolean"
+        },
+        {
+            "key": "S_DecoImageUrl_WhoAmIUrl",
+            "value": "/api/club/55829",
+            "type": "text"
+        },
+        {
+            "key": "S_ForceLapsNb",
+            "value": "-1",
+            "type": "integer"
+        }
+    ],
+    "maps": [
+        "yAe9mxBAI12h8uu1pHUpDL34C77",
+        "qY2yHyG5zEi9u_5lM1B3XnVjk86"
+    ],
+    "scalable": 1,
+    "password": 0
+}
+
+{
+    "name": "asdftest",
+    "region": "eu-west",
+    "maxPlayersPerServer": 16,
+    "script": "TrackMania/TM_Cup_Online.Script.txt",
+    "settings": [
+        {
+            "key": "S_FinishTimeout",
+            "value": "-11",
+            "type": "integer"
+        },
+        {
+            "key": "S_RoundsPerMap",
+            "value": "05",
+            "type": "integer"
+        },
+        {
+            "key": "S_NbOfWinners",
+            "value": "30",
+            "type": "integer"
+        },
+        {
+            "key": "S_WarmUpNb",
+            "value": "02",
+            "type": "integer"
+        },
+        {
+            "key": "S_WarmUpDuration",
+            "value": "02",
+            "type": "integer"
+        },
+        {
+            "key": "S_WarmUpTimeout",
+            "value": "-12",
+            "type": "integer"
+        }
+    ],
+    "maps": [
+        "yAe9mxBAI12h8uu1pHUpDL34C77",
+        "qY2yHyG5zEi9u_5lM1B3XnVjk86"
+    ],
+    "scalable": 1,
+    "password": 0
+}

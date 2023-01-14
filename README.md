@@ -1,4 +1,6 @@
-# 
+# Better Room Manager
+
+Administer Club Rooms: save/load presets, add random maps, set hidden script options, and more.
 
 License: Public Domain
 

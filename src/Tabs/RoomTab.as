@@ -5,12 +5,13 @@ class RoomTab : Tab {
     string roomName;
     Json::Value@ thisRoom = Json::Object();
     bool loading = false;
+    bool saving = false;
     LazyMap@[] lazyMaps;
     GameOpt@[] gameOpts;
 
     RoomTab(RoomsTab@ parent, int roomId, const string &in roomName, bool public) {
         // string inParens = clubTag.Length > 0 ? clubTag : clubName;
-        super(Icons::Server + " " + roomName + " (" + roomId + ")", false);
+        super(Icons::Server + " " + roomName + "\\$z (" + roomId + ")", false);
         this.roomId = roomId;
         this.roomName = roomName;
         @this.parent = parent;
@@ -24,6 +25,7 @@ class RoomTab : Tab {
 
     void LoadRoom() {
         loading = true;
+        saving = false;
         lazyMaps.RemoveRange(0, lazyMaps.Length);
         gameOpts.RemoveRange(0, gameOpts.Length);
         try {
@@ -66,7 +68,7 @@ class RoomTab : Tab {
     float mapsCtrlBarRHSWidth = 100;
 
     void DrawMainBody() {
-        UI::BeginDisabled(loading);
+        UI::BeginDisabled(loading || saving);
         if (UI::BeginTable('edit-room-table##' + roomId, 2, UI::TableFlags::SizingStretchSame)) {
             UI::TableNextRow();
 
@@ -140,7 +142,8 @@ class RoomTab : Tab {
 
     void DrawRoomEditForm() {
         bool changed = false;
-        name = UI::InputText("Room Name", name, changed);
+        name = ColoredString(UI::InputText("Room Name", name.Replace('\\', ''), changed));
+        UI::Text("Name Preview: " + name);
         public = UI::Checkbox("Public?", public);
         DrawLocationCombo();
         maxPlayers = UI::SliderInt("Max. Players", maxPlayers, 2, 100);
@@ -235,11 +238,11 @@ class RoomTab : Tab {
         gameOpts.InsertLast(go);
     }
 
-    void DrawSaveButton() {
-        UI::BeginDisabled(IsInvalidSettings);
-        if (UI::Button(_creatingRoom ? "Create Room" : "Update Room")) OnClickSaveRoom();
-        UI::EndDisabled();
-    }
+    // void DrawSaveButton() {
+    //     UI::BeginDisabled(IsInvalidSettings);
+    //     if (UI::Button(_creatingRoom ? "Create Room" : "Update Room")) OnClickSaveRoom();
+    //     UI::EndDisabled();
+    // }
 
     bool IsInvalidSettings {
         get {
@@ -248,7 +251,37 @@ class RoomTab : Tab {
     }
 
     void OnClickSaveRoom() {
+        saving = true;
+        ConstructAndSaveRoomConfig();
+        SetRoomPublicStatus();
+        LoadRoom();
+    }
 
+    void ConstructAndSaveRoomConfig() {
+        auto data = Json::Object();
+        data['name'] = name.Replace('\\', '');
+        data['region'] = SvrLocStr(region);
+        data['maxPlayersPerServer'] = maxPlayers;
+        data['script'] = GameModeToFullModeString(mode);
+        data['settings'] = Json::Array();
+        data['maps'] = Json::Array();
+        data['scalable'] = scalable ? 1 : 0;
+        // todo: can't change pw later
+        data['password'] = passworded ? 1 : 0;
+        for (uint i = 0; i < gameOpts.Length; i++) {
+            auto go = gameOpts[i];
+            data['settings'].Add(go.ToJson());
+        }
+        for (uint i = 0; i < lazyMaps.Length; i++) {
+            data['maps'].Add(lazyMaps[i].uid);
+        }
+        SaveEditedRoomConfig(parent.clubId, roomId, data);
+    }
+
+    void SetRoomPublicStatus() {
+        auto data = Json::Object();
+        data['public'] = public ? 1 : 0;
+        SaveActivityPublicStatus(parent.clubId, roomId, data);
     }
 
 
@@ -263,7 +296,7 @@ class RoomTab : Tab {
             UI::TableHeadersRow();
             UI::ListClipper lmClipper(lazyMaps.Length);
             while (lmClipper.Step()) {
-                for (uint i = lmClipper.DisplayStart; i < lmClipper.DisplayEnd; i++) {
+                for (uint i = lmClipper.DisplayStart; i < lmClipper.DisplayEnd && i < lazyMaps.Length; i++) {
                     auto lm = lazyMaps[i];
                     DrawLazyMapRow(i, lm);
                 }
@@ -315,7 +348,7 @@ class RoomTab : Tab {
     vec4 ctrlBtnRect;
 
     void DrawControlBar() {
-        UI::BeginDisabled(loading);
+        UI::BeginDisabled(loading || saving);
 
         float width = UI::GetContentRegionMax().x;
         // ControlButton(Icons::Plus + "##room-add", CoroutineFunc(this.OnClickAddRoom));
@@ -326,10 +359,13 @@ class RoomTab : Tab {
         ControlButton(Icons::FloppyO + "##room-save-preset" + roomId, CoroutineFunc(OnClickSavePreset));
         AddSimpleTooltip("Save Preset");
 
+        UI::AlignTextToFramePadding();
 
         if (loading) {
-            UI::AlignTextToFramePadding();
             UI::Text("Loading...");
+            UI::SameLine();
+        } else if (saving) {
+            UI::Text("Saving...");
             UI::SameLine();
         } else {
             // UI::Dummy(vec2());

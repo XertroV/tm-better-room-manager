@@ -29,9 +29,19 @@ Json::Value@ GetClubActivities(uint clubId, uint length = 100, uint offset = 0) 
     return CallLiveApiPath("/api/token/club/" + clubId + "/activity?" + LengthAndOffset(length, offset));
 }
 
-// See: </json/get_club_room.json> for response
+// See: [json/get_club_room.json](json/get_club_room.json) for response
 Json::Value@ GetClubRoom(uint clubId, uint roomId) {
     return CallLiveApiPath("/api/token/club/" + clubId + "/room/" + roomId);
+}
+
+// Payload: [json/update-room.json](json/update-room.json)
+void SaveEditedRoomConfig(uint clubId, uint roomId, Json::Value@ data) {
+    PostLiveApiPath("/api/token/club/" + clubId + "/room/" + roomId + "/edit", data);
+}
+
+// Payload: {public: 0 or 1}
+void SaveActivityPublicStatus(uint clubId, uint roomId, Json::Value@ data) {
+    PostLiveApiPath("/api/token/club/" + clubId + "/activity/" + roomId + "/edit", data);
 }
 
 // https://webservices.openplanet.dev/live/maps/uploaded
