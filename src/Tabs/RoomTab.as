@@ -49,8 +49,17 @@ class RoomTab : Tab {
 
     void PopulateMapsList() {
         auto @_maps = thisRoom['room']['maps'];
-        for (uint i = 0; i < _maps.Length; i++) {
-            lazyMaps.InsertLast(LazyMap(_maps[i]));
+        if (_maps.GetType() == Json::Type::Array) {
+            for (uint i = 0; i < _maps.Length; i++) {
+                lazyMaps.InsertLast(LazyMap(_maps[i]));
+            }
+        } else {
+            // object -- werid; for >100 maps mb
+            lazyMaps.Resize(0);
+            auto keys = _maps.GetKeys();
+            for (uint i = 0; i < keys.Length; i++) {
+                lazyMaps.InsertLast(LazyMap(_maps[keys[i]]));
+            }
         }
     }
 
@@ -82,8 +91,12 @@ class RoomTab : Tab {
             DrawRoomEditForm();
 
             UI::TableNextColumn();
-            SubHeading("Maps:");
+            SubHeading("Maps (" + lazyMaps.Length + "):");
             UI::SameLine();
+            if (lazyMaps.Length > 100) {
+                UI::Text("\\$f81Warning: >100 maps will cause issues.");
+                UI::SameLine();
+            }
             float width = UI::GetContentRegionMax().x;
             UI::SetCursorPos(vec2(width - mapsCtrlBarRHSWidth + UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing).x, UI::GetCursorPos().y));
             auto pos = UI::GetCursorPos();
@@ -356,6 +369,7 @@ class RoomTab : Tab {
     }
 
     void DrawLazyMapRow(uint i, LazyMap@ lm) {
+        if (lm is null) return;
         UI::TableNextRow();
         UI::TableNextColumn();
         UI::AlignTextToFramePadding();
@@ -429,7 +443,9 @@ class RoomTab : Tab {
 
         // NotificationsCtrlButton(vec2(ctrlBtnRect.z, ctrlBtnRect.w));
 
+        UI::BeginDisabled(lazyMaps.Length > 100);
         ControlButton(Icons::Upload + " Save Room##save-room" + roomId, CoroutineFunc(this.OnClickSaveRoom));
+        UI::EndDisabled();
 
         ctrlRhsWidth = (UI::GetCursorPos() - curr - UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing)).x;
         // control buttons always end with SameLine so put a dummy here to go to next line.
