@@ -1,0 +1,44 @@
+{
+    "id": 339126,
+    "clubId": 55829,
+    "clubName": "$z$e71\uf292$z$s$iTic Tac GO!",
+    "nadeo": true,
+    "roomId": 119201,
+    "campaignId": null,
+    "playerServerLogin": null,
+    "activityId": 339126,
+    "mediaUrl": "",
+    "name": "test rounds",
+    "room": {
+        "id": 119201,
+        "name": "test rounds",
+        "region": "ca-central",
+        "serverAccountId": "",
+        "maxPlayers": 16,
+        "playerCount": 0,
+        "maps": [
+            "wWG9lyQ3dYjzckhhprW9WhyCC6g",
+            "osHfIzlKes5lOcNbkiDUF1guAM9",
+            "RCvWrXBMxPl2RkLbbabPW_m_Cp2",
+            "FqOC38szG6MJIr_zLIGPGfbmAkl"
+        ],
+        "script": "TrackMania\/TM_Rounds_Online.Script.txt",
+        "scalable": false,
+        "scriptSettings": {
+            "S_ForceLapsNb": {
+                "key": "S_ForceLapsNb",
+                "value": "-1",
+                "type": "integer"
+            },
+            "S_DecoImageUrl_WhoAmIUrl": {
+                "key": "S_DecoImageUrl_WhoAmIUrl",
+                "value": "\/api\/club\/55829",
+                "type": "text"
+            }
+        },
+        "serverInfo": null
+    },
+    "popularityLevel": 0,
+    "creationTimestamp": 1671757530,
+    "password": false
+}

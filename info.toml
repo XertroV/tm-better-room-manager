@@ -1,0 +1,9 @@
+[meta]
+name     = "Room Manager"
+author   = "XertroV"
+category = "Utilities"
+version  = "0.1.0"
+
+[script]
+#__DEFINES__
+dependencies = ["NadeoServices"]
