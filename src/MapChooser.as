@@ -55,7 +55,7 @@ namespace MapChooser {
             mapNameClean = StripFormatCodes(map.Name).ToLower();
             bool match = true;
             for (uint p = 0; p < searchParts.Length; p++) {
-                if (!mapNameClean.Contains(searchParts[0])) {
+                if (!mapNameClean.Contains(searchParts[p])) {
                     match = false;
                     break;
                 }

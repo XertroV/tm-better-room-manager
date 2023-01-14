@@ -7,7 +7,7 @@ class RoomsTab : Tab {
 
     RoomsTab(int clubId, const string &in clubName, const string &in clubTag = "") {
         string inParens = clubTag.Length > 0 ? clubTag : clubName;
-        super(Icons::BuildingO + " " + inParens + ": Rooms", false);
+        super(Icons::BuildingO + " " + inParens + "\\$z: Rooms", false);
         this.clubId = clubId;
         this.clubName = clubName;
         this.clubTag = clubTag;
