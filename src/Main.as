@@ -4,7 +4,9 @@ void Main() {
     InitDirectories();
     AddAudiences();
     SetUpTabs();
-    startnew(MainCoro);
+#if DEV
+    startnew(TestCoro);
+#endif
 }
 
 void InitDirectories() {
@@ -12,13 +14,15 @@ void InitDirectories() {
     if (!IO::FolderExists(presets)) IO::CreateFolder(presets, true);
 }
 
-void MainCoro() {
+void TestCoro() {
+#if DEV
     mainTabs.InsertLast(RoomsTab(46587, 'xert', 'xert'));
     yield();
     auto _ttgRooms = RoomsTab(55829, 'ttg', 'ttg');
     mainTabs.InsertLast(_ttgRooms);
     yield();
     mainTabs.InsertLast(RoomTab(_ttgRooms, 345704, 'test name', true));
+#endif
 }
 
 /** Render function called every frame.
