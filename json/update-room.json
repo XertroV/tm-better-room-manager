@@ -1,0 +1,46 @@
+{
+    "name": "test rounds",
+    "region": "ca-central",
+    "maxPlayersPerServer": 16,
+    "script": "TrackMania/TM_Rounds_Online.Script.txt",
+    "settings": [
+        {
+            "key": "S_RoundsPerMap",
+            "value": "-11",
+            "type": "integer"
+        },
+        {
+            "key": "S_MapsPerMatch",
+            "value": "-11",
+            "type": "integer"
+        },
+        {
+            "key": "S_UseTieBreak",
+            "value": "false",
+            "type": "boolean"
+        },
+        {
+            "key": "S_WarmUpNb",
+            "value": "01",
+            "type": "integer"
+        },
+        {
+            "key": "S_WarmUpDuration",
+            "value": "01",
+            "type": "integer"
+        },
+        {
+            "key": "S_WarmUpTimeout",
+            "value": "-11",
+            "type": "integer"
+        }
+    ],
+    "maps": [
+        "wWG9lyQ3dYjzckhhprW9WhyCC6g",
+        "osHfIzlKes5lOcNbkiDUF1guAM9",
+        "RCvWrXBMxPl2RkLbbabPW_m_Cp2",
+        "FqOC38szG6MJIr_zLIGPGfbmAkl"
+    ],
+    "scalable": 0,
+    "password": 0
+}

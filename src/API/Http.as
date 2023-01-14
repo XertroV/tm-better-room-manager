@@ -41,11 +41,8 @@ Json::Value@ CallMapMonitorApiPath(const string &in path) {
     auto token = Auth::GetCachedToken();
     auto url = MM_API_ROOT + path;
     trace("[CallMapMonitorApiPath] Requesting: " + url);
-    auto req = Net::HttpRequest();
-    req.Url = MM_API_ROOT + path;
-    req.Headers['User-Agent'] = 'MapMonitor/Openplanet-Plugin/contact=@XertroV';
+    auto req = PluginGetRequest(MM_API_ROOT + path);
     req.Headers['Authorization'] = 'openplanet ' + token;
-    req.Method = Net::HttpMethod::Get;
     req.Start();
     while(!req.Finished()) { yield(); }
     return Json::Parse(req.String());
@@ -61,4 +58,13 @@ void AssertGoodPath(string &in path) {
 // Length and offset get params helper
 const string LengthAndOffset(uint length, uint offset) {
     return "length=" + length + "&offset=" + offset;
+}
+
+
+Net::HttpRequest@ PluginGetRequest(const string &in url) {
+    auto r = Net::HttpRequest();
+    r.Url = url;
+    r.Method = Net::HttpMethod::Get;
+    r.Headers['User-Agent'] = "TM_Plugin:RoomManager / contact=@XertroV,cgf@xk.io / client_version=" + Meta::ExecutingPlugin().Version;
+    return r;
 }

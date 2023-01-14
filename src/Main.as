@@ -7,9 +7,12 @@ void Main() {
 }
 
 void MainCoro() {
-    while (true) {
-        yield();
-    }
+    mainTabs.InsertLast(RoomsTab(46587, 'xert', 'xert'));
+    yield();
+    auto _ttgRooms = RoomsTab(55829, 'ttg', 'ttg');
+    mainTabs.InsertLast(_ttgRooms);
+    yield();
+    mainTabs.InsertLast(RoomTab(_ttgRooms, 345704, 'test name', true));
 }
 
 /** Render function called every frame.
@@ -17,6 +20,9 @@ void MainCoro() {
 void Render() {
     RenderMainUI();
     RoomOpts::Render();
+    PresetChooser::Render();
+    ScriptOptChooser::Render();
+    RandomMapsChooser::Render();
 }
 
 
@@ -41,4 +47,9 @@ void AddSimpleTooltip(const string &in msg) {
         UI::Text(msg);
         UI::EndTooltip();
     }
+}
+
+void CopyToClipboardAndNotify(const string &in toCopy) {
+    IO::SetClipboard(toCopy);
+    Notify("Copied: " + toCopy);
 }

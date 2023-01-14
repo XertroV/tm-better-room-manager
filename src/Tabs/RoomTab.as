@@ -6,6 +6,7 @@ class RoomTab : Tab {
     Json::Value@ thisRoom = Json::Object();
     bool loading = false;
     LazyMap@[] lazyMaps;
+    GameOpt@[] gameOpts;
 
     RoomTab(RoomsTab@ parent, int roomId, const string &in roomName, bool public) {
         // string inParens = clubTag.Length > 0 ? clubTag : clubName;
@@ -24,6 +25,7 @@ class RoomTab : Tab {
     void LoadRoom() {
         loading = true;
         lazyMaps.RemoveRange(0, lazyMaps.Length);
+        gameOpts.RemoveRange(0, gameOpts.Length);
         try {
             @thisRoom = GetClubRoom(parent.clubId, roomId);
             thisRoom['clubName'] = ColoredString(thisRoom['clubName']);
@@ -31,8 +33,9 @@ class RoomTab : Tab {
             thisRoom['room']['name'] = ColoredString(thisRoom['room']['name']);
             ResetFormFromRoomInfo();
             PopulateMapsList();
+            PopulateGameOpts();
         } catch {
-            NotifyWarning('Failed up update rooms list: ' + getExceptionInfo());
+            NotifyWarning('Failed to update room info: ' + getExceptionInfo());
         }
         loading = false;
     }
@@ -44,6 +47,15 @@ class RoomTab : Tab {
         }
     }
 
+    void PopulateGameOpts() {
+        auto opts = thisRoom['room']['scriptSettings'];
+        auto keys = opts.GetKeys();
+        for (uint i = 0; i < keys.Length; i++) {
+            auto opt = opts[keys[i]];
+            gameOpts.InsertLast(GameOpt(opt['key'], opt['value'], opt['type']));
+        }
+    }
+
     void DrawInner() override {
         DrawControlBar();
         UI::Separator();
@@ -51,22 +63,56 @@ class RoomTab : Tab {
         // DrawRoomsTable();
     }
 
+    float mapsCtrlBarRHSWidth = 100;
+
     void DrawMainBody() {
         UI::BeginDisabled(loading);
         if (UI::BeginTable('edit-room-table##' + roomId, 2, UI::TableFlags::SizingStretchSame)) {
             UI::TableNextRow();
+
             UI::TableNextColumn();
             SubHeading("Room Options:");
             DrawRoomEditForm();
+
             UI::TableNextColumn();
             SubHeading("Maps:");
+            UI::SameLine();
             float width = UI::GetContentRegionMax().x;
+            UI::SetCursorPos(vec2(width - mapsCtrlBarRHSWidth + UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing).x, UI::GetCursorPos().y));
             auto pos = UI::GetCursorPos();
-            UI::SetCursorPos(vec2(width - ctrlBtnRect.z, pos.y));
+            ControlButton(Icons::Plus + "##add-map" + roomId, CoroutineFunc(OnClickAddMap));
+            ControlButton(Icons::Plus + " Random##"+roomId, CoroutineFunc(OnClickAddRandom));
+            ControlButton(Icons::TrashO + " All##"+roomId, CoroutineFunc(OnClickRmAll));
+            mapsCtrlBarRHSWidth = UI::GetCursorPos().x - pos.x;
+            AddSimpleTooltip("Refresh to undo.");
+            UI::Dummy(vec2());
+
             DrawRoomMapsForm();
+
             UI::EndTable();
         }
         UI::EndDisabled();
+    }
+
+    void OnClickRmAll() {
+        lazyMaps.RemoveRange(0, lazyMaps.Length);
+    }
+
+    void OnClickAddRandom() {
+        loading = true;
+        RandomMapsChooser::Open(RandomMapsCallback(OnGotRandomMaps));
+    }
+
+    void OnGotRandomMaps(LazyMap@[]@ maps) {
+        loading = false;
+        if (maps is null) return;
+        for (uint i = 0; i < maps.Length; i++) {
+            this.lazyMaps.InsertLast(maps[i]);
+        }
+    }
+
+    void OnClickAddMap() {
+
     }
 
     void ResetFormFromRoomInfo() {
@@ -101,7 +147,7 @@ class RoomTab : Tab {
         scalable = UI::Checkbox("Scalable?", scalable);
         passworded = UI::Checkbox("Passworded?", passworded);
         DrawGameModeSettings();
-        DrawSaveButton();
+        // DrawSaveButton();
     }
 
     void DrawLocationCombo() {
@@ -112,15 +158,81 @@ class RoomTab : Tab {
         }
     }
 
+    float addModeOptWidth = 100;
     void DrawGameModeSettings() {
+        auto origMode = mode;
         if (UI::BeginCombo("Mode", tostring(mode))) {
             for (uint i = 1; i <= int(GameMode::Rounds); i++) {
                 if (UI::Selectable(tostring(GameMode(i)), i == int(mode))) mode = GameMode(i);
             }
+            UI::EndCombo();
         }
-        if (UI::CollapsingHeader("Game Mode Options")) {
-            UI::Text("todo");
+        if (origMode != mode) startnew(CoroutineFunc(OnModeChanged));
+        if (UI::CollapsingHeader("Script Options")) {
+            float width = UI::GetContentRegionMax().x;
+            auto pos = UI::GetCursorPos();
+            SubHeading("Script Options:");
+            UI::SetCursorPos(vec2(width - addModeOptWidth + UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing).x, pos.y));
+            pos = UI::GetCursorPos();
+            ControlButton(Icons::Plus + " Standard##add-script-std-opts" + roomId, CoroutineFunc(OnClickAddScriptStdOpts));
+            ControlButton(Icons::Plus + "##add-script-opt" + roomId, CoroutineFunc(OnClickAddScriptOpt));
+            addModeOptWidth = UI::GetCursorPos().x - pos.x;
+            UI::Dummy(vec2());
+            UI::Separator();
+            if (gameOpts.Length > 0) {
+                if (UI::BeginTable("room script opts" + roomId, 3)) {
+                    UI::TableSetupColumn("key", UI::TableColumnFlags::WidthFixed);
+                    UI::TableSetupColumn("valset", UI::TableColumnFlags::WidthStretch);
+                    UI::TableSetupColumn("delete", UI::TableColumnFlags::WidthFixed);
+                    UI::ListClipper modeOptClipper(gameOpts.Length);
+                    while (modeOptClipper.Step()) {
+                        for (uint i = modeOptClipper.DisplayStart; i < modeOptClipper.DisplayEnd; i++) {
+                            auto go = gameOpts[i];
+                            UI::TableNextColumn();
+                            UI::AlignTextToFramePadding();
+                            UI::Text(go.key);
+                            UI::TableNextColumn();
+                            go.DrawOption(false);
+                            UI::TableNextColumn();
+                            if (UI::Button(Icons::QuestionCircleO + "##url-" + go.key)) OpenBrowserURL(go.DocsUrl());
+                            UI::SameLine();
+                            if (UI::Button(Icons::TrashO + "##rm-" + go.key)) {
+                                gameOpts.RemoveAt(gameOpts.FindByRef(go));
+                            }
+                        }
+                    }
+                    UI::EndTable();
+                }
+            } else {
+                UI::Text("No game options set.");
+            }
         }
+    }
+
+    void OnModeChanged() {
+        auto @validOpts = GameModeOpts[int(mode)];
+        for (uint i = 0; i < gameOpts.Length; i++) {
+            auto go = gameOpts[i];
+            if (validOpts.Find(go.key) < 0) {
+                gameOpts.RemoveAt(i);
+                i--;
+            }
+        }
+    }
+
+    void OnClickAddScriptStdOpts() {
+        // todo
+    }
+
+    void OnClickAddScriptOpt() {
+        loading = true;
+        ScriptOptChooser::Open(ScriptOptChosenCallback(AddScriptOpt), gameOpts, mode);
+    }
+
+    void AddScriptOpt(GameOpt@ go) {
+        loading = false;
+        if (go is null) return;
+        gameOpts.InsertLast(go);
     }
 
     void DrawSaveButton() {
@@ -142,24 +254,25 @@ class RoomTab : Tab {
 
 
     void DrawRoomMapsForm() {
-        if (UI::BeginTable("room edit maps table" + roomId, 4, UI::TableFlags::SizingStretchProp)) {
+        if (UI::BeginTable("room edit maps table" + roomId, 5, UI::TableFlags::SizingStretchProp)) {
             UI::TableSetupColumn("Name");
             UI::TableSetupColumn("Author");
             UI::TableSetupColumn("AT");
             UI::TableSetupColumn("Img", UI::TableColumnFlags::WidthFixed);
+            UI::TableSetupColumn("##btns", UI::TableColumnFlags::WidthFixed);
             UI::TableHeadersRow();
             UI::ListClipper lmClipper(lazyMaps.Length);
             while (lmClipper.Step()) {
                 for (uint i = lmClipper.DisplayStart; i < lmClipper.DisplayEnd; i++) {
                     auto lm = lazyMaps[i];
-                    DrawLazyMapRow(lm);
+                    DrawLazyMapRow(i, lm);
                 }
             }
             UI::EndTable();
         }
     }
 
-    void DrawLazyMapRow(LazyMap@ lm) {
+    void DrawLazyMapRow(uint i, LazyMap@ lm) {
         UI::TableNextRow();
         UI::TableNextColumn();
         UI::AlignTextToFramePadding();
@@ -176,10 +289,17 @@ class RoomTab : Tab {
 
         UI::TableNextColumn();
         UI::Text(Icons::FileImageO);
+        bool clicked = UI::IsItemClicked();
         if (UI::IsItemHovered(UI::HoveredFlags::AllowWhenDisabled)) {
             UI::BeginTooltip();
             lm.DrawThumbnail(vec2(512, 512));
             UI::EndTooltip();
+        }
+        if (clicked) CopyToClipboardAndNotify(lm.uid);
+
+        UI::TableNextColumn();
+        if (UI::Button(Icons::TrashO + "##remove-map-" + i)) {
+            lazyMaps.RemoveAt(lazyMaps.FindByRef(lm));
         }
     }
 
@@ -195,31 +315,58 @@ class RoomTab : Tab {
     vec4 ctrlBtnRect;
 
     void DrawControlBar() {
-        float width = UI::GetContentRegionMax().x;
-
         UI::BeginDisabled(loading);
+
+        float width = UI::GetContentRegionMax().x;
         // ControlButton(Icons::Plus + "##room-add", CoroutineFunc(this.OnClickAddRoom));
         ControlButton(Icons::Refresh + "##room-refresh" + roomId, CoroutineFunc(this.LoadRoom));
         ctrlBtnRect = UI::GetItemRect();
+        ControlButton(Icons::FolderOpen + "##room-from-preset" + roomId, CoroutineFunc(OnClickChoosePreset));
+        AddSimpleTooltip("Load Preset");
+        ControlButton(Icons::FloppyO + "##room-save-preset" + roomId, CoroutineFunc(OnClickSavePreset));
+        AddSimpleTooltip("Save Preset");
 
-        UI::EndDisabled();
 
         if (loading) {
             UI::AlignTextToFramePadding();
             UI::Text("Loading...");
+            UI::SameLine();
         } else {
-            UI::Dummy(vec2());
+            // UI::Dummy(vec2());
         }
 
-        // // rhs buttons
-        // UI::SetCursorPos(vec2(width - ctrlRhsWidth, UI::GetCursorPos().y));
-        // auto curr = UI::GetCursorPos();
+        // rhs buttons
+        UI::SetCursorPos(vec2(width - ctrlRhsWidth, UI::GetCursorPos().y));
+        auto curr = UI::GetCursorPos();
+
         // NotificationsCtrlButton(vec2(ctrlBtnRect.z, ctrlBtnRect.w));
-        // ControlButton(Icons::FloppyO + "##main-export2", CoroutineFunc(this.OnClickExport));
-        // ctrlRhsWidth = (UI::GetCursorPos() - curr - UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing)).x;
 
-        // // control buttons always end with SameLine so put a dummy here to go to next line.
+        ControlButton(Icons::Upload + " Save Room##save-room" + roomId, CoroutineFunc(this.OnClickSaveRoom));
 
+        ctrlRhsWidth = (UI::GetCursorPos() - curr - UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing)).x;
+        // control buttons always end with SameLine so put a dummy here to go to next line.
+        UI::Dummy(vec2());
+
+        UI::EndDisabled();
+    }
+
+
+
+
+    void OnClickChoosePreset() {
+        loading = true;
+        PresetChooser::Open(PresetChosenCallback(OnChosenPreset));
+    }
+
+    void OnChosenPreset(Json::Value@ preset) {
+        print('on chosen preset cb');
+        loading = false;
+        if (preset is null) return;
+
+    }
+
+    void OnClickSavePreset() {
+        // todo
     }
 }
 
@@ -255,7 +402,7 @@ class LazyMap {
     }
 
     void DrawThumbnail(vec2 size = vec2()) {
-        UI::Text("UID: " + uid);
+        UI::Text("UID: " + uid + "       (click to copy)");
         if (tex is null) {
             UI::Text("Loading thumbnail...");
         } else {

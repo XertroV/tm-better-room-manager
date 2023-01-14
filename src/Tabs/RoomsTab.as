@@ -29,7 +29,7 @@ class RoomsTab : Tab {
             if (maxPage > 1) GetAdditionalRooms();
             loading = false;
         } catch {
-            NotifyWarning('Failed up update rooms list: ' + getExceptionInfo());
+            NotifyWarning('Failed to update rooms list: ' + getExceptionInfo());
         }
     }
 
@@ -139,7 +139,7 @@ class RoomsTab : Tab {
             UI::Text(isPassworded ? redLock : greenUnlock);
             if (isPassworded) {
                 UI::SameLine();
-                if (UI::Button(Icons::FilesO)) OnClickCopyPassword(roomId);
+                if (UI::Button(Icons::Clone)) OnClickCopyPassword(roomId);
             }
 
             UI::TableNextColumn();

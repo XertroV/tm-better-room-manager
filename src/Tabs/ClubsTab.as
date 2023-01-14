@@ -24,7 +24,7 @@ class ClubsTab : Tab {
             FixClubNamesTags(100);
             loading = false;
         } catch {
-            NotifyWarning('Failed up update clubs list: ' + getExceptionInfo());
+            NotifyWarning('Failed to update clubs list: ' + getExceptionInfo());
         }
     }
 
@@ -125,10 +125,11 @@ class ClubsTab : Tab {
         UI::Text(club['tag']);
 
         UI::TableNextColumn();
-        UI::Text(club['role']);
+        string role = string(club['role']);
+        UI::Text(role);
 
         UI::TableNextColumn();
-        if (string(club['role']) != "Member") {
+        if (role == "Creator" || role == "Admin") {
             if (UI::Button("Rooms##"+club_id)) OnClickRoomsForClub(club['id'], club['name'], club['tag']);
         }
     }

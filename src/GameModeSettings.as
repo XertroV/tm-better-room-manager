@@ -8,6 +8,8 @@ enum GameMode {
     Rounds = 6
 }
 
+// NOTE: Array and Dict at end.
+
 // todo: confirm mode strings. Rounds should be
 const string GameModeToFullModeString(GameMode m) {
     switch (m) {
@@ -91,8 +93,6 @@ string[][]@ _GetGameModeValidOpts() {
     return ret;
 }
 
-// Zeroth array is empty, otherwise corresponds to int(GameMode)
-string[][]@ GameModeOpts = _GetGameModeValidOpts();
 
 void PrintGameModeOpts() {
     for (uint gm = 1; gm < GameModeOpts.Length; gm++) {
@@ -161,5 +161,68 @@ dictionary@ _GetSettingsToType() {
     ret["S_WinnersRatio"] = "Float";
     return ret;
 }
+
+
+const string GetScriptOptType(const string &in key) {
+    string ret;
+    settingToType.Get(key, ret);
+    return ret;
+}
+
+
+class GameOpt {
+    string key, value, type;
+    bool boolVal;
+    int intVal;
+    string strVal;
+
+    GameOpt(const string &in key, const string &in value, const string &in type) {
+        if (!settingToType.Exists(key)) throw('GameOpt unknown key: ' + key);
+        this.key = key;
+        this.value = value;
+        settingToType.Get(key, this.type);
+
+        if (this.type != type) throw("Mismatching types for " + key + ": " + type + " and " + this.type + " (latter from dict)");
+
+        if (type == "boolean") boolVal = value == "true";
+        else if (type == "integer") intVal = Text::ParseInt(value);
+        else strVal = value;
+    }
+
+    void DrawOption(bool withLabel = true) {
+        if (type == "boolean") DrawBoolOpt(withLabel);
+        else if (type == "integer") DrawIntOpt(withLabel);
+        else DrawTextOpt(withLabel);
+    }
+
+    protected void DrawBoolOpt(bool withLabel = true) {
+        auto orig = boolVal;
+        boolVal = UI::Checkbox(withLabel ? key : "##"+key, boolVal);
+        if (orig != boolVal) value = tostring(boolVal);
+    }
+
+    protected void DrawIntOpt(bool withLabel = true) {
+        auto orig = intVal;
+        intVal = UI::InputInt(withLabel ? key : "##"+key, intVal);
+        if (orig != intVal) value = tostring(intVal);
+    }
+
+    protected void DrawTextOpt(bool withLabel = true) {
+        bool changed;
+        strVal = UI::InputText(withLabel ? key : "##"+key, strVal, changed);
+        if (changed) value = strVal;
+    }
+
+    const string DocsUrl() {
+        return "https://wiki.trackmania.io/en/dedicated-server/Usage/OfficialGameModesSettings#" + key.ToLower();
+    }
+}
+
+
+
+
+
+// Zeroth array is empty, otherwise corresponds to int(GameMode)
+string[][]@ GameModeOpts = _GetGameModeValidOpts();
 
 dictionary@ settingToType = _GetSettingsToType();

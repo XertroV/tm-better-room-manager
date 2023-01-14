@@ -1,0 +1,74 @@
+{
+    "id": 339126,
+    "clubId": 55829,
+    "clubName": "$z$e71\uf292$z$s$iTic Tac GO!",
+    "nadeo": true,
+    "roomId": 119201,
+    "campaignId": null,
+    "playerServerLogin": null,
+    "activityId": 339126,
+    "mediaUrl": "",
+    "name": "test rounds",
+    "room": {
+        "id": 119201,
+        "name": "test rounds",
+        "region": "ca-central",
+        "serverAccountId": "",
+        "maxPlayers": 16,
+        "playerCount": 0,
+        "maps": [
+            "wWG9lyQ3dYjzckhhprW9WhyCC6g",
+            "osHfIzlKes5lOcNbkiDUF1guAM9",
+            "RCvWrXBMxPl2RkLbbabPW_m_Cp2",
+            "FqOC38szG6MJIr_zLIGPGfbmAkl"
+        ],
+        "script": "TrackMania\/TM_Rounds_Online.Script.txt",
+        "scalable": false,
+        "scriptSettings": {
+            "S_WarmUpNb": {
+                "key": "S_WarmUpNb",
+                "value": "01",
+                "type": "integer"
+            },
+            "S_UseTieBreak": {
+                "key": "S_UseTieBreak",
+                "value": "false",
+                "type": "boolean"
+            },
+            "S_MapsPerMatch": {
+                "key": "S_MapsPerMatch",
+                "value": "-11",
+                "type": "integer"
+            },
+            "S_RoundsPerMap": {
+                "key": "S_RoundsPerMap",
+                "value": "-11",
+                "type": "integer"
+            },
+            "S_WarmUpTimeout": {
+                "key": "S_WarmUpTimeout",
+                "value": "-11",
+                "type": "integer"
+            },
+            "S_WarmUpDuration": {
+                "key": "S_WarmUpDuration",
+                "value": "01",
+                "type": "integer"
+            },
+            "S_DecoImageUrl_WhoAmIUrl": {
+                "key": "S_DecoImageUrl_WhoAmIUrl",
+                "value": "\/api\/club\/55829",
+                "type": "text"
+            },
+            "S_ForceLapsNb": {
+                "key": "S_ForceLapsNb",
+                "value": "-1",
+                "type": "integer"
+            }
+        },
+        "serverInfo": null
+    },
+    "popularityLevel": 0,
+    "creationTimestamp": 1671757530,
+    "password": false
+}

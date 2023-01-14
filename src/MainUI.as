@@ -31,7 +31,7 @@ void RenderMainUI() {
 
 void RenderMapMonitorWindow() {
     if (!WindowOpen) return;
-    vec2 size = vec2(700, 400);
+    vec2 size = vec2(1200, 700);
     vec2 pos = (vec2(Draw::GetWidth(), Draw::GetHeight()) - size) / 2.;
     UI::SetNextWindowSize(int(size.x), int(size.y), UI::Cond::FirstUseEver);
     UI::SetNextWindowPos(int(pos.x), int(pos.y), UI::Cond::FirstUseEver);
