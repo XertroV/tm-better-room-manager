@@ -111,7 +111,8 @@ class ClubsTab : Tab {
     }
 
     void DrawClubsTableRow(Json::Value@ club) {
-        string club_id = tostring(int(club['id']));
+        int clubId = int(club['id']);
+        string club_id = tostring(clubId);
 
         UI::TableNextRow();
         UI::TableNextColumn();
@@ -130,11 +131,22 @@ class ClubsTab : Tab {
 
         UI::TableNextColumn();
         if (role == "Creator" || role == "Admin") {
-            if (UI::Button("Rooms##"+club_id)) OnClickRoomsForClub(club['id'], club['name'], club['tag']);
+            UI::BeginDisabled(RoomsTabExists(clubId));
+            if (UI::Button("Rooms##"+club_id)) OnClickRoomsForClub(clubId, club['name'], club['tag']);
+            UI::EndDisabled();
         }
     }
 
     void OnClickRoomsForClub(int clubId, const string &in clubName, const string &in clubTag = "") {
-        mainTabs.InsertLast(RoomsTab(clubId, clubName, clubTag));
+        auto room = RoomsTab(clubId, clubName, clubTag);
+        mainTabs.InsertLast(room);
+    }
+
+    bool RoomsTabExists(int clubId) {
+        for (uint i = 0; i < mainTabs.Length; i++) {
+            auto rsTab = cast<RoomsTab>(mainTabs[i]);
+            if (rsTab !is null && rsTab.clubId == clubId) return true;
+        }
+        return false;
     }
 }

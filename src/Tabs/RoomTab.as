@@ -344,7 +344,7 @@ class RoomTab : Tab {
     void SetRoomPublicStatus() {
         auto data = Json::Object();
         data['public'] = public ? 1 : 0;
-        SaveActivityPublicStatus(parent.clubId, roomId, data);
+        EditClubActivity(parent.clubId, roomId, data);
     }
 
 

@@ -49,9 +49,11 @@ class RoomsTab : Tab {
     }
 
     void DrawInner() override {
+        UI::BeginDisabled(loading);
         DrawControlBar();
         UI::Separator();
         DrawRoomsTable();
+        UI::EndDisabled();
     }
 
     vec2 get_ButtonIconSize() {
@@ -129,7 +131,10 @@ class RoomsTab : Tab {
             UI::Text(room['name']);
 
             UI::TableNextColumn();
-            UI::Text(bool(room['active']) ? greenCheck : redTimes);
+            bool isActive = room['active'];
+            UI::Text(isActive ? greenCheck : redTimes);
+            UI::SameLine();
+            if (UI::Button((isActive ? Icons::ToggleOn : Icons::ToggleOff) + "##toggle-" + roomId)) OnClickToggleActive(roomId, isActive);
 
             UI::TableNextColumn();
             UI::Text(bool(room['public']) ? greenCheck : redUserSecret);
@@ -146,8 +151,27 @@ class RoomsTab : Tab {
             if (UI::Button(Icons::PencilSquareO + "##" + roomId)) OnClickEditRoom(roomId, room['name'], room['public']);
     }
 
+    int toggleRoomActive;
+    bool toggleRoomActiveNew;
+    void OnClickToggleActive(int roomId, bool currentlyActive) {
+        loading = true;
+        toggleRoomActive = roomId;
+        toggleRoomActiveNew = !currentlyActive;
+        startnew(CoroutineFunc(RunToggleRoomActive));
+    }
+
+    void RunToggleRoomActive() {
+        auto roomId = toggleRoomActive;
+        int active = toggleRoomActiveNew ? 1 : 0;
+        auto pl = Json::Object();
+        pl['active'] = active;
+        EditClubActivity(clubId, roomId, pl);
+        SetRooms();
+    }
+
     int pwGetRoomId;
     void OnClickCopyPassword(int roomId) {
+        loading = true;
         pwGetRoomId = roomId;
         startnew(CoroutineFunc(GetAndCopyPassword));
     }
@@ -155,6 +179,7 @@ class RoomsTab : Tab {
     void GetAndCopyPassword() {
         auto roomId = pwGetRoomId;
         auto resp = GetRoomPassword(clubId, roomId);
+        loading = false;
         if (resp is null || resp.GetType() != Json::Type::Object) {
             NotifyWarning("Could not get password for room: " + roomId);
         } else {

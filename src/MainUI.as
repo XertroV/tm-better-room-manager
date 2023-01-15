@@ -11,7 +11,7 @@ UI::Font@ titleFont = UI::LoadFont("DroidSans.ttf", 26);
 
 
 const string PluginIcon = Icons::BuildingO;
-const string MenuTitle = "\\$3f3" + PluginIcon + "\\$z " + Meta::ExecutingPlugin().Name;
+const string MenuTitle = "\\$f83" + PluginIcon + "\\$z " + Meta::ExecutingPlugin().Name;
 
 uint g_NbNotifications = 1;
 
