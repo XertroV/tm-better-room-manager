@@ -128,9 +128,9 @@ namespace MapChooser {
         tmxIds = UI::InputTextMultiline("##tmx-ids", tmxIds, changed, vec2(UI::GetContentRegionMax().x - UI::GetStyleVarVec2(UI::StyleVar::WindowPadding).x, UI::GetTextLineHeightWithSpacing() * 3));
         if (UI::Button("Add maps from TMX via TrackIDs")) OnClickAddMapsTmxTrackIds();
         UI::Separator();
-        SubHeading("TMX Map Pack (only first 100 maps)");
+        SubHeading("TMX Map Pack ID (only first 100 maps will be added)");
         tmxMapPackId = UI::InputText("##tmx-map-pack-id", tmxMapPackId);
-        if (UI::Button("Add maps from Map Pack")) startnew(OnClickAddMapsTmxMapPack);
+        if (UI::Button("Add maps from Map Pack via ID")) startnew(OnClickAddMapsTmxMapPack);
     }
 
     void OnClickAddMapsTmxTrackIds() {
