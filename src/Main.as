@@ -1,6 +1,7 @@
 bool UserHasPermissions = false;
 
 void Main() {
+    if (!CheckPermissions()) return;
     InitDirectories();
     AddAudiences();
     SetUpTabs();
@@ -8,6 +9,16 @@ void Main() {
     startnew(TestCoro);
 #endif
 }
+
+
+bool CheckPermissions() {
+    if (!Permissions::CreateActivity()) {
+        NotifyError("Missing permissions: CreateActivity. This plugin will do nothing.");
+        return false;
+    }
+    return true;
+}
+
 
 void InitDirectories() {
     string presets = IO::FromStorageFolder("presets");
@@ -67,4 +78,13 @@ void AddSimpleTooltip(const string &in msg) {
 void CopyToClipboardAndNotify(const string &in toCopy) {
     IO::SetClipboard(toCopy);
     Notify("Copied: " + toCopy);
+}
+
+string[]@ Slice(string[] &in list, int from, int to) {
+    if (to >= list.Length) to = list.Length;
+    string[] r;
+    for (uint i = from; i < to; i++) {
+        r.InsertLast(list[i]);
+    }
+    return r;
 }

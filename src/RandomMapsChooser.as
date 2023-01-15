@@ -171,7 +171,7 @@ namespace RandomMapsChooser {
             if (IsMapUploadedToNadeo(mapUid)) {
                 gotMaps.InsertLast(LazyMap(mapUid));
             } else {
-                trace('skipping unuploaded map: ' + mapUid);
+                warn('skipping unuploaded map: ' + int(newMap['TrackID']) + ", " + mapUid);
             }
         }
     }
@@ -180,21 +180,6 @@ namespace RandomMapsChooser {
         cb(gotMaps);
         active = false;
         loadingMaps = false;
-    }
-
-    const string randMapEndpoint = "https://trackmania.exchange/mapsearch2/search?api=on&random=1{params_str}";
-
-    Json::Value@ GetARandomMap() {
-        string url = randMapEndpoint.Replace("{params_str}", "&etags=23,37,40,46,47");
-        auto req = PluginGetRequest(url);
-        req.Start();
-        while (!req.Finished()) yield();
-        if (req.ResponseCode() >= 400 || req.ResponseCode() < 200 || req.Error().Length > 0) {
-            warn("[status:" + req.ResponseCode() + "] Error getting rand map from TMX: " + req.Error());
-            return null;
-        }
-        print("Got rand map: " + req.String());
-        return Json::Parse(req.String());
     }
 }
 

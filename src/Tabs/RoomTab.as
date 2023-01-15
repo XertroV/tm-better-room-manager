@@ -100,6 +100,7 @@ class RoomTab : Tab {
             float width = UI::GetContentRegionMax().x;
             UI::SetCursorPos(vec2(width - mapsCtrlBarRHSWidth + UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing).x, UI::GetCursorPos().y));
             auto pos = UI::GetCursorPos();
+            ControlButton(Icons::Random + "##shuffle-maps" + roomId, CoroutineFunc(OnClickShuffleMaps));
             ControlButton(Icons::Plus + "##add-map" + roomId, CoroutineFunc(OnClickAddMap));
             ControlButton(Icons::Plus + " Random##"+roomId, CoroutineFunc(OnClickAddRandom));
             ControlButton(Icons::TrashO + " All##"+roomId, CoroutineFunc(OnClickRmAll));
@@ -118,6 +119,28 @@ class RoomTab : Tab {
         lazyMaps.RemoveRange(0, lazyMaps.Length);
     }
 
+    void OnClickShuffleMaps() {
+        dictionary weightToIx;
+        LazyMap@[] origLazyMaps = lazyMaps;
+        int[] weights = array<int>(lazyMaps.Length);
+        for (uint i = 0; i < weights.Length; i++) {
+            weights[i] = Math::Rand(0, 1000000);
+        }
+        yield();
+        for (uint i = 0; i < weights.Length; i++) {
+            weightToIx[tostring(weights[i])] = i;
+        }
+        yield();
+        weights.SortAsc();
+        yield();
+        for (uint i = 0; i < weights.Length; i++) {
+            int origIx;
+            if (weightToIx.Get(tostring(weights[i]), origIx))
+                @lazyMaps[i] = origLazyMaps[origIx];
+            else warn("Could not lookup index in on click shuffle maps");
+        }
+    }
+
     void OnClickAddRandom() {
         loading = true;
         RandomMapsChooser::Open(RandomMapsCallback(OnGotRandomMaps));
@@ -133,13 +156,15 @@ class RoomTab : Tab {
 
     void OnClickAddMap() {
         loading = true;
-        MapChooser::Open(MapChosenCallback(OnMapChosen));
+        MapChooser::Open(MapChosenCallback(OnMapsChosen));
     }
 
-    void OnMapChosen(LazyMap@ map) {
+    void OnMapsChosen(LazyMap@[]@ maps) {
         loading = false;
-        if (map is null) return;
-        this.lazyMaps.InsertLast(map);
+        if (maps is null) return;
+        for (uint i = 0; i < maps.Length; i++) {
+            this.lazyMaps.InsertLast(maps[i]);
+        }
     }
 
     void ResetFormFromRoomInfo() {

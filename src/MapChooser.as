@@ -1,4 +1,4 @@
-funcdef void MapChosenCallback(LazyMap@ map);
+funcdef void MapChosenCallback(LazyMap@[]@ maps);
 
 
 namespace MapChooser {
@@ -10,14 +10,17 @@ namespace MapChooser {
     CGameCtnChallengeInfo@ chosenMap = null;
 
     string filterString;
+    bool loading = false;
 
     void Open(MapChosenCallback@ callback) {
         active = true;
+        loading = true;
         @cb = callback;
         @knownMaps = array<CGameCtnChallengeInfo@>();
         @filteredMaps = array<CGameCtnChallengeInfo@>();
         filterString = "";
         @chosenMap = null;
+        tmxIds = "";
         auto app = cast<CGameManiaPlanet>(GetApp());
         // only refresh maps if we do not have a map loaded
         if (app !is null && app.CurrentPlayground is null && app.Editor is null && app.RootMap is null) {
@@ -35,6 +38,7 @@ namespace MapChooser {
             knownMaps.InsertLast(map);
         }
         OnClickResetFilter();
+        loading = false;
     }
 
     uint nbFiltered = 0;
@@ -92,11 +96,125 @@ namespace MapChooser {
 
     void Render() {
         if (!active) return;
-        UI::SetNextWindowSize(500, 300, UI::Cond::Appearing);
+        UI::SetNextWindowSize(550, 350, UI::Cond::Appearing);
         if (UI::Begin("Map Chooser", WindowOpen)) {
-            DrawInner();
+            UI::BeginDisabled(loading);
+            UI::BeginTabBar("map-chooser-tabs", UI::TabBarFlags::None);
+            if (UI::BeginTabItem("Local Maps")) {
+                DrawInner();
+                UI::EndTabItem();
+            }
+            if (UI::BeginTabItem("From TMX")) {
+                DrawTmxInner();
+                UI::EndTabItem();
+            }
+            UI::EndTabBar();
+            UI::EndDisabled();
         }
         UI::End();
+    }
+
+    string tmxIds;
+    string tmxMapPackId;
+    void DrawTmxInner() {
+        if (!loading) {
+            SubHeading("\\$fa7Note:\\$z If a map upload is required, you'll be returned to the main menu.");
+        } else {
+            UI::ProgressBar(tmxDone / tmxTotal, vec2(-1, 0), "Loading Maps...");
+        }
+        UI::Separator();
+        SubHeading("TMX Track IDs (comma separated)");
+        bool changed = false;
+        tmxIds = UI::InputTextMultiline("##tmx-ids", tmxIds, changed, vec2(UI::GetContentRegionMax().x - UI::GetStyleVarVec2(UI::StyleVar::WindowPadding).x, UI::GetTextLineHeightWithSpacing() * 3));
+        if (UI::Button("Add maps from TMX via TrackIDs")) OnClickAddMapsTmxTrackIds();
+        UI::Separator();
+        SubHeading("TMX Map Pack (only first 100 maps)");
+        tmxMapPackId = UI::InputText("##tmx-map-pack-id", tmxMapPackId);
+        if (UI::Button("Add maps from Map Pack")) startnew(OnClickAddMapsTmxMapPack);
+    }
+
+    void OnClickAddMapsTmxTrackIds() {
+        loading = true;
+        auto parts = tmxIds.Split(",");
+        string[] trackIds;
+        for (uint i = 0; i < parts.Length; i++) {
+            auto s = parts[i].Trim();
+            if (s.Length > 0)
+                trackIds.InsertLast(s);
+        }
+        startnew(CoroutineFuncUserdata(AddMapsFromTmxIds), trackIds);
+    }
+
+    // Json::Value@[] tmpMapsTmx;
+
+    // total (max) number of operations
+    float tmxTotal = 1;
+    // increment when we do one of the operations
+    float tmxDone = 0;
+
+    void AddMapsFromTmxIds(ref@ r) {
+        auto trackIds = cast<string[]>(r);
+        // tmpMapsTmx.RemoveRange(0, tmpMapsTmx.Length);
+        tmxTotal = trackIds.Length * 2.;
+        tmxDone = 0;
+        // get maps from tmx
+        uint chunkSize = 25;
+        string[] uids;
+        int[] tids;
+        for (uint i = 0; i < trackIds.Length; i += chunkSize) {
+            auto @chunk = Slice(trackIds, i, i + chunkSize);
+            Json::Value@ tracks = GetMapsByTrackIDs(chunk);
+            for (uint t = 0; t < tracks.Length; t++) {
+                auto track = tracks[t];
+                uids.InsertLast(track['TrackUID']);
+                tids.InsertLast(track['TrackID']);
+            }
+            tmxDone += chunk.Length;
+        }
+
+        EnsureMapsHelper(tids, uids);
+        tmxDone += tids.Length;
+        // add lazy map
+        LazyMap@[] ret;
+        for (uint i = 0; i < uids.Length; i++) {
+            ret.InsertLast(LazyMap(uids[i]));
+        }
+        startnew(CoroutineFuncUserdata(RunCallbackMulti), ret);
+        loading = false;
+        active = false;
+    }
+
+    void OnClickAddMapsTmxMapPack() {
+        loading = true;
+        tmxTotal = 1;
+        tmxDone = 0;
+        auto mpMaps = GetMapsFromMapPackId(tmxMapPackId);
+        while (mpMaps.Length > 100) {
+            mpMaps.Remove(mpMaps.Length - 1);
+        }
+        tmxTotal = mpMaps.Length * 2.;
+        tmxDone = mpMaps.Length;
+
+        string[] uids;
+        int[] tids;
+        for (uint i = 0; i < mpMaps.Length; i++) {
+            auto track = mpMaps[i];
+            uids.InsertLast(track['TrackUID']);
+            tids.InsertLast(track['TrackID']);
+        }
+
+        EnsureMapsHelper(tids, uids);
+        tmxDone = tmxTotal;
+        // add lazy map
+        LazyMap@[] ret;
+        for (uint i = 0; i < uids.Length; i++) {
+            ret.InsertLast(LazyMap(uids[i]));
+        }
+        startnew(CoroutineFuncUserdata(RunCallbackMulti), ret);
+        loading = false;
+        active = false;
+
+        loading = false;
     }
 
     float btnWidth = 100;
@@ -154,6 +272,10 @@ namespace MapChooser {
         if (!IsMapUploadedToNadeo(chosenMap.MapUid)) {
             UploadMapToNadeo(chosenMap.MapUid);
         }
-        cb(LazyMap(chosenMap.MapUid));
+        cb({LazyMap(chosenMap.MapUid)});
+    }
+
+    void RunCallbackMulti(ref@ maps) {
+        cb(cast<LazyMap@[]>(maps));
     }
 }
