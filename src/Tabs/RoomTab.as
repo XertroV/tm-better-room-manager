@@ -83,12 +83,18 @@ class RoomTab : Tab {
 
     void DrawMainBody() {
         UI::BeginDisabled(loading || saving);
-        if (UI::BeginTable('edit-room-table##' + roomId, 2, UI::TableFlags::SizingStretchSame)) {
+        if (UI::BeginTable('edit-room-table##' + roomId, 3, UI::TableFlags::SizingStretchSame)) {
+            UI::TableSetupColumn("lhs", UI::TableColumnFlags::WidthStretch, .4);
+            UI::TableSetupColumn("mid", UI::TableColumnFlags::WidthStretch, .02);
+            UI::TableSetupColumn("rhs", UI::TableColumnFlags::WidthStretch, .58);
             UI::TableNextRow();
 
             UI::TableNextColumn();
             SubHeading("Room Options:");
             DrawRoomEditForm();
+
+            UI::TableNextColumn();
+            // blank
 
             UI::TableNextColumn();
             SubHeading("Maps (" + lazyMaps.Length + "):");
@@ -375,7 +381,8 @@ class RoomTab : Tab {
 
 
     void DrawRoomMapsForm() {
-        if (UI::BeginTable("room edit maps table" + roomId, 5, UI::TableFlags::SizingStretchProp)) {
+        if (UI::BeginTable("room edit maps table" + roomId, 6, UI::TableFlags::SizingStretchProp)) {
+            UI::TableSetupColumn("##btns-up-down", UI::TableColumnFlags::WidthFixed);
             UI::TableSetupColumn("Name");
             UI::TableSetupColumn("Author");
             UI::TableSetupColumn("AT");
@@ -393,9 +400,31 @@ class RoomTab : Tab {
         }
     }
 
+    void MoveMap(int i, int delta) {
+        if (lazyMaps.Length == 0) return;
+        int newPos = i + delta;
+        if (newPos < 0) newPos = 0;
+        if (newPos >= lazyMaps.Length) newPos = lazyMaps.Length;
+        int extraInsert = newPos >= i ? 1 : 0;
+        int extraRem = newPos >= i ? 0 : 1;
+        auto @tmp = lazyMaps[i];
+        if (newPos == lazyMaps.Length) lazyMaps.InsertLast(tmp);
+        else lazyMaps.InsertAt(newPos + extraInsert, tmp);
+        lazyMaps.RemoveAt(i + extraRem);
+    }
+
     void DrawLazyMapRow(uint i, LazyMap@ lm) {
         if (lm is null) return;
         UI::TableNextRow();
+        UI::TableNextColumn();
+        if (UI::Button(Icons::AngleDoubleUp + "##to-top"+i)) MoveMap(i, -int(i));
+        UI::SameLine();
+        if (UI::Button(Icons::AngleUp + "##up"+i)) MoveMap(i, -1);
+        UI::SameLine();
+        if (UI::Button(Icons::AngleDown + "##down"+i)) MoveMap(i, 1);
+        UI::SameLine();
+        if (UI::Button(Icons::AngleDoubleDown + "##to-bottom"+i)) MoveMap(i, 1000);
+
         UI::TableNextColumn();
         UI::AlignTextToFramePadding();
         UI::Text(lm.name);
@@ -414,6 +443,11 @@ class RoomTab : Tab {
         bool clicked = UI::IsItemClicked();
         if (UI::IsItemHovered(UI::HoveredFlags::AllowWhenDisabled)) {
             UI::BeginTooltip();
+            UI::Text("UID: " + lm.uid + "       (click to copy)");
+            UI::Text("\\$080" + Icons::Circle + "\\$z " + lm.authorTime);
+            UI::Text("\\$fd0" + Icons::Circle + "\\$z " + lm.goldTime);
+            UI::Text("\\$ccc" + Icons::Circle + "\\$z " + lm.silverTime);
+            UI::Text("\\$d83" + Icons::Circle + "\\$z " + lm.bronzeTime);
             lm.DrawThumbnail(vec2(512, 512));
             UI::EndTooltip();
         }
@@ -526,6 +560,9 @@ class LazyMap {
     string name = "??";
     string author = "??";
     string authorTime = "??";
+    string goldTime;
+    string silverTime;
+    string bronzeTime;
     string thumbUrl;
 
     void LoadMap() {
@@ -533,6 +570,9 @@ class LazyMap {
         name = ColoredString(map.Name);
         author = map.AuthorDisplayName;
         authorTime = Time::Format(map.AuthorScore);
+        goldTime = Time::Format(map.GoldScore);
+        silverTime = Time::Format(map.SilverScore);
+        bronzeTime = Time::Format(map.BronzeScore);
         thumbUrl = map.ThumbnailUrl;
         startnew(CoroutineFunc(LoadThumbnail));
     }
@@ -546,7 +586,6 @@ class LazyMap {
     }
 
     void DrawThumbnail(vec2 size = vec2()) {
-        UI::Text("UID: " + uid + "       (click to copy)");
         if (tex is null) {
             UI::Text("Loading thumbnail...");
         } else {
