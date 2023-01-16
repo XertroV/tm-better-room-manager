@@ -2,7 +2,7 @@
 name     = "Better Room Manager"
 author   = "XertroV"
 category = "Club"
-version  = "0.1.8"
+version  = "0.1.9"
 
 [script]
 #__DEFINES__
