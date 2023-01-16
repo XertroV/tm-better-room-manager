@@ -85,8 +85,8 @@ class RoomTab : Tab {
         UI::BeginDisabled(loading || saving);
         if (UI::BeginTable('edit-room-table##' + roomId, 3, UI::TableFlags::SizingStretchSame)) {
             UI::TableSetupColumn("lhs", UI::TableColumnFlags::WidthStretch, .4);
-            UI::TableSetupColumn("mid", UI::TableColumnFlags::WidthStretch, .02);
-            UI::TableSetupColumn("rhs", UI::TableColumnFlags::WidthStretch, .58);
+            UI::TableSetupColumn("mid", UI::TableColumnFlags::WidthStretch, .01);
+            UI::TableSetupColumn("rhs", UI::TableColumnFlags::WidthStretch, .59);
             UI::TableNextRow();
 
             UI::TableNextColumn();
@@ -381,7 +381,7 @@ class RoomTab : Tab {
 
 
     void DrawRoomMapsForm() {
-        if (UI::BeginTable("room edit maps table" + roomId, 6, UI::TableFlags::SizingStretchProp)) {
+        if (UI::BeginTable("room edit maps table" + roomId, 6, UI::TableFlags::SizingStretchProp | UI::TableFlags::ScrollY, UI::GetContentRegionAvail() - vec2(0, UI::GetStyleVarVec2(UI::StyleVar::FramePadding).y))) {
             UI::TableSetupColumn("##btns-up-down", UI::TableColumnFlags::WidthFixed);
             UI::TableSetupColumn("Name");
             UI::TableSetupColumn("Author");

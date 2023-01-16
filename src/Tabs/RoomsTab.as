@@ -93,14 +93,17 @@ class RoomsTab : Tab {
     }
 
     void DrawRoomsTable() {
-        uint nCols = 6;
-        if (UI::BeginTable("clubs table", nCols, UI::TableFlags::SizingStretchProp)) {
-            UI::TableSetupColumn("ID");
-            UI::TableSetupColumn("Name");
-            UI::TableSetupColumn("Active");
-            UI::TableSetupColumn("Public");
-            UI::TableSetupColumn("Password");
-            UI::TableSetupColumn("##clubs col btns", UI::TableColumnFlags::WidthFixed);
+        uint nCols = 9;
+        if (UI::BeginTable("clubs table", nCols, UI::TableFlags::SizingStretchSame | UI::TableFlags::ScrollY)) {
+            UI::TableSetupColumn("ID", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthFixed);
+            UI::TableSetupColumn("##clubs col btns", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("Active", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("Public", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("Password", UI::TableColumnFlags::WidthFixed);
+            UI::TableSetupColumn("##-club-room-rhs", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("##-club-room-rhs2", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("##-club-room-rhs3", UI::TableColumnFlags::WidthStretch);
             UI::TableHeadersRow();
 
             UI::ListClipper mapClipper(myRooms.Length);
@@ -131,6 +134,9 @@ class RoomsTab : Tab {
             UI::Text(room['name']);
 
             UI::TableNextColumn();
+            if (UI::Button(Icons::PencilSquareO + "##" + roomId)) OnClickEditRoom(roomId, room['name'], room['public']);
+
+            UI::TableNextColumn();
             bool isActive = room['active'];
             UI::Text(isActive ? greenCheck : redTimes);
             UI::SameLine();
@@ -146,9 +152,6 @@ class RoomsTab : Tab {
                 UI::SameLine();
                 if (UI::Button(Icons::Clone)) OnClickCopyPassword(roomId);
             }
-
-            UI::TableNextColumn();
-            if (UI::Button(Icons::PencilSquareO + "##" + roomId)) OnClickEditRoom(roomId, room['name'], room['public']);
     }
 
     int toggleRoomActive;
