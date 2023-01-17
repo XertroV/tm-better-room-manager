@@ -6,7 +6,7 @@ void Main() {
     AddAudiences();
     SetUpTabs();
 #if DEV
-    startnew(TestCoro);
+    // startnew(TestCoro);
 #endif
 }
 
