@@ -10,10 +10,12 @@ void Main() {
 #endif
 }
 
-
+bool notifiedPermissionsMissing = false;
 bool CheckPermissions() {
-    if (!Permissions::CreateActivity()) {
-        NotifyError("Missing permissions: CreateActivity. This plugin will do nothing.");
+    if (!OpenplanetHasFullPermissions()) {
+        if (!notifiedPermissionsMissing)
+            NotifyError("Missing permissions: This plugin will do nothing. You need club access.");
+        notifiedPermissionsMissing = true;
         return false;
     }
     return true;
@@ -39,6 +41,7 @@ void TestCoro() {
 /** Render function called every frame.
 */
 void RenderInterface() {
+    if (!CheckPermissions()) return;
     UI::PushStyleColor(UI::Col::FrameBg, vec4(.2, .2, .2, .5));
 
     RenderMainUI();
