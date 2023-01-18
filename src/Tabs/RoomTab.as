@@ -227,7 +227,7 @@ class RoomTab : Tab {
     void DrawGameModeSettings() {
         auto origMode = mode;
         if (UI::BeginCombo("Mode", tostring(mode))) {
-            for (uint i = 1; i <= int(GameMode::Rounds); i++) {
+            for (int i = 1; i <= int(GameMode::Rounds); i++) {
                 if (UI::Selectable(tostring(GameMode(i)), i == int(mode))) mode = GameMode(i);
             }
             UI::EndCombo();
@@ -251,7 +251,7 @@ class RoomTab : Tab {
                     UI::TableSetupColumn("delete", UI::TableColumnFlags::WidthFixed);
                     UI::ListClipper modeOptClipper(gameOpts.Length);
                     while (modeOptClipper.Step()) {
-                        for (uint i = modeOptClipper.DisplayStart; i < modeOptClipper.DisplayEnd && i < gameOpts.Length; i++) {
+                        for (int i = modeOptClipper.DisplayStart; i < modeOptClipper.DisplayEnd && i < int(gameOpts.Length); i++) {
                             auto go = gameOpts[i];
                             UI::TableNextColumn();
                             UI::AlignTextToFramePadding();
@@ -391,7 +391,7 @@ class RoomTab : Tab {
             UI::TableHeadersRow();
             UI::ListClipper lmClipper(lazyMaps.Length);
             while (lmClipper.Step()) {
-                for (uint i = lmClipper.DisplayStart; i < lmClipper.DisplayEnd && i < lazyMaps.Length; i++) {
+                for (int i = lmClipper.DisplayStart; i < lmClipper.DisplayEnd && i < int(lazyMaps.Length); i++) {
                     auto lm = lazyMaps[i];
                     DrawLazyMapRow(i, lm);
                 }
@@ -404,11 +404,11 @@ class RoomTab : Tab {
         if (lazyMaps.Length == 0) return;
         int newPos = i + delta;
         if (newPos < 0) newPos = 0;
-        if (newPos >= lazyMaps.Length) newPos = lazyMaps.Length;
+        if (newPos >= int(lazyMaps.Length)) newPos = lazyMaps.Length;
         int extraInsert = newPos >= i ? 1 : 0;
         int extraRem = newPos >= i ? 0 : 1;
         auto @tmp = lazyMaps[i];
-        if (newPos == lazyMaps.Length) lazyMaps.InsertLast(tmp);
+        if (newPos == int(lazyMaps.Length)) lazyMaps.InsertLast(tmp);
         else lazyMaps.InsertAt(newPos + extraInsert, tmp);
         lazyMaps.RemoveAt(i + extraRem);
     }

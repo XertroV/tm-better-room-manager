@@ -108,7 +108,7 @@ class RoomsTab : Tab {
 
             UI::ListClipper mapClipper(myRooms.Length);
             while (mapClipper.Step()) {
-                for (uint i = mapClipper.DisplayStart; i < mapClipper.DisplayEnd; i++) {
+                for (int i = mapClipper.DisplayStart; i < mapClipper.DisplayEnd; i++) {
                     DrawRoomsTableRow(myRooms[i]);
                 }
             }

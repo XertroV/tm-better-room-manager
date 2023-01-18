@@ -83,7 +83,7 @@ void CopyToClipboardAndNotify(const string &in toCopy) {
     Notify("Copied: " + toCopy);
 }
 
-string[]@ Slice(string[] &in list, int from, int to) {
+string[]@ Slice(string[] &in list, uint from, uint to) {
     if (to >= list.Length) to = list.Length;
     string[] r;
     for (uint i = from; i < to; i++) {

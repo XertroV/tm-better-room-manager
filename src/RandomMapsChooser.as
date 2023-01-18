@@ -158,7 +158,7 @@ namespace RandomMapsChooser {
     }
 
     void GetMapsTillDone() {
-        while (loadingMaps && gotMaps.Length < nbMaps) {
+        while (loadingMaps && int(gotMaps.Length) < nbMaps) {
             auto @newMap = GetARandomMap();
             if (newMap is null) continue;
             @newMap = newMap['results'][0];

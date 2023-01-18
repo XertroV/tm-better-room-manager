@@ -245,7 +245,7 @@ namespace MapChooser {
         if (UI::BeginChild('map selectable scrollable')) {
             UI::ListClipper clipMaps(filteredMaps.Length);
             while (clipMaps.Step()) {
-                for (uint i = clipMaps.DisplayStart; i < clipMaps.DisplayEnd; i++) {
+                for (int i = clipMaps.DisplayStart; i < clipMaps.DisplayEnd; i++) {
                     DrawMapSelectable(filteredMaps[i]);
                 }
             }
