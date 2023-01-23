@@ -1,5 +1,26 @@
 funcdef void RandomMapsCallback(LazyMap@[]@ maps);
 
+const int NUM_TAGS = 48;
+
+class Tag {
+    bool checked;
+    int tagNumber;
+    string name;
+    Tag() {
+        this.checked = false;
+        this.tagNumber = Tags::Default;
+        this.name = "";
+    }
+    Tag(const string name, int tagNumber, bool checked = false){
+        this.checked = checked;
+        this.tagNumber = tagNumber;
+        this.name = name;
+    }
+    string tostring(){
+        return this.name;
+    }
+}
+
 enum Tags {
     Default = 0,
     Arena = 40,
@@ -51,6 +72,29 @@ enum Tags {
     Zrt = 11
 }
 
+array<Tag> generateTags() {
+    array<Tag> tags(NUM_TAGS);
+    for (int i = 0; i <= NUM_TAGS; i++){
+            string name = tostring(Tags(i));
+            Tag t;
+            if (name != "Default") t = Tag(name, i);
+            else t = Tag("Default", i, true);
+            tags.InsertAt(i, t);
+    }
+    return tags;
+}
+
+string toTagString(array<Tag> tags){
+    string s = "";
+    for (int i = 0; i < NUM_TAGS; i++){
+        if(tags[i].checked && tags[i].name == "Default"){
+            continue;
+        }
+        if (tags[i].checked) s += tostring(tags[i].tagNumber) + ",";
+    }
+    return s;
+}
+
 enum MapDifficulty {
     Beginner = 0,
     Intermediate = 1,
@@ -78,7 +122,7 @@ namespace RandomMapsChooser {
     int maxLen = 120;
     MapDifficulty minDifficulty = MapDifficulty::Beginner;
     MapDifficulty maxDifficulty = MapDifficulty::Intermediate;
-    Tags tag = Tags::Default;
+    array<Tag> tags = generateTags();
     int nbMaps = 12;
 
     bool Open(RandomMapsCallback@ callback) {
@@ -141,14 +185,15 @@ namespace RandomMapsChooser {
         maxDifficulty = DifficultyCombo('Max: ', maxDifficulty);
 
         UI::Separator();
-        SubHeading("Tags (TMX)");
-        tag = TagsCombo('Tag: ', tag);
-
-        UI::Separator();
         UI::AlignTextToFramePadding();
         UI::Text("Nb Maps: ");
         UI::SameLine();
         nbMaps = UI::SliderInt("##nbmaps", nbMaps, 1, 100);
+
+        UI::Separator();
+        if(UI::CollapsingHeader("Tags (TMX)")){
+            tags = TagsCheckbox(tags);
+        }
 
         UI::EndDisabled();
     }
@@ -175,19 +220,17 @@ namespace RandomMapsChooser {
         return ret;
     }
     
-    Tags TagsCombo(const string &in label, Tags tg) {
+    array<Tag> TagsCheckbox(array<Tag> tags) {
         UI::AlignTextToFramePadding();
-        UI::Text(label);
-        UI::SameLine();
-        Tags ret = tg;
-        if (UI::BeginCombo("##tags-"+label, tostring(tg))) {
-            for (uint i = 0; i <= int(Tags::Kacky); i++) {
-                auto _tg = Tags(i);
-                if (UI::Selectable(tostring(_tg), tg == _tg)) ret = _tg;
+        UI::Columns(6);
+        array<string> names(NUM_TAGS);
+        for(int i = 0; i < NUM_TAGS; i++){
+            if(i != 0 && i % 8 == 0) {
+                UI::NextColumn();
             }
-            UI::EndCombo();
+            tags[i].checked = UI::Checkbox(tostring(tags[i].name), tags[i].checked);
         }
-        return ret;
+        return tags;
     }
 
     void DrawOptSelectable(const string &in key) {
@@ -229,7 +272,8 @@ namespace RandomMapsChooser {
 
     void GetMapsTillDone() {
         while (loadingMaps && int(gotMaps.Length) < nbMaps) {
-            auto @newMap = GetARandomMap(tag);
+            string tagStr = toTagString(tags);
+            auto @newMap = GetARandomMap(tagStr);
             if (newMap is null) continue;
             @newMap = newMap['results'][0];
             // return type: https://api2.mania.exchange/Method/Index/4

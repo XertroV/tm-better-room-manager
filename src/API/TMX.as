@@ -14,13 +14,13 @@ const string MapUrlTmx(int TrackID) {
 
 const string randMapEndpoint = "https://trackmania.exchange/mapsearch2/search?api=on&random=1{params_str}";
 
-Json::Value@ GetARandomMap(int tag) {
+Json::Value@ GetARandomMap(string tags) {
     string url;
-    if (tag == 0) {
+    if (tags == "") {
         url = randMapEndpoint.Replace("{params_str}", "&etags=23,37,40,46,47");
     }
     else {
-        string t = "&tags=" + tostring(tag);
+        string t = "&tags=" + tags;
         url = randMapEndpoint.Replace("{params_str}", t);
     }
     auto req = PluginGetRequest(url);
