@@ -1,5 +1,55 @@
 funcdef void RandomMapsCallback(LazyMap@[]@ maps);
 
+enum Tags {
+    Default = 0,
+    Arena = 40,
+    Backwards = 34,
+    Bobsleigh = 44,
+    Bumper = 20,
+    Competitive = 13,
+    Dirt = 15,
+    Educational = 42,
+    Endurance = 24,
+    FlagRush = 46,
+    Fragile = 21,
+    Freestyle = 41,
+    Freewheel = 35,
+    FullSpeed = 2,
+    Grass = 33,
+    Ice = 14,
+    Kacky = 23,
+    Lol = 5,
+    Mini = 25,
+    Minigame = 30,
+    Mixed = 27,
+    MultiLap = 8,
+    Nascar = 28,
+    Obstacle = 31,
+    Offroad = 9,
+    Pathfinding = 45,
+    Plastic = 39,
+    Platform = 18,
+    PressForward = 6,
+    Puzzle = 47,
+    Race = 1,
+    Refactor = 17,
+    Remake = 26,
+    Royal = 37,
+    Rpg = 4,
+    Sausage = 43,
+    Scenery = 22,
+    Signature = 36,
+    SlowMotion = 19,
+    SpeedDrift = 29,
+    SpeedFun = 12,
+    SpeedTech = 7,
+    Stunt = 16,
+    Tech = 3,
+    Transitional = 32,
+    Trial = 10,
+    Water = 38,
+    Zrt = 11
+}
 
 enum MapDifficulty {
     Beginner = 0,
@@ -28,6 +78,7 @@ namespace RandomMapsChooser {
     int maxLen = 120;
     MapDifficulty minDifficulty = MapDifficulty::Beginner;
     MapDifficulty maxDifficulty = MapDifficulty::Intermediate;
+    Tags tag = Tags::Default;
     int nbMaps = 12;
 
     bool Open(RandomMapsCallback@ callback) {
@@ -90,6 +141,10 @@ namespace RandomMapsChooser {
         maxDifficulty = DifficultyCombo('Max: ', maxDifficulty);
 
         UI::Separator();
+        SubHeading("Tags (TMX)");
+        tag = TagsCombo('Tag: ', tag);
+
+        UI::Separator();
         UI::AlignTextToFramePadding();
         UI::Text("Nb Maps: ");
         UI::SameLine();
@@ -114,6 +169,21 @@ namespace RandomMapsChooser {
             for (uint i = 0; i <= int(MapDifficulty::Impossible); i++) {
                 auto _md = MapDifficulty(i);
                 if (UI::Selectable(tostring(_md), md == _md)) ret = _md;
+            }
+            UI::EndCombo();
+        }
+        return ret;
+    }
+    
+    Tags TagsCombo(const string &in label, Tags tg) {
+        UI::AlignTextToFramePadding();
+        UI::Text(label);
+        UI::SameLine();
+        Tags ret = tg;
+        if (UI::BeginCombo("##tags-"+label, tostring(tg))) {
+            for (uint i = 0; i <= int(Tags::Kacky); i++) {
+                auto _tg = Tags(i);
+                if (UI::Selectable(tostring(_tg), tg == _tg)) ret = _tg;
             }
             UI::EndCombo();
         }
@@ -159,7 +229,7 @@ namespace RandomMapsChooser {
 
     void GetMapsTillDone() {
         while (loadingMaps && int(gotMaps.Length) < nbMaps) {
-            auto @newMap = GetARandomMap();
+            auto @newMap = GetARandomMap(tag);
             if (newMap is null) continue;
             @newMap = newMap['results'][0];
             // return type: https://api2.mania.exchange/Method/Index/4
