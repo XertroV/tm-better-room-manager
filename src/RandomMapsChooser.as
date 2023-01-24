@@ -5,10 +5,6 @@ const int NUM_TAGS = 47;
 class Tag {
     bool checked;
     TagTypes type;
-    Tag() {
-        this.checked = false;
-        this.type = TagTypes::Arena;
-    }
     Tag(TagTypes type, bool checked = false){
         this.checked = checked;
         this.type = type;
@@ -68,28 +64,40 @@ enum TagTypes {
     Zrt = 11
 }
 
-array<Tag> generateTags() {
-    array<Tag> tags(NUM_TAGS);
+array<Tag@> generateTags() {
+    array<Tag@> tags;
     for (int i = 1; i <= NUM_TAGS; i++){
-        tags[i - 1] = Tag(TagTypes(i), true);
+        tags.InsertLast(Tag(TagTypes(i), true));
     }
+    setAllTagsToDefault(tags);
     return tags;
 }
 
-string toTagString(array<Tag> tags){
-    string s = "";
+const string toTagString(array<Tag@>& tags){
+    string s;
     for (int i = 0; i < NUM_TAGS; i++){
         if(tags[i].checked){
             int n = tags[i].type;
-            s += tostring(n) + ",";
+            s += (i > 0 ? "," : "") + tostring(n);
         }
     }
     return s;
 }
 
-void setAllTags(array<Tag>& tags, bool val) {
+void setAllTags(array<Tag@>& tags, bool val) {
     for (int i = 0; i < NUM_TAGS; i++) {
         tags[i].setChecked(val);
+    }
+}
+
+void setAllTagsToDefault(Tag@[]& tags) {
+    setAllTags(tags, true);
+    // default off: 23,37,40,46,47
+    // see API/TMX.as for list used in HTTP request formation
+    int[] defaultOff = {23,37,40,46,47};
+    for (uint i = 0; i < defaultOff.Length; i++) {
+        if (defaultOff[i] > tags.Length) continue;
+        tags[defaultOff[i] - 1].setChecked(false);
     }
 }
 
@@ -120,7 +128,7 @@ namespace RandomMapsChooser {
     int maxLen = 120;
     MapDifficulty minDifficulty = MapDifficulty::Beginner;
     MapDifficulty maxDifficulty = MapDifficulty::Intermediate;
-    array<Tag> tags = generateTags();
+    array<Tag@> tags = generateTags();
     bool checkAll = true;
     bool uncheckAll = false;
     int nbMaps = 12;
@@ -145,7 +153,7 @@ namespace RandomMapsChooser {
 
     void Render() {
         if (!active) return;
-        UI::SetNextWindowSize(500, 300, UI::Cond::Appearing);
+        UI::SetNextWindowSize(850, 640, UI::Cond::Appearing);
         if (UI::Begin("Add Random Maps", WindowOpen)) {
             DrawInner();
         }
@@ -191,14 +199,13 @@ namespace RandomMapsChooser {
         nbMaps = UI::SliderInt("##nbmaps", nbMaps, 1, 100);
 
         UI::Separator();
-        if(UI::CollapsingHeader("Tags (TMX)")){
-            UI::Text("Check/Uncheck all boxes for default");
-            checkAll = UI::Button("Check All");
+        if (UI::CollapsingHeader("Tags (TMX)")) {
+            if (UI::Button("Defaults")) setAllTagsToDefault(tags);
             UI::SameLine();
-            uncheckAll = UI::Button("Uncheck All");
-            tags = TagsCheckbox(tags);
-            if (checkAll) setAllTags(tags, true);
-            if (uncheckAll) setAllTags(tags, false);
+            if (UI::Button("Check All")) setAllTags(tags, true);
+            UI::SameLine();
+            if (UI::Button("Uncheck All")) setAllTags(tags, false);
+            DrawTagsCheckboxes(tags);
         }
 
         UI::EndDisabled();
@@ -225,17 +232,17 @@ namespace RandomMapsChooser {
         }
         return ret;
     }
-    
-    array<Tag> TagsCheckbox(array<Tag> tags) {
+
+    void DrawTagsCheckboxes(array<Tag@>& tags) {
+        if (tags is null) return;
         UI::AlignTextToFramePadding();
         UI::Columns(6);
-        for (int i = 0; i < NUM_TAGS; i++) {
+        for (int i = 0; i < tags.Length; i++) {
             if ((i % 8 == 0) && i != 0) {
                 UI::NextColumn();
             }
             tags[i].checked = UI::Checkbox(tostring(tags[i].type), tags[i].checked);
         }
-        return tags;
     }
 
     void DrawOptSelectable(const string &in key) {
@@ -276,8 +283,8 @@ namespace RandomMapsChooser {
     }
 
     void GetMapsTillDone() {
+        string tagStr = toTagString(tags);
         while (loadingMaps && int(gotMaps.Length) < nbMaps) {
-            string tagStr = toTagString(tags);
             auto @newMap = GetARandomMap(tagStr);
             if (newMap is null) continue;
             @newMap = newMap['results'][0];
@@ -288,7 +295,8 @@ namespace RandomMapsChooser {
             if (len < minLen || maxLen < len) continue;
             string mapUid = newMap['TrackUID'];
             if (IsMapUploadedToNadeo(mapUid)) {
-                gotMaps.InsertLast(LazyMap(mapUid));
+                if (loadingMaps && int(gotMaps.Length) < nbMaps)
+                    gotMaps.InsertLast(LazyMap(mapUid));
             } else {
                 warn('skipping unuploaded map: ' + int(newMap['TrackID']) + ", " + mapUid);
             }
