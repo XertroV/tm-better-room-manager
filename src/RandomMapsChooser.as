@@ -1,28 +1,24 @@
 funcdef void RandomMapsCallback(LazyMap@[]@ maps);
 
-const int NUM_TAGS = 48;
+const int NUM_TAGS = 47;
 
 class Tag {
     bool checked;
-    int tagNumber;
-    string name;
+    TagTypes type;
     Tag() {
         this.checked = false;
-        this.tagNumber = Tags::Default;
-        this.name = "";
+        this.type = TagTypes::Arena;
     }
-    Tag(const string name, int tagNumber, bool checked = false){
+    Tag(TagTypes type, bool checked = false){
         this.checked = checked;
-        this.tagNumber = tagNumber;
-        this.name = name;
+        this.type = type;
     }
-    string tostring(){
-        return this.name;
+    void setChecked(bool check){
+        this.checked = check;
     }
 }
 
-enum Tags {
-    Default = 0,
+enum TagTypes {
     Arena = 40,
     Backwards = 34,
     Bobsleigh = 44,
@@ -74,12 +70,8 @@ enum Tags {
 
 array<Tag> generateTags() {
     array<Tag> tags(NUM_TAGS);
-    for (int i = 0; i <= NUM_TAGS; i++){
-            string name = tostring(Tags(i));
-            Tag t;
-            if (name != "Default") t = Tag(name, i);
-            else t = Tag("Default", i, true);
-            tags.InsertAt(i, t);
+    for (int i = 1; i <= NUM_TAGS; i++){
+        tags[i - 1] = Tag(TagTypes(i), true);
     }
     return tags;
 }
@@ -87,12 +79,18 @@ array<Tag> generateTags() {
 string toTagString(array<Tag> tags){
     string s = "";
     for (int i = 0; i < NUM_TAGS; i++){
-        if(tags[i].checked && tags[i].name == "Default"){
-            continue;
+        if(tags[i].checked){
+            int n = tags[i].type;
+            s += tostring(n) + ",";
         }
-        if (tags[i].checked) s += tostring(tags[i].tagNumber) + ",";
     }
     return s;
+}
+
+void setAllTags(array<Tag>& tags, bool val) {
+    for (int i = 0; i < NUM_TAGS; i++) {
+        tags[i].setChecked(val);
+    }
 }
 
 enum MapDifficulty {
@@ -123,6 +121,8 @@ namespace RandomMapsChooser {
     MapDifficulty minDifficulty = MapDifficulty::Beginner;
     MapDifficulty maxDifficulty = MapDifficulty::Intermediate;
     array<Tag> tags = generateTags();
+    bool checkAll = true;
+    bool uncheckAll = false;
     int nbMaps = 12;
 
     bool Open(RandomMapsCallback@ callback) {
@@ -192,7 +192,13 @@ namespace RandomMapsChooser {
 
         UI::Separator();
         if(UI::CollapsingHeader("Tags (TMX)")){
+            UI::Text("Check/Uncheck all boxes for default");
+            checkAll = UI::Button("Check All");
+            UI::SameLine();
+            uncheckAll = UI::Button("Uncheck All");
             tags = TagsCheckbox(tags);
+            if (checkAll) setAllTags(tags, true);
+            if (uncheckAll) setAllTags(tags, false);
         }
 
         UI::EndDisabled();
@@ -223,12 +229,11 @@ namespace RandomMapsChooser {
     array<Tag> TagsCheckbox(array<Tag> tags) {
         UI::AlignTextToFramePadding();
         UI::Columns(6);
-        array<string> names(NUM_TAGS);
-        for(int i = 0; i < NUM_TAGS; i++){
-            if(i != 0 && i % 8 == 0) {
+        for (int i = 0; i < NUM_TAGS; i++) {
+            if ((i % 8 == 0) && i != 0) {
                 UI::NextColumn();
             }
-            tags[i].checked = UI::Checkbox(tostring(tags[i].name), tags[i].checked);
+            tags[i].checked = UI::Checkbox(tostring(tags[i].type), tags[i].checked);
         }
         return tags;
     }
