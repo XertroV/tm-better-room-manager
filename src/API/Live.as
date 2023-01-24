@@ -15,6 +15,16 @@ Json::Value@ GetMyClubs(uint length = 100, uint offset = 0) {
     return CallLiveApiPath("/api/token/club/mine?" + LengthAndOffset(length, offset));
 }
 
+// returns {accountId: string, tagClubId: int, tag: string, pinnedClub: 0 or 1}
+Json::Value@ SetClubTag(uint clubId) {
+    return PostLiveApiPath("/api/token/club/" + clubId + "/tag", null);
+}
+
+// returns {accountId: string, tagClubId: int, tag: string, pinnedClub: 0 or 1}
+Json::Value@ SetPinnedClub(uint clubId) {
+    return PostLiveApiPath("/api/token/club/" + clubId + "/pin", null);
+}
+
 // https://webservices.openplanet.dev/live/clubs/members
 Json::Value@ GetClubMembers(uint clubId, uint length = 100, uint offset = 0) {
     return CallLiveApiPath("/api/token/club/" + clubId + "/member?" + LengthAndOffset(length, offset));
