@@ -1,5 +1,97 @@
 funcdef void RandomMapsCallback(LazyMap@[]@ maps);
 
+const int NUM_TAGS = 47;
+
+class Tag {
+    bool checked;
+    TagTypes type;
+    Tag() {
+        this.checked = false;
+        this.type = TagTypes::Arena;
+    }
+    Tag(TagTypes type, bool checked = false){
+        this.checked = checked;
+        this.type = type;
+    }
+    void setChecked(bool check){
+        this.checked = check;
+    }
+}
+
+enum TagTypes {
+    Arena = 40,
+    Backwards = 34,
+    Bobsleigh = 44,
+    Bumper = 20,
+    Competitive = 13,
+    Dirt = 15,
+    Educational = 42,
+    Endurance = 24,
+    FlagRush = 46,
+    Fragile = 21,
+    Freestyle = 41,
+    Freewheel = 35,
+    FullSpeed = 2,
+    Grass = 33,
+    Ice = 14,
+    Kacky = 23,
+    Lol = 5,
+    Mini = 25,
+    Minigame = 30,
+    Mixed = 27,
+    MultiLap = 8,
+    Nascar = 28,
+    Obstacle = 31,
+    Offroad = 9,
+    Pathfinding = 45,
+    Plastic = 39,
+    Platform = 18,
+    PressForward = 6,
+    Puzzle = 47,
+    Race = 1,
+    Refactor = 17,
+    Remake = 26,
+    Royal = 37,
+    Rpg = 4,
+    Sausage = 43,
+    Scenery = 22,
+    Signature = 36,
+    SlowMotion = 19,
+    SpeedDrift = 29,
+    SpeedFun = 12,
+    SpeedTech = 7,
+    Stunt = 16,
+    Tech = 3,
+    Transitional = 32,
+    Trial = 10,
+    Water = 38,
+    Zrt = 11
+}
+
+array<Tag> generateTags() {
+    array<Tag> tags(NUM_TAGS);
+    for (int i = 1; i <= NUM_TAGS; i++){
+        tags[i - 1] = Tag(TagTypes(i), true);
+    }
+    return tags;
+}
+
+string toTagString(array<Tag> tags){
+    string s = "";
+    for (int i = 0; i < NUM_TAGS; i++){
+        if(tags[i].checked){
+            int n = tags[i].type;
+            s += tostring(n) + ",";
+        }
+    }
+    return s;
+}
+
+void setAllTags(array<Tag>& tags, bool val) {
+    for (int i = 0; i < NUM_TAGS; i++) {
+        tags[i].setChecked(val);
+    }
+}
 
 enum MapDifficulty {
     Beginner = 0,
@@ -28,6 +120,9 @@ namespace RandomMapsChooser {
     int maxLen = 120;
     MapDifficulty minDifficulty = MapDifficulty::Beginner;
     MapDifficulty maxDifficulty = MapDifficulty::Intermediate;
+    array<Tag> tags = generateTags();
+    bool checkAll = true;
+    bool uncheckAll = false;
     int nbMaps = 12;
 
     bool Open(RandomMapsCallback@ callback) {
@@ -95,6 +190,17 @@ namespace RandomMapsChooser {
         UI::SameLine();
         nbMaps = UI::SliderInt("##nbmaps", nbMaps, 1, 100);
 
+        UI::Separator();
+        if(UI::CollapsingHeader("Tags (TMX)")){
+            UI::Text("Check/Uncheck all boxes for default");
+            checkAll = UI::Button("Check All");
+            UI::SameLine();
+            uncheckAll = UI::Button("Uncheck All");
+            tags = TagsCheckbox(tags);
+            if (checkAll) setAllTags(tags, true);
+            if (uncheckAll) setAllTags(tags, false);
+        }
+
         UI::EndDisabled();
     }
 
@@ -118,6 +224,18 @@ namespace RandomMapsChooser {
             UI::EndCombo();
         }
         return ret;
+    }
+    
+    array<Tag> TagsCheckbox(array<Tag> tags) {
+        UI::AlignTextToFramePadding();
+        UI::Columns(6);
+        for (int i = 0; i < NUM_TAGS; i++) {
+            if ((i % 8 == 0) && i != 0) {
+                UI::NextColumn();
+            }
+            tags[i].checked = UI::Checkbox(tostring(tags[i].type), tags[i].checked);
+        }
+        return tags;
     }
 
     void DrawOptSelectable(const string &in key) {
@@ -159,7 +277,8 @@ namespace RandomMapsChooser {
 
     void GetMapsTillDone() {
         while (loadingMaps && int(gotMaps.Length) < nbMaps) {
-            auto @newMap = GetARandomMap();
+            string tagStr = toTagString(tags);
+            auto @newMap = GetARandomMap(tagStr);
             if (newMap is null) continue;
             @newMap = newMap['results'][0];
             // return type: https://api2.mania.exchange/Method/Index/4
