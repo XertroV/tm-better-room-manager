@@ -18,7 +18,7 @@ Launch it from the Plugins menu ("Better Room Manager")
 
 License: Public Domain
 
-Authors: XertroV
+Authors: XertroV, BrianTipton1
 
 Suggestions/feedback: @XertroV on Openplanet discord
 
