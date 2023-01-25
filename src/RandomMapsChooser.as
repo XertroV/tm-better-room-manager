@@ -94,7 +94,7 @@ void setAllTagsToDefault(Tag@[]& tags) {
     setAllTags(tags, true);
     // default off: 23,37,40,46,47
     // see API/TMX.as for list used in HTTP request formation
-    int[] defaultOff = {23,37,40,46,47};
+    uint[] defaultOff = {23,37,40,46,47};
     for (uint i = 0; i < defaultOff.Length; i++) {
         if (defaultOff[i] > tags.Length) continue;
         tags[defaultOff[i] - 1].setChecked(false);
@@ -237,7 +237,7 @@ namespace RandomMapsChooser {
         if (tags is null) return;
         UI::AlignTextToFramePadding();
         UI::Columns(6);
-        for (int i = 0; i < tags.Length; i++) {
+        for (uint i = 0; i < tags.Length; i++) {
             if ((i % 8 == 0) && i != 0) {
                 UI::NextColumn();
             }
