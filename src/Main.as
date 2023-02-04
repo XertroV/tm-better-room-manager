@@ -29,9 +29,9 @@ void InitDirectories() {
 
 void TestCoro() {
 #if DEV
-    mainTabs.InsertLast(RoomsTab(46587, 'xert', 'xert'));
+    mainTabs.InsertLast(RoomsTab(46587, 'xert', 'xert', 'Admin'));
     yield();
-    auto _ttgRooms = RoomsTab(55829, 'ttg', 'ttg');
+    auto _ttgRooms = RoomsTab(55829, 'ttg', 'ttg', 'Admin');
     mainTabs.InsertLast(_ttgRooms);
     yield();
     mainTabs.InsertLast(RoomTab(_ttgRooms, 345704, 'test name', true));

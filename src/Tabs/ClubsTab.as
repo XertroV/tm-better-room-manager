@@ -1,3 +1,4 @@
+const string CONTENT_CREATOR = "Content_Creator";
 
 class ClubsTab : Tab {
     Json::Value@ myClubs = Json::Array();
@@ -130,15 +131,16 @@ class ClubsTab : Tab {
         UI::Text(role);
 
         UI::TableNextColumn();
-        if (role == "Creator" || role == "Admin") {
+        if (role == "Creator" || role == "Admin" || role == CONTENT_CREATOR) {
             UI::BeginDisabled(RoomsTabExists(clubId));
-            if (UI::Button("Rooms##"+club_id)) OnClickRoomsForClub(clubId, club['name'], club['tag']);
+            if (UI::Button("Rooms##"+club_id))
+                OnClickRoomsForClub(clubId, club['name'], club['tag'], role);
             UI::EndDisabled();
         }
     }
 
-    void OnClickRoomsForClub(int clubId, const string &in clubName, const string &in clubTag = "") {
-        auto room = RoomsTab(clubId, clubName, clubTag);
+    void OnClickRoomsForClub(int clubId, const string &in clubName, const string &in clubTag, const string &in role) {
+        auto room = RoomsTab(clubId, clubName, clubTag, role);
         mainTabs.InsertLast(room);
     }
 

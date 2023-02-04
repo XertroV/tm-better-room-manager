@@ -1,16 +1,21 @@
 
 class RoomsTab : Tab {
     int clubId;
-    string clubName, clubTag;
+    string clubName, clubTag, role;
     Json::Value@ myRooms = Json::Array();
     bool loading = false;
+    bool IsLimited = false;
+    bool disableActiveToggleSafety = false;
 
-    RoomsTab(int clubId, const string &in clubName, const string &in clubTag = "") {
+    RoomsTab(int clubId, const string &in clubName, const string &in clubTag, const string &in role) {
         string inParens = clubTag.Length > 0 ? clubTag : clubName;
         super(Icons::BuildingO + " " + inParens + "\\$z: Rooms", false);
         this.clubId = clubId;
         this.clubName = clubName;
         this.clubTag = clubTag;
+        this.role = role;
+        this.IsLimited = role == CONTENT_CREATOR;
+        if (!IsLimited) disableActiveToggleSafety = true;
         startnew(CoroutineFunc(SetRooms));
         canCloseTab = true;
     }
@@ -22,7 +27,7 @@ class RoomsTab : Tab {
         @myRooms = Json::Array();
         loading = true;
         try {
-            auto resp = GetClubActivities(clubId, 100, 0);
+            auto resp = GetRoleDependantClubActivities();
             AddActivitiesFrom(resp['activityList']);
             maxPage = resp['maxPage'];
             clubCount = resp['itemCount'];
@@ -31,6 +36,13 @@ class RoomsTab : Tab {
         } catch {
             NotifyWarning('Failed to update rooms list: ' + getExceptionInfo());
         }
+    }
+
+    Json::Value@ GetRoleDependantClubActivities(uint length = 100, uint offset = 0) {
+        // content creators cannot see deactivated rooms
+        if (IsLimited)
+            return GetClubActivities(clubId, true, length, offset);
+        return GetClubActivities(clubId, length, offset);
     }
 
     void AddActivitiesFrom(Json::Value@ activityList) {
@@ -44,7 +56,7 @@ class RoomsTab : Tab {
 
     void GetAdditionalRooms() {
         for (uint page = 2; page <= maxPage; page++) {
-            AddActivitiesFrom(GetClubActivities(clubId, 100, (page - 1) * 100)['activityList']);
+            AddActivitiesFrom(GetRoleDependantClubActivities(100, (page - 1) * 100)['activityList']);
         }
     }
 
@@ -63,7 +75,7 @@ class RoomsTab : Tab {
 
     float ctrlRhsWidth;
     vec4 ctrlBtnRect;
-
+    float lastActiveColumnCursorX = 200;
     void DrawControlBar() {
         float width = UI::GetContentRegionMax().x;
 
@@ -77,9 +89,14 @@ class RoomsTab : Tab {
         if (loading) {
             UI::AlignTextToFramePadding();
             UI::Text("Loading...");
-        } else {
-            UI::Dummy(vec2());
+            UI::SameLine();
         }
+        auto pos = UI::GetCursorPos();
+        UI::SetCursorPos(vec2(Math::Max(pos.x, lastActiveColumnCursorX), pos.y));
+        if (IsLimited) {
+            disableActiveToggleSafety = UI::Checkbox("Disable toggle safety", disableActiveToggleSafety);
+        }
+        UI::Dummy(vec2());
 
         // // rhs buttons
         // UI::SetCursorPos(vec2(width - ctrlRhsWidth, UI::GetCursorPos().y));
@@ -137,10 +154,13 @@ class RoomsTab : Tab {
             if (UI::Button(Icons::PencilSquareO + "##" + roomId)) OnClickEditRoom(roomId, room['name'], room['public']);
 
             UI::TableNextColumn();
+            lastActiveColumnCursorX = UI::GetCursorPos().x;
             bool isActive = room['active'];
             UI::Text(isActive ? greenCheck : redTimes);
             UI::SameLine();
+            UI::BeginDisabled(!disableActiveToggleSafety);
             if (UI::Button((isActive ? Icons::ToggleOn : Icons::ToggleOff) + "##toggle-" + roomId)) OnClickToggleActive(roomId, isActive);
+            UI::EndDisabled();
 
             UI::TableNextColumn();
             UI::Text(bool(room['public']) ? greenCheck : redUserSecret);
