@@ -31,9 +31,12 @@ void ClearTaskCoro() {
     while (true) {
         yield();
         if (tasksToClear.Length == 0) continue;
-        for (uint i = 0; i < tasksToClear.Length; i++) {
+        // give a little buffer, rather than doing it next frame
+        uint toClear = tasksToClear.Length;
+        sleep(50);
+        for (uint i = 0; i < toClear; i++) {
             tasksToClear[i].Release();
         }
-        tasksToClear.RemoveRange(0, tasksToClear.Length);
+        tasksToClear.RemoveRange(0, toClear);
     }
 }

@@ -127,3 +127,29 @@ void UploadMapToNadeo(const string &in mapUid) {
 //     auto app = cast<CGameManiaPlanet>(GetApp());
 //     return app.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr.GlobalLeaderBoard_GetPlayerCount("Global");
 // }
+
+
+/***
+ *
+ * Do not keep handles to this object around! use immediately.
+ *
+ * Scopes:
+ *  #Const C_BrowserFilter_GameData 1
+    #Const C_BrowserFilter_TitleData 2
+    #Const C_BrowserFilter_GameAndTitleData 3
+    #Const C_BrowserFilter_UserData 4
+    #Const C_BrowserFilter_AllData 7
+ */
+CWebServicesTaskResult_MapListScript@ Map_GetFilteredGameList(uint scope, const string &in path, bool flatten, bool sortByNameElseDate, bool sortOrderAsc) {
+    auto app = cast<CGameManiaPlanet>(GetApp());
+    auto resp = app.MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr.Map_GetFilteredGameList(scope, path, flatten, sortByNameElseDate, sortOrderAsc);
+    WaitAndClearTaskLater(resp, app.MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr);
+    return resp;
+}
+
+void Map_RefreshFromDisk() {
+    // crashes in a server
+    ReturnToMenu();
+    auto app = cast<CGameManiaPlanet>(GetApp());
+    app.MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr.Map_RefreshFromDisk();
+}

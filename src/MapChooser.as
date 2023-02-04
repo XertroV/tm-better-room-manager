@@ -12,6 +12,9 @@ namespace MapChooser {
     string filterString;
     bool loading = false;
 
+    Folder@ CurrentFolder = null;
+    Folder@[] FolderStack;
+
     void Open(MapChosenCallback@ callback) {
         active = true;
         loading = true;
@@ -26,7 +29,14 @@ namespace MapChooser {
         if (app !is null && app.CurrentPlayground is null && app.Editor is null && app.RootMap is null) {
             cast<CGameManiaPlanet>(GetApp()).MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr.Map_RefreshFromDisk();
         }
+        @CurrentFolder = null;
+        FolderStack.RemoveRange(0, FolderStack.Length);
         startnew(RefreshMaps);
+        startnew(LoadCurrentFolder);
+    }
+
+    void LoadCurrentFolder() {
+        @CurrentFolder = Folder("Maps", Map_GetFilteredGameList(4, "", false, false, false));
     }
 
     void RefreshMaps() {
@@ -94,14 +104,20 @@ namespace MapChooser {
         }
     }
 
+    vec2 framePadding;
     void Render() {
         if (!active) return;
+        framePadding = UI::GetStyleVarVec2(UI::StyleVar::FramePadding);
         UI::SetNextWindowSize(550, 350, UI::Cond::Appearing);
         if (UI::Begin("Map Chooser", WindowOpen)) {
             UI::BeginDisabled(loading);
             UI::BeginTabBar("map-chooser-tabs", UI::TabBarFlags::None);
             if (UI::BeginTabItem("Local Maps")) {
                 DrawInner();
+                UI::EndTabItem();
+            }
+            if (UI::BeginTabItem(Icons::FolderOpenO + " From Folder")) {
+                DrawChooseFolderInner();
                 UI::EndTabItem();
             }
             if (UI::BeginTabItem("From TMX")) {
@@ -112,6 +128,56 @@ namespace MapChooser {
             UI::EndDisabled();
         }
         UI::End();
+    }
+
+    float chooseFolderBtnWidth = 200;
+    void DrawChooseFolderInner() {
+        SubHeading("Choose a Folder");
+        UI::SameLine();
+        UI::SetCursorPos(vec2(UI::GetContentRegionMax().x - chooseFolderBtnWidth, UI::GetCursorPos().y));
+        auto pos = UI::GetCursorPos();
+        ControlButton(Icons::Refresh + "##refresh folders", OnClickRefreshMapsFromDisk_Async);
+        ControlButton("Add Maps (" + (CurrentFolder is null ? -1 : CurrentFolder.nbSelected) + ")", OnClickAddMapsFromFolder);
+        chooseFolderBtnWidth = UI::GetCursorPos().x - pos.x - framePadding.x * 2.;
+        UI::Dummy(vec2());
+        UI::Separator();
+        DrawFolderSelector();
+    }
+
+    void DrawFolderSelector() {
+        if (CurrentFolder is null) {
+            UI::Text("Loading...");
+            return;
+        }
+
+        if (GetApp().ChallengeInfos.Length == 0) return;
+        // auto root = GetApp().ChallengeInfos[0].Fids.ParentFolder;
+
+        UI::SetNextItemOpen(true, UI::Cond::Always);
+        CurrentFolder.DrawTree();
+    }
+
+    void OnClickAddMapsFromFolder() {
+        loading = true;
+        auto maps = CurrentFolder.OnClickAddSelectedMaps();
+        Meta::PluginCoroutine@[] coros;
+        for (uint i = 0; i < maps.Length; i++) {
+            coros.InsertLast(startnew(CheckMapIsUploadedAndUploadIfNot_Coro, array<string> = {maps[i]}));
+        }
+        await(coros);
+        LazyMap@[] ret;
+        for (uint i = 0; i < maps.Length; i++) {
+            ret.InsertLast(LazyMap(maps[i]));
+        }
+        startnew(CoroutineFuncUserdata(RunCallbackMulti), ret);
+        loading = false;
+        active = false;
+    }
+
+    void OnClickRefreshMapsFromDisk_Async() {
+        @CurrentFolder = null;
+        Map_RefreshFromDisk();
+        LoadCurrentFolder();
     }
 
     string tmxIds;
@@ -278,4 +344,105 @@ namespace MapChooser {
     void RunCallbackMulti(ref@ maps) {
         cb(cast<LazyMap@[]>(maps));
     }
+
+
+
+
+    class Folder {
+        string[] SubFolders;
+        CGameCtnChallengeInfo@[] MapInfos;
+        Folder@ Parent = null;
+        string Name;
+        bool[] selected;
+        string[] MapNames;
+        int nbSelected = 0;
+
+        Folder(const string &in name, CWebServicesTaskResult_MapListScript@ resp, Folder@ parent = null) {
+            Name = name;
+            @Parent = parent;
+            for (uint i = 0; i < resp.SubFolders.Length; i++) {
+                SubFolders.InsertLast(resp.SubFolders[i]);
+            }
+            for (uint i = 0; i < resp.MapInfos.Length; i++) {
+                if (!resp.MapInfos[i].IsPlayable) continue;
+                auto @mapInfo = resp.MapInfos[i];
+                MapInfos.InsertLast(mapInfo);
+                selected.InsertLast(true);
+                MapNames.InsertLast(ColoredString(mapInfo.NameForUi));
+            }
+            nbSelected = selected.Length;
+        }
+
+        void DrawTree() {
+            DrawOpenTreeNode(DrawTreeInnerF(DrawTreeInner));
+        }
+
+        void DrawTreeInner() {
+            for (uint i = 0; i < SubFolders.Length; i++) {
+                UI::SetNextItemOpen(false, UI::Cond::Always);
+                UI::AlignTextToFramePadding();
+                auto clicked = UI::TreeNode(SubFolders[i]);
+                if (clicked) {
+                    UI::TreePop();
+                    startnew(CoroutineFuncUserdata(OnChooseSubfolder), array<string> = {SubFolders[i]});
+                }
+            }
+            for (uint i = 0; i < MapInfos.Length; i++) {
+                DrawMapInfo(i);
+            }
+        }
+
+        void OnChooseSubfolder(ref@ r) {
+            auto sf = cast<string[]>(r)[0];
+            @CurrentFolder = null;
+            @CurrentFolder = Folder(sf, Map_GetFilteredGameList(4, sf, false, false, false), this);
+        }
+
+        void DrawMapInfo(int i) {
+            UI::AlignTextToFramePadding();
+            UI::Dummy(vec2());
+            UI::SameLine();
+            DrawMapSelector(i);
+        }
+
+        // for use in folders
+        void DrawMapSelector(int i) {
+            bool _curr = selected[i];
+            if (_curr != UI::Checkbox(MapNames[i], _curr)) {
+                selected[i] = !_curr;
+                nbSelected += _curr ? -1 : 1;
+            }
+        }
+
+        DrawTreeInnerF@ treeCb;
+        void DrawOpenTreeNode(DrawTreeInnerF@ inner) {
+            @treeCb = inner;
+            if (Parent is null) DrawOpenTreeNodeInner();
+            else Parent.DrawOpenTreeNode(DrawTreeInnerF(DrawOpenTreeNodeInner));
+        }
+
+        void DrawOpenTreeNodeInner() {
+            bool cannotBeClosed = Parent is null;
+            UI::AlignTextToFramePadding();
+            if (cannotBeClosed || UI::TreeNode(Name, UI::TreeNodeFlags::DefaultOpen)) {
+                treeCb();
+                if (!cannotBeClosed) UI::TreePop();
+            } else if (!cannotBeClosed) {
+                // if we were closed, open the parent folder.
+                @CurrentFolder = Parent;
+            } else {
+            }
+        }
+
+        string[]@ OnClickAddSelectedMaps() {
+            string[] ret;
+            for (uint i = 0; i < MapInfos.Length; i++) {
+                if (selected[i]) ret.InsertLast(MapInfos[i].MapUid);
+            }
+            return ret;
+        }
+    }
+
+    funcdef void DrawTreeInnerF();
+    funcdef void DrawOpenTreeNodeInnerF();
 }

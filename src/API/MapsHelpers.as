@@ -146,6 +146,7 @@ void ReturnToMenu() {
         app.BackToMainMenu();
     }
     WaitForMainMenuToHaveFocus();
+    AwaitManialinkTitleReady();
 }
 
 void WaitForMainMenuToHaveFocus() {
@@ -156,4 +157,11 @@ void WaitForMainMenuToHaveFocus() {
 void AwaitManialinkTitleReady() {
     auto app = cast<CGameManiaPlanet>(GetApp());
     while (!app.ManiaTitleControlScriptAPI.IsReady) yield();
+}
+
+void CheckMapIsUploadedAndUploadIfNot_Coro(ref@ r) {
+    auto uid = cast<array<string>>(r)[0];
+    if (!IsMapUploadedToNadeo(uid)) {
+        UploadMapFromLocal(uid);
+    }
 }
