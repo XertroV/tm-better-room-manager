@@ -400,8 +400,7 @@ namespace MapChooser {
 
         void DrawMapInfo(int i) {
             UI::AlignTextToFramePadding();
-            UI::Dummy(vec2());
-            UI::SameLine();
+            UI::SetCursorPos(UI::GetCursorPos() + vec2(framePadding.x, 0));
             DrawMapSelector(i);
         }
 
