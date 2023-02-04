@@ -112,16 +112,16 @@ namespace MapChooser {
         if (UI::Begin("Map Chooser", WindowOpen)) {
             UI::BeginDisabled(loading);
             UI::BeginTabBar("map-chooser-tabs", UI::TabBarFlags::None);
-            if (UI::BeginTabItem("Local Maps")) {
-                DrawInner();
-                UI::EndTabItem();
-            }
             if (UI::BeginTabItem(Icons::FolderOpenO + " From Folder")) {
                 DrawChooseFolderInner();
                 UI::EndTabItem();
             }
             if (UI::BeginTabItem("From TMX")) {
                 DrawTmxInner();
+                UI::EndTabItem();
+            }
+            if (UI::BeginTabItem("Local Maps Search")) {
+                DrawInner();
                 UI::EndTabItem();
             }
             UI::EndTabBar();
@@ -331,6 +331,7 @@ namespace MapChooser {
     }
 
     void RunCallback() {
+        if (cb is null) throw('RunCallback: null callback');
         if (chosenMap is null) {
             cb(null);
             return;
@@ -342,10 +343,9 @@ namespace MapChooser {
     }
 
     void RunCallbackMulti(ref@ maps) {
+        if (cb is null) throw('RunCallbackMulti: null callback');
         cb(cast<LazyMap@[]>(maps));
     }
-
-
 
 
     class Folder {
