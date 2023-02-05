@@ -177,6 +177,7 @@ namespace MapChooser {
     void OnClickRefreshMapsFromDisk_Async() {
         @CurrentFolder = null;
         Map_RefreshFromDisk();
+        yield();
         LoadCurrentFolder();
     }
 
