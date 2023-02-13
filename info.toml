@@ -3,6 +3,7 @@ name     = "Better Room Manager"
 author   = "XertroV"
 category = "Club"
 version  = "0.1.21"
+siteid   = 312
 
 [script]
 #__DEFINES__
