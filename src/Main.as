@@ -34,7 +34,7 @@ void TestCoro() {
     auto _ttgRooms = RoomsTab(55829, 'ttg', 'ttg', 'Admin');
     mainTabs.InsertLast(_ttgRooms);
     yield();
-    mainTabs.InsertLast(RoomTab(_ttgRooms, 345704, 'test name', true));
+    mainTabs.InsertLast(RoomTab(_ttgRooms, 345704, 'test name', true, true));
 #endif
 }
 

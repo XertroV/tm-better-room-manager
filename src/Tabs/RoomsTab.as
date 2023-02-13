@@ -50,13 +50,27 @@ class RoomsTab : Tab {
         for (uint i = 0; i < activityList.Length; i++) {
             auto item = activityList[i];
             item['name'] = ColoredString(item['name']);
-            if ("room" == item['activityType']) myRooms.Add(item);
+            if ("room" == item['activityType']) {
+                myRooms.Add(item);
+                SetExistingRoomActive(item);
+            }
         }
     }
 
     void GetAdditionalRooms() {
         for (uint page = 2; page <= maxPage; page++) {
             AddActivitiesFrom(GetRoleDependantClubActivities(100, (page - 1) * 100)['activityList']);
+        }
+    }
+
+    void SetExistingRoomActive(Json::Value@ room) {
+        bool isActive = room['active'];
+        int id = room['id'];
+        for (uint i = 0; i < mainTabs.Length; i++) {
+            auto rt = cast<RoomTab>(mainTabs[i]);
+            if (rt is null) continue;
+            if (rt.roomId != id) continue;
+            rt.isActive = isActive;
         }
     }
 
@@ -141,6 +155,8 @@ class RoomsTab : Tab {
     string redUserSecret = "\\$<\\$f84" + Icons::UserSecret + "\\$>";
 
     void DrawRoomsTableRow(Json::Value@ room) {
+            bool isActive = room['active'];
+
             UI::TableNextRow();
             UI::TableNextColumn();
             UI::AlignTextToFramePadding();
@@ -151,11 +167,10 @@ class RoomsTab : Tab {
             UI::Text(room['name']);
 
             UI::TableNextColumn();
-            if (UI::Button(Icons::PencilSquareO + "##" + roomId)) OnClickEditRoom(roomId, room['name'], room['public']);
+            if (UI::Button(Icons::PencilSquareO + "##" + roomId)) OnClickEditRoom(roomId, room['name'], room['public'], isActive);
 
             UI::TableNextColumn();
             lastActiveColumnCursorX = UI::GetCursorPos().x;
-            bool isActive = room['active'];
             UI::Text(isActive ? greenCheck : redTimes);
             UI::SameLine();
             UI::BeginDisabled(!disableActiveToggleSafety);
@@ -218,10 +233,18 @@ class RoomsTab : Tab {
 
 
     void OnClickAddRoom() {
-        mainTabs.InsertLast(RoomTab(this, -1, "", true));
+        mainTabs.InsertLast(RoomTab(this, -1, "", true, false));
     }
 
-    void OnClickEditRoom(int roomId, const string &in roomName, bool public) {
-        mainTabs.InsertLast(RoomTab(this, roomId, roomName, public));
+    void OnClickEditRoom(int roomId, const string &in roomName, bool public, bool isActive) {
+        for (uint i = 0; i < mainTabs.Length; i++) {
+            auto rt = cast<RoomTab>(mainTabs[i]);
+            if (rt is null) continue;
+            if (rt.roomId == roomId) {
+                NotifyWarning("That room is already open.");
+                return;
+            }
+        }
+        mainTabs.InsertLast(RoomTab(this, roomId, roomName, public, isActive));
     }
 }

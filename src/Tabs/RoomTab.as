@@ -9,14 +9,17 @@ class RoomTab : Tab {
     LazyMap@[] lazyMaps;
     GameOpt@[] gameOpts;
     bool isEditing = true;
+    bool isActive = true;
 
     // roomId = -1 to create a new room
-    RoomTab(RoomsTab@ parent, int _roomId, const string &in roomName, bool public) {
+    RoomTab(RoomsTab@ parent, int _roomId, const string &in roomName, bool public, bool isActive) {
         isEditing = _roomId > 0;
         this.roomName = isEditing ? roomName : "New Room";
         super(Icons::Server + " " + this.roomName + "\\$z (" + _roomId + ")", false);
         // have to set isEditing again for some reason -- weird.
         isEditing = _roomId > 0;
+        this.isActive = isActive;
+        if (!isEditing) isActive = false;
         this.roomId = _roomId;
         @this.parent = parent;
         this.public = public;
@@ -38,6 +41,10 @@ class RoomTab : Tab {
             thisRoom['clubName'] = ColoredString(thisRoom['clubName']);
             thisRoom['name'] = ColoredString(thisRoom['name']);
             thisRoom['room']['name'] = ColoredString(thisRoom['room']['name']);
+            // if we created a new room, start active
+            if (!isEditing) isActive = true;
+            // if we created a room, we're definitely editing now
+            isEditing = true;
             ResetFormFromRoomInfo();
             PopulateMapsList();
             PopulateGameOpts();
@@ -502,7 +509,9 @@ class RoomTab : Tab {
 
         // NotificationsCtrlButton(vec2(ctrlBtnRect.z, ctrlBtnRect.w));
 
+        UI::BeginDisabled(!isActive);
         ControlButton(Icons::AngleDoubleRight + " Join Room##join-room" + roomId, CoroutineFunc(this.OnClickJoinRoom));
+        UI::EndDisabled();
         UI::BeginDisabled(lazyMaps.Length > 100);
         ControlButton(Icons::Upload + " Save Room##save-room" + roomId, CoroutineFunc(this.OnClickSaveRoom));
         UI::EndDisabled();
