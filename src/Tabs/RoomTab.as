@@ -502,6 +502,7 @@ class RoomTab : Tab {
 
         // NotificationsCtrlButton(vec2(ctrlBtnRect.z, ctrlBtnRect.w));
 
+        ControlButton(Icons::AngleDoubleRight + " Join Room##join-room" + roomId, CoroutineFunc(this.OnClickJoinRoom));
         UI::BeginDisabled(lazyMaps.Length > 100);
         ControlButton(Icons::Upload + " Save Room##save-room" + roomId, CoroutineFunc(this.OnClickSaveRoom));
         UI::EndDisabled();
@@ -513,7 +514,36 @@ class RoomTab : Tab {
         UI::EndDisabled();
     }
 
+    void OnClickJoinRoom() {
+        loading = true;
+        try {
+            string pw;
+            if (passworded) {
+                pw = ":" + string(GetRoomPassword(parent.clubId, roomId).Get('password', '???'));
+            }
+            Json::Value@ joinLink = GetJoinLink(parent.clubId, roomId);
+            while (!JoinLinkReady(joinLink)) {
+                sleep(2000);
+                @joinLink = GetJoinLink(parent.clubId, roomId);
+            }
+            string jl = joinLink.Get('joinLink', '????');
+            ReturnToMenu();
+            //  -- already done with these join links
+            string toJoin = jl.Replace("#join", "#qjoin") + pw;
+            // trace("Joining: " + toJoin);
+            cast<CGameManiaPlanet>(GetApp()).ManiaPlanetScriptAPI.OpenLink(toJoin, CGameManiaPlanetScriptAPI::ELinkType::ManialinkBrowser);
+        } catch {
+            NotifyError("Exception joining room: " + getExceptionInfo());
+        }
+        loading = false;
+    }
 
+    bool JoinLinkReady(Json::Value@ pl) {
+        if (pl is null || pl.GetType() != Json::Type::Object) return false;
+        if (!pl.HasKey("joinLink") || !pl.HasKey("starting")) return false;
+        if (bool(pl.Get("starting", true))) return false;
+        return true;
+    }
 
 
     void OnClickChoosePreset() {

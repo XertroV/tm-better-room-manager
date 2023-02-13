@@ -136,12 +136,22 @@ namespace MapChooser {
         UI::SameLine();
         UI::SetCursorPos(vec2(UI::GetContentRegionMax().x - chooseFolderBtnWidth, UI::GetCursorPos().y));
         auto pos = UI::GetCursorPos();
+        ControlButton(Icons::CheckSquareO + " All", OnClickSelectAll);
+        ControlButton(Icons::CheckSquareO + " None", OnClickSelectNone);
         ControlButton(Icons::Refresh + "##refresh folders", OnClickRefreshMapsFromDisk_Async);
         ControlButton("Add Maps (" + (CurrentFolder is null ? -1 : CurrentFolder.nbSelected) + ")", OnClickAddMapsFromFolder);
         chooseFolderBtnWidth = UI::GetCursorPos().x - pos.x - framePadding.x * 2.;
         UI::Dummy(vec2());
         UI::Separator();
         DrawFolderSelector();
+    }
+
+    void OnClickSelectAll() {
+        CurrentFolder.SelectAll();
+    }
+
+    void OnClickSelectNone() {
+        CurrentFolder.SelectNone();
     }
 
     void DrawFolderSelector() {
@@ -372,6 +382,20 @@ namespace MapChooser {
                 MapNames.InsertLast(ColoredString(mapInfo.NameForUi));
             }
             nbSelected = selected.Length;
+        }
+
+        void SelectAll() {
+            for (uint i = 0; i < selected.Length; i++) {
+                selected[i] = true;
+            }
+            nbSelected = selected.Length;
+        }
+
+        void SelectNone() {
+            for (uint i = 0; i < selected.Length; i++) {
+                selected[i] = false;
+            }
+            nbSelected = 0;
         }
 
         void DrawTree() {

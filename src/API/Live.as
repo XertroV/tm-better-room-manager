@@ -64,6 +64,17 @@ Json::Value@ GetRoomPassword(uint clubId, uint roomId) {
     return CallLiveApiPath("/api/token/club/" + clubId + "/room/" + roomId + "/get-password");
 }
 
+// returns {joinLink: string, starting: bool} -- throws if the server is deactivated
+Json::Value@ GetJoinLink(uint clubId, uint roomId) {
+    auto resp = PostLiveApiPath("/api/token/club/" + clubId + "/room/" + roomId + "/join", Json::Object());
+    if (resp !is null && resp.GetType() == Json::Type::Array) {
+        if (resp.Length > 0 && string(resp[0]) == "roomServer:error-NoServerAvailable") {
+            throw("Getting join link: roomServer:error-NoServerAvailable -- The room is probably deactivated");
+        }
+    }
+    return resp;
+}
+
 // https://webservices.openplanet.dev/live/maps/uploaded
 Json::Value@ GetYourUploadedMaps(uint length = 100, uint offset = 0) {
     return CallLiveApiPath("/api/token/map?" + LengthAndOffset(length, offset));
