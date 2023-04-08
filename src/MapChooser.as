@@ -143,7 +143,10 @@ namespace MapChooser {
         chooseFolderBtnWidth = UI::GetCursorPos().x - pos.x - framePadding.x * 2.;
         UI::Dummy(vec2());
         UI::Separator();
-        DrawFolderSelector();
+        if (UI::BeginChild("choose folder scollable")) {
+            DrawFolderSelector();
+        }
+        UI::EndChild();
     }
 
     void OnClickSelectAll() {
