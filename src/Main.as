@@ -5,6 +5,7 @@ void Main() {
     InitDirectories();
     AddAudiences();
     SetUpTabs();
+    startnew(ClearTaskCoro);
 #if DEV
     // startnew(TestCoro);
 #endif
