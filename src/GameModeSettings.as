@@ -5,7 +5,8 @@ enum GameMode {
     Laps = 3,
     Teams = 4,
     TimeAttack = 5,
-    Rounds = 6
+    Rounds = 6,
+    RoyalTimeAttack = 7,
 }
 
 // NOTE: Array and Dict at end.
@@ -19,6 +20,7 @@ const string GameModeToFullModeString(GameMode m) {
         case GameMode::Teams: return "TrackMania/TM_Teams_Online.Script.txt";
         case GameMode::TimeAttack: return "TrackMania/TM_TimeAttack_Online.Script.txt";
         case GameMode::Rounds: return "TrackMania/TM_Rounds_Online.Script.txt";
+        case GameMode::RoyalTimeAttack: return "TrackMania/TM_RoyalTimeAttack_Online.Script.txt";
     }
     throw("Unknown mode");
     return "";
@@ -31,63 +33,70 @@ GameMode GameModeFromStr(const string &in modeStr) {
     if (modeStr == "TrackMania/TM_Teams_Online.Script.txt") return GameMode::Teams;
     if (modeStr == "TrackMania/TM_TimeAttack_Online.Script.txt") return GameMode::TimeAttack;
     if (modeStr == "TrackMania/TM_Rounds_Online.Script.txt") return GameMode::Rounds;
+    if (modeStr == "TrackMania/TM_RoyalTimeAttack_Online.Script.txt") return GameMode::RoyalTimeAttack;
     return GameMode::Unknown;
 }
 
-const string GameModeCSV = """,Cup,Knockout,Laps,Teams,TimeAttack,Rounds
-S_ChatTime,1,1,1,1,1,1
-S_CumulatePoints,,,,1,,
-S_DecoImageUrl_Checkpoint,1,1,1,1,1,1
-S_DecoImageUrl_DecalSponsor4x1,1,1,1,1,1,1
-S_DecoImageUrl_Screen16x1,1,1,1,1,1,1
-S_DecoImageUrl_Screen16x9,1,1,1,1,1,1
-S_DecoImageUrl_Screen8x1,1,1,1,1,1,1
-S_DecoImageUrl_WhoAmIUrl,1,1,1,1,1,1
-S_DelayBeforeNextMap,1,1,1,1,1,1
-S_DisableGiveUp,,,1,,,
-S_EarlyEndMatchCallback,,1,,,,
-S_EliminatedPlayersNbRanks,,1,,,,
-S_FinishTimeout,1,1,1,1,,1
-S_ForceLapsNb,1,1,1,1,1,1
-S_InfiniteLaps,1,1,1,1,1,1
-S_IsChannelServer,1,1,1,1,1,1
-S_IsSplitScreen,1,1,1,1,1,1
-S_MapsPerMatch,,,,1,,1
-S_MatchPosition,,1,,,,
-S_MaxPointsPerRound,,,,1,,
-S_NbOfWinners,1,,,,,
-S_NeutralEmblemUrl,1,1,1,1,1,1
-S_PointsGap,,,,1,,
-S_PointsLimit,1,,,1,,1
-S_PointsRepartition,1,1,,1,,1
-S_RespawnBehaviour,1,1,1,1,1,1
-S_RoundsPerMap,1,1,,1,,1
-S_RoundsWithoutElimination,,1,,,,
-S_ScriptEnvironment,1,1,1,1,1,1
-S_SeasonIds,1,1,1,1,1,1
-S_SynchronizePlayersAtMapStart,1,1,1,1,1,1
-S_SynchronizePlayersAtRoundStart,1,1,1,1,1,1
-S_TimeLimit,,,1,,1,
-S_TrustClientSimu,1,1,1,1,1,1
-S_UseAlternateRules,,,,1,,
-S_UseClublinks,1,1,1,1,1,1
-S_UseClublinksSponsors,1,1,1,1,1,1
-S_UseCrudeExtrapolation,1,1,1,1,1,1
-S_UseCustomPointsRepartition,,,,1,,
-S_UseTieBreak,,,,1,,
-S_WarmUpDuration,1,1,1,1,1,1
-S_WarmUpNb,1,1,1,1,1,1
-S_WarmUpTimeout,1,1,1,1,1,1
-S_EnableJoinLeaveNotifications,1,1,1,1,1,1""";
+const string GameModeCSV = """,Cup,Knockout,Laps,Teams,TimeAttack,Rounds,RoyalTimeAttack
+S_ChatTime,1,1,1,1,1,1,1
+S_CumulatePoints,,,,1,,,
+S_DecoImageUrl_Checkpoint,1,1,1,1,1,1,1
+S_DecoImageUrl_DecalSponsor4x1,1,1,1,1,1,1,1
+S_DecoImageUrl_Screen16x1,1,1,1,1,1,1,1
+S_DecoImageUrl_Screen16x9,1,1,1,1,1,1,1
+S_DecoImageUrl_Screen8x1,1,1,1,1,1,1,1
+S_DecoImageUrl_WhoAmIUrl,1,1,1,1,1,1,1
+S_DelayBeforeNextMap,1,1,1,1,1,1,1
+S_DisableGiveUp,,,1,,,,
+S_EarlyEndMatchCallback,,1,,,,,
+S_EliminatedPlayersNbRanks,,1,,,,,
+S_FinishTimeout,1,1,1,1,,1,
+S_ForceLapsNb,1,1,1,1,1,1,1
+S_InfiniteLaps,1,1,1,1,1,1,1
+S_IsChannelServer,1,1,1,1,1,1,1
+S_IsSplitScreen,1,1,1,1,1,1,1
+S_MapsPerMatch,,,,1,,1,
+S_MatchPosition,,1,,,,,
+S_MaxPointsPerRound,,,,1,,,
+S_NbOfWinners,1,,,,,,
+S_NeutralEmblemUrl,1,1,1,1,1,1,1
+S_PointsGap,,,,1,,,
+S_PointsLimit,1,,,1,,1,
+S_PointsRepartition,1,1,,1,,1,
+S_RespawnBehaviour,1,1,1,1,1,1,1
+S_RoundsPerMap,1,1,,1,,1,
+S_RoundsWithoutElimination,,1,,,,,
+S_ScriptEnvironment,1,1,1,1,1,1,1
+S_SeasonIds,1,1,1,1,1,1,1
+S_SynchronizePlayersAtMapStart,1,1,1,1,1,1,1
+S_SynchronizePlayersAtRoundStart,1,1,1,1,1,1,
+S_TimeLimit,,,1,,1,,1
+S_TrustClientSimu,1,1,1,1,1,1,1
+S_UseAlternateRules,,,,1,,,
+S_UseClublinks,1,1,1,1,1,1,1
+S_UseClublinksSponsors,1,1,1,1,1,1,1
+S_UseCrudeExtrapolation,1,1,1,1,1,1,1
+S_UseCustomPointsRepartition,,,,1,,,
+S_UseTieBreak,,,,1,,,
+S_WarmUpDuration,1,1,1,1,1,1,
+S_WarmUpNb,1,1,1,1,1,1,
+S_WarmUpTimeout,1,1,1,1,1,1,
+S_EnableJoinLeaveNotifications,1,1,1,1,1,1,1
+S_ClubId,1,1,1,1,1,1,1
+S_ClubName,1,1,1,1,1,1,1
+S_LoadingScreenImageUrl,1,1,1,1,1,1,1
+S_DisableGoToMap,1,1,1,1,1,1,1
+S_PickAndBan_Enable,1,1,1,1,1,1,1
+S_PickAndBan_Style,1,1,1,1,1,1,1""";
 
 string[][]@ _GetGameModeValidOpts() {
     auto lines = GameModeCSV.Split("\n");
     string[][] ret;
-    ret.Resize(7);
+    ret.Resize(8);
     for (uint l = 1; l < lines.Length; l++) {
         auto parts = lines[l].Split(',');
         auto settingName = parts[0];
-        for (uint gm = 1; gm <= 6; gm++) {
+        for (uint gm = 1; gm <= 7; gm++) {
             if (parts[gm] == "1") ret[gm].InsertLast(settingName);
         }
     }
@@ -161,6 +170,12 @@ dictionary@ _GetSettingsToType() {
     ret["S_WarmUpTimeout"] = "integer";
     ret["S_WinnersRatio"] = "Float";
     ret["S_EnableJoinLeaveNotifications"] = "boolean";
+    ret["S_ClubId"] = "integer";
+    ret["S_ClubName"] = "text";
+    ret["S_LoadingScreenImageUrl"] = "text";
+    ret["S_DisableGoToMap"] = "boolean";
+    ret["S_PickAndBan_Enable"] = "boolean";
+    ret["S_PickAndBan_Style"] = "text";
     return ret;
 }
 
@@ -176,7 +191,7 @@ const string GetScriptOptType(const string &in key) {
 
 string[][][]@ _GetScriptDefaults() {
     string[][][] scriptDefaults;
-    scriptDefaults.Resize(7);
+    scriptDefaults.Resize(8);
     string[][] @tmp;
 
     @tmp = scriptDefaults[GameMode::TimeAttack];
@@ -237,8 +252,8 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
     tmp.InsertLast({'S_UseAlternateRules', 'true'});
-    // @tmp = scriptDefaults[GameMode::RoyalTimeAttack];
-    // tmp.InsertLast({'S_TimeLimit', '150'});
+    @tmp = scriptDefaults[GameMode::RoyalTimeAttack];
+    tmp.InsertLast({'S_TimeLimit', '150'});
     return scriptDefaults;
 }
 

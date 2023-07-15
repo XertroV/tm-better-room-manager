@@ -234,7 +234,7 @@ class RoomTab : Tab {
     void DrawGameModeSettings() {
         auto origMode = mode;
         if (UI::BeginCombo("Mode", tostring(mode))) {
-            for (int i = 1; i <= int(GameMode::Rounds); i++) {
+            for (int i = 1; i <= int(GameMode::RoyalTimeAttack); i++) {
                 if (UI::Selectable(tostring(GameMode(i)), i == int(mode))) mode = GameMode(i);
             }
             UI::EndCombo();
