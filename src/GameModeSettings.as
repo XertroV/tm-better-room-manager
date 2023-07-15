@@ -77,7 +77,8 @@ S_UseCustomPointsRepartition,,,,1,,
 S_UseTieBreak,,,,1,,
 S_WarmUpDuration,1,1,1,1,1,1
 S_WarmUpNb,1,1,1,1,1,1
-S_WarmUpTimeout,1,1,1,1,1,1""";
+S_WarmUpTimeout,1,1,1,1,1,1
+S_EnableJoinLeaveNotifications,1,1,1,1,1,1""";
 
 string[][]@ _GetGameModeValidOpts() {
     auto lines = GameModeCSV.Split("\n");
@@ -159,6 +160,7 @@ dictionary@ _GetSettingsToType() {
     ret["S_WarmUpNb"] = "integer";
     ret["S_WarmUpTimeout"] = "integer";
     ret["S_WinnersRatio"] = "Float";
+    ret["S_EnableJoinLeaveNotifications"] = "boolean";
     return ret;
 }
 
