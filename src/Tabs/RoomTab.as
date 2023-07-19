@@ -234,7 +234,11 @@ class RoomTab : Tab {
     void DrawGameModeSettings() {
         auto origMode = mode;
         if (UI::BeginCombo("Mode", tostring(mode))) {
-            for (int i = 1; i <= int(GameMode::RoyalTimeAttack); i++) {
+            for (int i = 1; i < int(GameMode::XXX_LAST); i++) {
+                // these don't work
+                if (i == int(GameMode::MultiTeams)) continue;
+                if (i == int(GameMode::HeadToHead)) continue;
+                if (i == int(GameMode::Final42TMGL)) continue;
                 if (UI::Selectable(tostring(GameMode(i)), i == int(mode))) mode = GameMode(i);
             }
             UI::EndCombo();
@@ -531,9 +535,14 @@ class RoomTab : Tab {
                 pw = ":" + string(GetRoomPassword(parent.clubId, roomId).Get('password', '???'));
             }
             Json::Value@ joinLink = GetJoinLink(parent.clubId, roomId);
-            while (!JoinLinkReady(joinLink)) {
+            uint count = 0;
+            while (!JoinLinkReady(joinLink) && count < 10) {
+                count++;
                 sleep(2000);
                 @joinLink = GetJoinLink(parent.clubId, roomId);
+            }
+            if (count >= 10) {
+                throw("No server was available after 10 retries (20+ seconds)");
             }
             string jl = joinLink.Get('joinLink', '????');
             ReturnToMenu();
