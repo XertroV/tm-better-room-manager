@@ -11,7 +11,8 @@ UI::Font@ titleFont = UI::LoadFont("DroidSans.ttf", 26);
 
 
 const string PluginIcon = Icons::BuildingO;
-const string MenuTitle = "\\$f83" + PluginIcon + "\\$z " + Meta::ExecutingPlugin().Name;
+const string ColorPluginIcon = "\\$f83" + PluginIcon;
+const string MenuTitle = ColorPluginIcon + "\\$z " + Meta::ExecutingPlugin().Name;
 
 uint g_NbNotifications = 1;
 
@@ -25,11 +26,11 @@ void RenderMenu() {
 }
 
 void RenderMainUI() {
-    RenderMapMonitorWindow();
+    RenderRoomManagerWindow();
     RenderAddMapWindow();
 }
 
-void RenderMapMonitorWindow() {
+void RenderRoomManagerWindow() {
     if (!WindowOpen) return;
     vec2 size = vec2(1200, 700);
     vec2 pos = (vec2(Draw::GetWidth(), Draw::GetHeight()) - size) / 2.;
@@ -56,7 +57,6 @@ void SetUpTabs() {
 
 
 
-
 bool IsAnyChooserActive() {
     return PresetChooser::active
         || RandomMapsChooser::active
@@ -65,134 +65,6 @@ bool IsAnyChooserActive() {
         || PresetSaver::active
         ;
 }
-
-
-
-
-// class AboutTab : Tab {
-//     AboutTab() {
-//         super(Icons::InfoCircle + " About", false);
-//     }
-
-//     void DrawTab() override {
-//         if (!tabOpen || !S_ShowAboutTab) return;
-//         if (UI::BeginTabItem(tabName, S_ShowAboutTab, TabFlags)) {
-//             DrawTogglePop();
-//             DrawInner();
-//             UI::EndTabItem();
-//         }
-//     }
-
-//     void DrawInner() override {
-//         UI::Markdown("""
-//  # About Map Monitor
-
-//  Map Monitor (MM) will monitor maps for: top times, a player's time/rank, and the number of players.
-//  Data gathered is saved to a database and available for analysis.
-
-//  ## Using MM
-
-//  To use MM, you must add at least 2 things: a map, and a watcher.
-//  Watchers are how you tell MM what data to monitor a map for.
-//  Each watcher applies to exactly one map.
-//  Once a watcher is added, MM will start gathering relevant data for that map.
-
-//  To recieve notifications, you need to set up a notify rules (or just 'rules').
-//  A rule tells MM what events you should be notified about.
-//  For example:
-//  - Your rank decreases (someone beats your time)
-//  - If a player's PB improves
-//  - If a player beats your time (a specific player, or any)
-//  - If someone plays your map (or when thresholds are reached, like 100 players, 1000 players, etc)
-//  - Summary data: like how many people played your maps in the last week
-
-//  Notifications are put in your inbox, and you can browse past notifications, too.
-
-//  ## Feedback, Suggestions, Bugs, etc
-
-//  - [Map Monitor thread on the Openplanet Discord](https://discord.com/channels/276076890714800129/1062289118647824414)
-//  - [Github Repo Issues](https://github.com/XertroV/tm-map-monitor/issues)
-//  - @XertroV on the Openplanet Discord
-
-//         """);
-//     }
-// }
-
-
-class RulesTab : Tab {
-    RulesTab() {
-        super(Icons::Table + " Rules", false);
-    }
-
-    void DrawInner() override {
-        // DrawControlBar();
-        UI::Separator();
-        // DrawMapsTable();
-    }
-}
-
-
-class InboxTab : Tab {
-    InboxTab() {
-        super(Icons::Inbox + " Inbox", false);
-    }
-
-    void DrawInner() override {
-        // DrawControlBar();
-        UI::Separator();
-        // DrawMapsTable();
-    }
-}
-
-class TopTimesTab : Tab {
-    TopTimesTab() {
-        super(Icons::Trophy + " Top Times", false);
-        icon = Icons::Trophy;
-    }
-
-    void DrawInner() override {
-        // DrawControlBar();
-        UI::Separator();
-        // DrawMapsTable();
-    }
-}
-
-class TimesTab : Tab {
-    TimesTab() {
-        super(Icons::ClockO + " Pb Times", false);
-    }
-
-    void DrawInner() override {
-        // DrawControlBar();
-        UI::Separator();
-        // DrawMapsTable();
-    }
-}
-
-class RanksTab : Tab {
-    RanksTab() {
-        super(Icons::ListOl + " Ranks", false);
-    }
-
-    void DrawInner() override {
-        // DrawControlBar();
-        UI::Separator();
-        // DrawMapsTable();
-    }
-}
-
-class NbPlayersTab : Tab {
-    NbPlayersTab() {
-        super(Icons::Users + " Nb Players", false);
-    }
-
-    void DrawInner() override {
-        // DrawControlBar();
-        UI::Separator();
-        // DrawMapsTable();
-    }
-}
-
 
 
 

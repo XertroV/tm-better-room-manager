@@ -1,3 +1,6 @@
+// global for checking if we're in a room we administer
+string lastJoinedRoomLink;
+RoomTab@ lastJoinedRoomTab;
 
 class RoomTab : Tab {
     int roomId;
@@ -544,12 +547,13 @@ class RoomTab : Tab {
             if (count >= 10) {
                 throw("No server was available after 10 retries (20+ seconds)");
             }
-            string jl = joinLink.Get('joinLink', '????');
+            string jl = joinLink.Get('joinLink', '');
             ReturnToMenu();
             //  -- already done with these join links
-            string toJoin = jl.Replace("#join", "#qjoin") + pw;
-            // trace("Joining: " + toJoin);
-            cast<CGameManiaPlanet>(GetApp()).ManiaPlanetScriptAPI.OpenLink(toJoin, CGameManiaPlanetScriptAPI::ELinkType::ManialinkBrowser);
+            lastJoinedRoomLink = jl.Replace("#join", "#qjoin") + pw;
+            @lastJoinedRoomTab = this;
+            trace("Joining: " + lastJoinedRoomLink);
+            cast<CGameManiaPlanet>(GetApp()).ManiaPlanetScriptAPI.OpenLink(lastJoinedRoomLink, CGameManiaPlanetScriptAPI::ELinkType::ManialinkBrowser);
         } catch {
             NotifyError("Exception joining room: " + getExceptionInfo());
         }
