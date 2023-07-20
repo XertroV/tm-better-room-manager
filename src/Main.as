@@ -6,6 +6,7 @@ void Main() {
     AddAudiences();
     SetUpTabs();
     startnew(ClearTaskCoro);
+    startnew(WatchServer::Main);
 #if DEV
     // startnew(TestCoro);
 #endif

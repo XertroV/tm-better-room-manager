@@ -16,7 +16,8 @@ void RenderMenuMain() {
 }
 
 void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ si) {
-    UI::TextDisabled("Server: " + si.ServerName);
+    UI::Text("\\$aaaServer: " + si.ServerName);
+    UI::Text("\\$aaaServerLogin: " + si.ServerLogin);
 
     UI::Separator();
 
