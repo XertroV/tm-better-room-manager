@@ -28,8 +28,8 @@ namespace WatchServer {
         auto si = cast<CTrackManiaNetworkServerInfo>(app.Network.ServerInfo);
         auto declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
         while (app.Network.ClientManiaAppPlayground !is null && !declaredVars.Contains("Net_DecoImage_ClubId = ")) {
-            sleep(1000);
             declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
+            sleep(1000);
         }
         auto parts = declaredVars.Split("Net_DecoImage_ClubId = ");
         if (parts.Length <= 1) return;
