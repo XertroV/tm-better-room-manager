@@ -94,9 +94,9 @@ class RoomTab : Tab {
     void DrawMainBody() {
         UI::BeginDisabled(loading || saving);
         if (UI::BeginTable('edit-room-table##' + roomId, 3, UI::TableFlags::SizingStretchSame)) {
-            UI::TableSetupColumn("lhs", UI::TableColumnFlags::WidthStretch, .4);
+            UI::TableSetupColumn("lhs", UI::TableColumnFlags::WidthStretch, .45);
             UI::TableSetupColumn("mid", UI::TableColumnFlags::WidthStretch, .01);
-            UI::TableSetupColumn("rhs", UI::TableColumnFlags::WidthStretch, .59);
+            UI::TableSetupColumn("rhs", UI::TableColumnFlags::WidthStretch, .54);
             UI::TableNextRow();
 
             UI::TableNextColumn();
@@ -301,7 +301,6 @@ class RoomTab : Tab {
 
     void OnClickAddScriptStdOpts() {
         string[][]@ defaults = scriptDefaults[mode];
-        trace('defaults len: ' + defaults.Length);
         for (uint i = 0; i < defaults.Length; i++) {
             AddScriptOptIfNotExists(defaults[i][0], defaults[i][1]);
         }

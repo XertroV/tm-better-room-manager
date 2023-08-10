@@ -540,7 +540,6 @@ string[][][]@ _GetScriptDefaults() {
     AddChampionSpring2022Defaults(scriptDefaults[GameMode::ChampionSpring2022]);
     AddChampionSpring2022Defaults(scriptDefaults[GameMode::CupClassic]);
     @tmp = scriptDefaults[GameMode::CupClassic];
-    trace('tmp len: ' + tmp.Length);
     SetGameModeOptionInList(tmp, 'S_CupPointsLimit', '120');
     SetGameModeOptionInList(tmp, 'S_RoundsPerMap', '4');
     SetGameModeOptionInList(tmp, 'S_PointsRepartition', '10,6,4,3,2,1');
@@ -622,6 +621,7 @@ class GameOpt {
     }
 
     void DrawOption(bool withLabel = true) {
+        UI::SetNextItemWidth(UI::GetContentRegionAvail().x);
         if (type == "boolean") DrawBoolOpt(withLabel);
         else if (type == "integer") DrawIntOpt(withLabel);
         else if (type == "float") DrawFloatOpt(withLabel);
