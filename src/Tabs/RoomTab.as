@@ -301,6 +301,7 @@ class RoomTab : Tab {
 
     void OnClickAddScriptStdOpts() {
         string[][]@ defaults = scriptDefaults[mode];
+        trace('defaults len: ' + defaults.Length);
         for (uint i = 0; i < defaults.Length; i++) {
             AddScriptOptIfNotExists(defaults[i][0], defaults[i][1]);
         }
