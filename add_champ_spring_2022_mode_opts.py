@@ -77,4 +77,4 @@ def gen_csv():
     return '\n'.join([','.join(row) for row in all_rows])
 
 print(gen_csv())
-# modes_csv_path.write_text(gen_csv())
+modes_csv_path.write_text(gen_csv())

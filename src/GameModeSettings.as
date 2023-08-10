@@ -139,12 +139,17 @@ S_EliminatedPlayersNbRanks,,1,,,,,,,,,,1,,,,,,
 S_EnableAmbientSound,,,,,,,,,,,,,,1,1,,1,1
 S_EnableDossardColor,,,,,,,,1,,,,,,,,,,
 S_EnableJoinLeaveNotifications,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,,
+S_EnablePreMatch,,,,,,,,,,,,,,1,1,,,
+S_EnableTrophiesGain,,,,,,,,,,,,,,1,1,,,
 S_EnableWinScreen,,,,,,,,,,,,,,1,1,,1,1
+S_EndRoundPostScoreUpdateDuration,,,,,,,,,,,,,,1,1,,,
+S_EndRoundPreScoreUpdateDuration,,,,,,,,,,,,,,1,1,,,
 S_FinalistsAccountIds,,,,,,,,,,,,,,,,,1,1
 S_FinishTimeout,1,1,1,1,,1,,1,1,1,,1,,1,1,1,1,1
 S_FinishTimeoutDivider,,,,,,,,,,1,,,,,,,,
 S_ForceLapsNb,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,1
 S_ForceRoadSpectatorsNb,,,,,,,,1,,,,,,1,1,,1,1
+S_HideScoresHeader,,,,,,,,,,,,,,1,1,,,
 S_InfiniteLaps,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,,
 S_IntroMaxDuration,,,,,,,,,,,1,,1,,,,,
 S_IsChannelServer,1,1,1,1,1,1,1,,,,,1,,,,,,
@@ -153,15 +158,20 @@ S_IsSplitScreen,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,,
 S_KOCheckpointNb,,,,,,,,,,,,,,1,1,,1,1
 S_KOCheckpointTime,,,,,,,,,,,,,,1,1,,1,1
 S_KOValidationDelay,,,,,,,,,,,,,,1,1,,1,1
+S_LoadMatchState,,,,,,,,,,,,,,1,1,,,
 S_LoadingScreenImageUrl,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,,
 S_LogLevel,,,,,,,,,,,1,,,,,,,
 S_MapPointsLimit,,,,,,,,1,1,,,,,,,,1,1
+S_MapWorldRecord,,,,,,,,,,,,,,1,1,,,
 S_MapsPerMatch,,,,1,,1,,,,1,,,,,,1,,
 S_MatchId,,,,,,,,,1,1,,,,,,,,
 S_MatchInfo,,,,,,,,1,,,,,,,,,,
-S_MatchmakingId,,,,,,,,,1,1,,,,,,,,
+S_MatchLevel,,,,,,,,,,,,,,1,1,,,
 S_MatchPointsLimit,,,,,,,,1,1,,,,,1,1,,1,1
 S_MatchPosition,,1,,,,,,,,,,1,,,,,,
+S_MatchStyle,,,,,,,,,,,,,,1,1,,,
+S_MatchType,,,,,,,,,,,,,,1,1,,,
+S_MatchmakingId,,,,,,,,,1,1,,,,,,,,
 S_MaxPointsPerRound,,,,1,,,,,,1,,,,,,,,
 S_NbOfWinners,1,,,,,,,,,,,,,1,1,,1,1
 S_NeutralEmblemUrl,1,1,1,1,1,1,1,,,,,1,,,,,,
@@ -183,11 +193,15 @@ S_RoundsWithoutElimination,,1,,,,,,,,,,1,,,,,,
 S_ScriptEnvironment,1,1,1,1,1,1,1,,,1,1,1,,,,,,
 S_SeasonIds,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,,
 S_SponsorsUrl,,,,,,,,1,,,,,,1,1,,,
+S_StepNb,,,,,,,,,,,,,,1,1,,,
+S_StopMatchIfNotEnoughPlayers,,,,,,,,,,,,,,1,1,,,
 S_SynchronizePlayersAtMapStart,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,,
 S_SynchronizePlayersAtRoundStart,1,1,1,1,1,1,,,,1,,1,,,,,1,1
 S_TeamsNb,,,,,,,,,,,,,,,,1,,
 S_TeamsUrl,,,,,,,,1,1,,,,,,,,,
 S_TimeLimit,,,1,,1,,1,,,,1,,1,,,,,
+S_TrackNb,,,,,,,,,,,,,,1,1,,,
+S_TracksTotal,,,,,,,,,,,,,,1,1,,,
 S_TrustClientSimu,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,,
 S_UseAlternateRules,,,,1,,,,,,1,,,,,,,,
 S_UseClublinks,1,1,1,1,1,1,1,,,,,1,,,,,,
@@ -264,6 +278,8 @@ dictionary@ _GetSettingsToType() {
     ret["S_EnableAmbientSound"] = "boolean";
     ret["S_EnableDossardColor"] = "boolean";
     ret["S_EnableJoinLeaveNotifications"] = "boolean";
+    ret["S_EnablePreMatch"] = "boolean";
+    ret["S_EnableTrophiesGain"] = "boolean";
     ret["S_EnableWinScreen"] = "boolean";
     ret["S_EndRoundPostScoreUpdateDuration"] = "integer";
     ret["S_EndRoundPreScoreUpdateDuration"] = "integer";
@@ -273,6 +289,7 @@ dictionary@ _GetSettingsToType() {
     ret["S_FinishTimeoutDivider"] = "integer";
     ret["S_ForceLapsNb"] = "integer";
     ret["S_ForceWinnersNb"] = "integer";
+    ret["S_HideScoresHeader"] = "boolean";
     ret["S_InfiniteLaps"] = "boolean";
     ret["S_IntroMaxDuration"] = "integer";
     ret["S_IsChannelServer"] = "boolean";
@@ -280,12 +297,17 @@ dictionary@ _GetSettingsToType() {
     ret["S_KOCheckpointNb"] = "integer";
     ret["S_KOCheckpointTime"] = "integer";
     ret["S_KOValidationDelay"] = "integer";
+    ret["S_LoadMatchState"] = "text";
     ret["S_LoadingScreenImageUrl"] = "text";
     ret["S_LogLevel"] = "integer";
     ret["S_MapPointsLimit"] = "integer";
+    ret["S_MapWorldRecord"] = "text";
     ret["S_MapsPerMatch"] = "integer";
     ret["S_MatchId"] = "text";
     ret["S_MatchInfo"] = "text";
+    ret["S_MatchLevel"] = "integer";
+    ret["S_MatchStyle"] = "integer";
+    ret["S_MatchType"] = "integer";
     ret["S_MatchmakingId"] = "text";
     ret["S_MatchPointsLimit"] = "integer";
     ret["S_MatchPosition"] = "integer";
@@ -314,11 +336,15 @@ dictionary@ _GetSettingsToType() {
     ret["S_ScriptEnvironment"] = "text";
     ret["S_SeasonIds"] = "text";
     ret["S_SponsorsUrl"] = "text";
+    ret["S_StepNb"] = "integer";
+    ret["S_StopMatchIfNotEnoughPlayers"] = "boolean";
     ret["S_SynchronizePlayersAtMapStart"] = "boolean";
     ret["S_SynchronizePlayersAtRoundStart"] = "boolean";
     ret["S_TeamsNb"] = "integer";
     ret["S_TeamsUrl"] = "text";
     ret["S_TimeLimit"] = "integer";
+    ret["S_TrackNb"] = "integer";
+    ret["S_TracksTotal"] = "integer";
     ret["S_TimeOutPlayersNumber"] = "integer";
     ret["S_TrustClientSimu"] = "boolean";
     ret["S_UseAlternateRules"] = "boolean";
