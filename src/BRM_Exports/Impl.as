@@ -117,14 +117,16 @@ namespace BRM {
             return this.SetModeSetting("S_ChatTime", tostring(ct));
         }
 
-        // Set the chat time (seconds)
-        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int ct = 1) {
-            auto builder = this.SetTimeLimit(1).SetChatTime(ct).SetMaps({mapUid});
-            auto resp = builder.SaveRoom();
-            sleep(3000);
-            builder.SetTimeLimit(limit);
-            builder.SaveRoom();
-            return builder;
+        // This will yield! An easy 'go to next map' command for club rooms.
+        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int chat_time = 1) {
+            this.SetTimeLimit(1)
+                .SetChatTime(chat_time)
+                .SetMaps({mapUid});
+            auto resp = this.SaveRoom();
+            sleep(5000);
+            this.SetTimeLimit(limit);
+            auto resp2 = this.SaveRoom();
+            return this;
         }
 
 
