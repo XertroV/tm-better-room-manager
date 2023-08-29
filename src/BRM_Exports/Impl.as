@@ -106,6 +106,28 @@ namespace BRM {
             data['settings'].Add(s);
         }
 
+
+        // Set the time limit (seconds)
+        IRoomSettingsBuilder@ SetTimeLimit(int limit) {
+            return this.SetModeSetting("S_TimeLimit", tostring(limit));
+        }
+
+        // Set the chat time (seconds)
+        IRoomSettingsBuilder@ SetChatTime(int ct) {
+            return this.SetModeSetting("S_ChatTime", tostring(ct));
+        }
+
+        // Set the chat time (seconds)
+        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int ct = 1) {
+            auto builder = this.SetTimeLimit(1).SetChatTime(ct).SetMaps({mapUid});
+            auto resp = builder.SaveRoom();
+            sleep(3000);
+            builder.SetTimeLimit(limit);
+            builder.SaveRoom();
+            return builder;
+        }
+
+
         IRoomSettingsBuilder@ SetPlayerLimit(uint limit) {
             data['maxPlayersPerServer'] = limit;
             return this;

@@ -90,6 +90,15 @@ namespace BRM {
         // Set a game mode setting (e.g., S_TimeLimit)
         IRoomSettingsBuilder@ SetModeSetting(const string &in key, const string &in value);
 
+        // Set the time limit (seconds)
+        IRoomSettingsBuilder@ SetTimeLimit(int limit);
+
+        // Set the chat time (seconds)
+        IRoomSettingsBuilder@ SetChatTime(int ct);
+
+        // Set the chat time (seconds)
+        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int ct = 1);
+
         // Set the rooms map list
         IRoomSettingsBuilder@ SetMaps(const array<string> &in maps);
 
