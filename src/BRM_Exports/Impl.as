@@ -117,7 +117,7 @@ namespace BRM {
             return this.SetModeSetting("S_ChatTime", tostring(ct));
         }
 
-        // This will yield! An easy 'go to next map' command for club rooms.
+        // This will yield! An easy 'go to next map' command for club rooms. Duration is 5s + 2 http requests to nadeo.
         IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int chat_time = 1) {
             this.SetTimeLimit(1)
                 .SetChatTime(chat_time)
