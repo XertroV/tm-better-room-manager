@@ -36,6 +36,13 @@ class ClubsTab : Tab {
             club['nameSafe'] = ColoredString(club['name']);
             club['tagSafe'] = ColoredString(club['tag']);
             // print(club['name']);
+            string role = string(club['role']);
+            bool isAdmin = role == "Admin" || role == "Creator";
+            bool isLimitedAdmin = role == CONTENT_CREATOR;
+            bool isAnyAdmin = isAdmin || isLimitedAdmin;
+            club['isAdmin'] = isAdmin;
+            club['isAnyAdmin'] = isAnyAdmin;
+            club['isLimitedAdmin'] = isLimitedAdmin;
         }
     }
 

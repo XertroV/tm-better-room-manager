@@ -88,7 +88,8 @@ namespace ClubTagSetter {
     bool loading = false;
     string[] payloadKeys = {"name", "tag", "description", "state", "iconTheme", "decalTheme", "backgroundTheme", "verticalTheme", "screen16x9Theme", "screen8x1Theme", "screen16x1Theme"};
     void OnClickSetTag() {
-        if (clubId != 55829) throw("wrong club");
+        if (clubId != 55829 && clubId != 71821)
+            throw("wrong club");
         m_error = "";
         Json::Value@ data = Json::Object();
         for (uint i = 0; i < payloadKeys.Length; i++) {

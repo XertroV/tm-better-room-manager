@@ -16,8 +16,15 @@ void RenderMenuMain() {
 }
 
 void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ si) {
-    UI::Text("\\$aaaServer: " + si.ServerName);
-    UI::Text("\\$aaaServerLogin: " + si.ServerLogin);
+    CopyLabel("\\$aaaServer", si.ServerName);
+    CopyLabel("\\$aaaServerLogin", si.ServerLogin);
+    auto extra = BRM::GetCurrentServerInfo(GetApp(), false);
+    if (extra.clubId > 0) {
+        CopyLabel("\\$aaaClub ID", tostring(extra.clubId));
+    }
+    if (extra.roomId > 0) {
+        CopyLabel("\\$aaaRoom ID", tostring(extra.roomId));
+    }
 
     UI::Separator();
 

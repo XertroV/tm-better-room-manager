@@ -1,4 +1,5 @@
 namespace BRM {
+    // import Json::Value@ _SaveEditedRoomConfig(uint clubId, uint roomId, Json::Value@ data) from "BRM";
 
     shared enum GameMode {
         Unknown = 0,
@@ -78,35 +79,47 @@ namespace BRM {
         return GameMode::Unknown;
     }
 
-    shared class RoomSettingsBuilder {
-        uint clubId;
-        uint roomId;
-        GameMode gameMode = GameMode::Unknown;
 
-        RoomSettingsBuilder(uint clubId, uint roomId) {
+    shared interface IRoomSettingsBuilder {
+        // Populate based on current room settings. This function may yield.
+        IRoomSettingsBuilder@ GetCurrentSettingsAsync();
+
+        // Set the room game mode
+        IRoomSettingsBuilder@ SetMode(GameMode mode, bool withDefaultSettings = false);
+
+        // Set a game mode setting (e.g., S_TimeLimit)
+        IRoomSettingsBuilder@ SetModeSetting(const string &in key, const string &in value);
+
+        // Set the rooms map list
+        IRoomSettingsBuilder@ SetMaps(const array<string> &in maps);
+
+        // Add a map to the rooms map list
+        IRoomSettingsBuilder@ AddMaps(const array<string> &in maps);
+
+        // Set the room player limit (1 - 100)
+        IRoomSettingsBuilder@ SetPlayerLimit(uint limit);
+
+        // Set the room name
+        IRoomSettingsBuilder@ SetName(const string &in name);
+
+        // Save the room; returns immediately
+        IRoomSettingsBuilder@ SaveRoomInCoro();
+
+        // saves the room and returns the result; will yield internally
+        Json::Value@ SaveRoom();
+    }
+
+    shared class ServerInfo {
+        string login;
+        string name;
+        int clubId = -1;
+        int roomId = -1;
+
+        ServerInfo(const string &in login, const string &in name, int clubId, int roomId) {
+            this.login = login;
+            this.name = name;
             this.clubId = clubId;
             this.roomId = roomId;
-        }
-
-        // Populate based on current room settings. This function may yield.
-        RoomSettingsBuilder@ GetCurrentSettingsAsync() {
-
-            return this;
-        }
-
-
-        RoomSettingsBuilder@ SetMode(GameMode mode) {
-            this.gameMode = mode;
-            return this;
-        }
-
-        RoomSettingsBuilder@ SaveRoomInCoro() {
-            startnew(CoroutineFunc(this.SaveRoomAsync));
-            return this;
-        }
-
-        void SaveRoomAsync() {
-
         }
     }
 }

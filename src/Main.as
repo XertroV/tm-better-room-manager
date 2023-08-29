@@ -9,6 +9,7 @@ void Main() {
     startnew(WatchServer::Main);
 #if DEV
     // startnew(TestCoro);
+    trace("Current plugin id: " + Meta::ExecutingPlugin().ID);
 #endif
 }
 

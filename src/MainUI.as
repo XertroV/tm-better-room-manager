@@ -49,10 +49,12 @@ void RenderRoomManagerWindow() {
 }
 
 array<Tab@> mainTabs;
+ClubsTab@ mainClubsTab;
 
 void SetUpTabs() {
     // mainTabs.InsertLast(AboutTab());
-    mainTabs.InsertLast(ClubsTab());
+    @mainClubsTab = ClubsTab();
+    mainTabs.InsertLast(mainClubsTab);
 }
 
 
@@ -110,6 +112,14 @@ bool ControlButton(const string &in label, CoroutineFunc@ onClick, vec2 size = v
     return ret;
 }
 
+
+void CopyLabel(const string &in label, const string &in value) {
+    UI::Text(label + ": " + value);
+    if (UI::IsItemClicked()) {
+        Notify("Copying: " + value);
+        IO::SetClipboard(value);
+    }
+}
 
 
 

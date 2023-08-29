@@ -10,3 +10,4 @@ siteid   = 312
 dependencies = ["NadeoServices"]
 exports = ["BRM_Exports/Exports.as"]
 shared_exports = ["BRM_Exports/Shared.as"]
+module = "BRM"
