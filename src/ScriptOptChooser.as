@@ -5,9 +5,9 @@ namespace ScriptOptChooser {
     bool active = false;
     ScriptOptChosenCallback@ cb = null;
     GameOpt@[]@ filterOut;
-    GameMode mode = GameMode::Unknown;
+    BRM::GameMode mode = BRM::GameMode::Unknown;
 
-    bool Open(ScriptOptChosenCallback@ callback, GameOpt@[]@ existing, GameMode _mode) {
+    bool Open(ScriptOptChosenCallback@ callback, GameOpt@[]@ existing, BRM::GameMode _mode) {
         if (active) return false;
         active = true;
         mode = _mode;

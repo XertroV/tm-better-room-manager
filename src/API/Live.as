@@ -15,6 +15,16 @@ Json::Value@ GetMyClubs(uint length = 100, uint offset = 0) {
     return CallLiveApiPath("/api/token/club/mine?" + LengthAndOffset(length, offset));
 }
 
+// {"id":55829,"name":"$z$e71\uf292$z$s$iTic Tac GO!","tag":"$Z$E71$I$S\uf292$Z$FFF$STTG","description":"$L[https:\/\/openplanet.dev\/plugin\/cgf]https:\/\/openplanet.dev\/plugin\/cgf$L","authorAccountId":"0a2d1bc0-4aaa-4374-b2db-3d561bdab1c9","latestEditorAccountId":"0a2d1bc0-4aaa-4374-b2db-3d561bdab1c9","iconUrl":"","logoUrl":"","decalUrl":"","screen16x9Url":"","decalSponsor4x1Url":"","screen8x1Url":"","screen16x1Url":"","verticalUrl":"","backgroundUrl":"","creationTimestamp":1671505006,"popularityLevel":0,"state":"public","featured":false,"walletUid":"7f5a3686-4238-415b-b1bb-03c32d93afab","metadata":"","editionTimestamp":1693279393,"iconTheme":"","decalTheme":"","screen16x9Theme":"","screen8x1Theme":"","screen16x1Theme":"","verticalTheme":"","backgroundTheme":"","verified":false}
+Json::Value@ GetClubDetails(uint clubId) {
+    return CallLiveApiPath("/api/token/club/" + clubId);
+}
+
+// Payload: {"name":"$z$e71$z$s$iTic Tac GO!","tag":"$Z$E71$I$S$Z$FFF$STTG","description":"$L[https://openplanet.dev/plugin/cgf]https://openplanet.dev/plugin/cgf$L","state":"public","iconTheme":"","decalTheme":"","backgroundTheme":"","verticalTheme":"","screen16x9Theme":"","screen8x1Theme":"","screen16x1Theme":""}
+Json::Value@ SetClubDetails(uint clubId, Json::Value@ data) {
+    return PostLiveApiPath("/api/token/club/" + clubId + "/edit", data);
+}
+
 // returns {accountId: string, tagClubId: int, tag: string, pinnedClub: 0 or 1}
 Json::Value@ SetClubTag(uint clubId) {
     return PostLiveApiPath("/api/token/club/" + clubId + "/tag", null);

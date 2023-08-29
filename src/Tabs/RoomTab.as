@@ -190,7 +190,7 @@ class RoomTab : Tab {
         region = SvrLocFromString(room['region']);
         maxPlayers = room['maxPlayers'];
         @maps = room['maps'];
-        mode = GameModeFromStr(room['script']);
+        mode = BRM::GameModeFromStr(room['script']);
         scalable = room['scalable'];
         @scriptSettings = room['scriptSettings'];
     }
@@ -203,7 +203,7 @@ class RoomTab : Tab {
     bool passworded = false;
     Json::Value@ maps = Json::Array();
     Json::Value@ scriptSettings = Json::Object();
-    GameMode mode = GameMode::TimeAttack;
+    BRM::GameMode mode = BRM::GameMode::TimeAttack;
     bool _creatingRoom = false;
 
     void DrawRoomEditForm() {
@@ -237,12 +237,12 @@ class RoomTab : Tab {
     void DrawGameModeSettings() {
         auto origMode = mode;
         if (UI::BeginCombo("Mode", tostring(mode))) {
-            for (int i = 1; i < int(GameMode::XXX_LAST); i++) {
+            for (int i = 1; i < int(BRM::GameMode::XXX_LAST); i++) {
                 // these don't work
-                if (i == int(GameMode::MultiTeams)) continue;
-                if (i == int(GameMode::HeadToHead)) continue;
-                if (i == int(GameMode::Final42TMGL)) continue;
-                if (UI::Selectable(tostring(GameMode(i)), i == int(mode))) mode = GameMode(i);
+                if (i == int(BRM::GameMode::MultiTeams)) continue;
+                if (i == int(BRM::GameMode::HeadToHead)) continue;
+                if (i == int(BRM::GameMode::Final42TMGL)) continue;
+                if (UI::Selectable(tostring(BRM::GameMode(i)), i == int(mode))) mode = BRM::GameMode(i);
             }
             UI::EndCombo();
         }
@@ -359,7 +359,7 @@ class RoomTab : Tab {
         data['name'] = name.Replace('\\', '');
         data['region'] = SvrLocStr(region);
         data['maxPlayersPerServer'] = maxPlayers;
-        data['script'] = GameModeToFullModeString(mode);
+        data['script'] = BRM::GameModeToFullModeString(mode);
         data['settings'] = Json::Array();
         data['maps'] = Json::Array();
         data['scalable'] = scalable ? 1 : 0;
@@ -579,7 +579,7 @@ class RoomTab : Tab {
         print('on chosen preset cb: ' + Json::Write(preset));
         region = SvrLocFromString(preset['region']);
         maxPlayers = preset['maxPlayersPerServer'];
-        mode = GameModeFromStr(preset['script']);
+        mode = BRM::GameModeFromStr(preset['script']);
         scalable = int(preset['scalable']) == 1;
         gameOpts.RemoveRange(0, gameOpts.Length);
         auto presetScriptOpts = preset['settings'];

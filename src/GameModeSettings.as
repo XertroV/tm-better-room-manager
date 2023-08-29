@@ -1,83 +1,5 @@
-enum GameMode {
-    Unknown = 0,
-    Cup = 1,
-    Knockout = 2,
-    Laps = 3,
-    Teams = 4,
-    TimeAttack = 5,
-    Rounds = 6,
-    RoyalTimeAttack = 7,
-    // unofficial but included ones?
-    TMWTTeams,
-    TMWTMatchmaking,
-    TeamsMatchmaking,
-    TimeAttackDaily,
-    KnockoutDaily,
-    COTDQualifications,
-    CupClassic,
-    ChampionSpring2022,
-    // unlisted modes
-    MultiTeams,
-    HeadToHead,
-    Final42TMGL,
-    // leave last for loops
-    XXX_LAST
-}
-
 // NOTE: Array and Dict at end.
-
-// todo: confirm mode strings. Rounds should be
-const string GameModeToFullModeString(GameMode m) {
-    switch (m) {
-        case GameMode::Cup: return "TrackMania/TM_Cup_Online.Script.txt";
-        case GameMode::Knockout: return "TrackMania/TM_Knockout_Online.Script.txt";
-        case GameMode::Laps: return "TrackMania/TM_Laps_Online.Script.txt";
-        case GameMode::Teams: return "TrackMania/TM_Teams_Online.Script.txt";
-        case GameMode::TimeAttack: return "TrackMania/TM_TimeAttack_Online.Script.txt";
-        case GameMode::Rounds: return "TrackMania/TM_Rounds_Online.Script.txt";
-        case GameMode::RoyalTimeAttack: return "TrackMania/TM_RoyalTimeAttack_Online.Script.txt";
-        // hidden game modes:
-        case GameMode::TMWTTeams: return "TrackMania/TM_TMWTTeams_Online.Script.txt";
-        case GameMode::TMWTMatchmaking: return "TrackMania/TM_TMWTMatchmaking_Online.Script.txt";
-        case GameMode::TeamsMatchmaking: return "TrackMania/TM_Teams_Matchmaking_Online.Script.txt";
-        case GameMode::TimeAttackDaily: return "TrackMania/TM_TimeAttackDaily_Online.Script.txt";
-        case GameMode::KnockoutDaily: return "TrackMania/TM_KnockoutDaily_Online.Script.txt";
-        case GameMode::COTDQualifications: return "TrackMania/TM_COTDQualifications_Online.Script.txt";
-        case GameMode::CupClassic: return "TrackMania/Legacy/TM_CupClassic_Online.Script.txt";
-        case GameMode::ChampionSpring2022: return "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt";
-        // unlisted
-        case GameMode::MultiTeams: return "TrackMania/TM_MultiTeams_Online.Script.txt";
-        case GameMode::HeadToHead: return "TrackMania/TM_HeadToHead_Online.Script.txt";
-        case GameMode::Final42TMGL: return "TrackMania/TM_Final42TMGL_Online.Script.txt";
-    }
-    throw("Unknown mode");
-    return "";
-}
-
-GameMode GameModeFromStr(const string &in modeStr) {
-    if (modeStr == "TrackMania/TM_Cup_Online.Script.txt") return GameMode::Cup;
-    if (modeStr == "TrackMania/TM_Knockout_Online.Script.txt") return GameMode::Knockout;
-    if (modeStr == "TrackMania/TM_Laps_Online.Script.txt") return GameMode::Laps;
-    if (modeStr == "TrackMania/TM_Teams_Online.Script.txt") return GameMode::Teams;
-    if (modeStr == "TrackMania/TM_TimeAttack_Online.Script.txt") return GameMode::TimeAttack;
-    if (modeStr == "TrackMania/TM_Rounds_Online.Script.txt") return GameMode::Rounds;
-    if (modeStr == "TrackMania/TM_RoyalTimeAttack_Online.Script.txt") return GameMode::RoyalTimeAttack;
-    // hidden game modes:
-    if (modeStr == "TrackMania/TM_TMWTTeams_Online.Script.txt") return GameMode::TMWTTeams;
-    if (modeStr == "TrackMania/TM_TMWTMatchmaking_Online.Script.txt") return GameMode::TMWTMatchmaking;
-    if (modeStr == "TrackMania/TM_Teams_Matchmaking_Online.Script.txt") return GameMode::TeamsMatchmaking;
-    if (modeStr == "TrackMania/TM_TimeAttackDaily_Online.Script.txt") return GameMode::TimeAttackDaily;
-    if (modeStr == "TrackMania/TM_KnockoutDaily_Online.Script.txt") return GameMode::KnockoutDaily;
-    if (modeStr == "TrackMania/TM_COTDQualifications_Online.Script.txt") return GameMode::COTDQualifications;
-    if (modeStr == "TrackMania/Legacy/TM_CupClassic_Online.Script.txt") return GameMode::CupClassic;
-    if (modeStr == "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt") return GameMode::ChampionSpring2022;
-        // unlisted
-    if (modeStr == "TrackMania/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
-    if (modeStr == "TrackMania/TM_HeadToHead_Online.Script.txt") return GameMode::HeadToHead;
-    if (modeStr == "TrackMania/TM_Final42TMGL_Online.Script.txt") return GameMode::Final42TMGL;
-    // default
-    return GameMode::Unknown;
-}
+// Note: GameMode and to/from string functions located in Shared.as
 
 /*
   These are universal because they're defined in ModeBase.Script.txt
@@ -219,12 +141,12 @@ string[][]@ _GetGameModeValidOpts() {
     auto lines = GameModeCSV.Split("\n");
     auto universalModeSettings = UniversalModeSettings.Split("\n");
     string[][] ret;
-    ret.Resize(int(GameMode::XXX_LAST));
+    ret.Resize(int(BRM::GameMode::XXX_LAST));
     for (uint l = 1; l < lines.Length; l++) {
         if (lines[l].Length < 5) continue;
         auto parts = lines[l].Split(',');
         auto settingName = parts[0];
-        for (uint gm = 1; gm < int(GameMode::XXX_LAST); gm++) {
+        for (uint gm = 1; gm < int(BRM::GameMode::XXX_LAST); gm++) {
             if (parts[gm] == "1" || universalModeSettings.Find(settingName) > -1) {
                 ret[gm].InsertLast(settingName);
             }
@@ -237,7 +159,7 @@ string[][]@ _GetGameModeValidOpts() {
 void PrintGameModeOpts() {
     for (uint gm = 1; gm < GameModeOpts.Length; gm++) {
         auto item = GameModeOpts[gm];
-        print(tostring(GameMode(gm)));
+        print(tostring(BRM::GameMode(gm)));
         for (uint i = 0; i < item.Length; i++) {
             print("  " + item[i]);
         }
@@ -373,16 +295,16 @@ const string GetScriptOptType(const string &in key) {
 
 string[][][]@ _GetScriptDefaults() {
     string[][][] scriptDefaults;
-    scriptDefaults.Resize(int(GameMode::XXX_LAST));
+    scriptDefaults.Resize(int(BRM::GameMode::XXX_LAST));
     string[][] @tmp;
 
-    @tmp = scriptDefaults[GameMode::TimeAttack];
+    @tmp = scriptDefaults[BRM::GameMode::TimeAttack];
     tmp.InsertLast({'S_TimeLimit', '300'});
     tmp.InsertLast({'S_WarmUpNb', '0'});
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
     tmp.InsertLast({'S_ForceLapsNb', '-1'});
-    @tmp = scriptDefaults[GameMode::Rounds];
+    @tmp = scriptDefaults[BRM::GameMode::Rounds];
     tmp.InsertLast({'S_PointsRepartition', ''});
     tmp.InsertLast({'S_PointsLimit', '50'});
     tmp.InsertLast({'S_FinishTimeout', '-1'});
@@ -392,7 +314,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpNb', '0'});
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
-    @tmp = scriptDefaults[GameMode::Laps];
+    @tmp = scriptDefaults[BRM::GameMode::Laps];
     tmp.InsertLast({'S_TimeLimit', '0'});
     tmp.InsertLast({'S_ForceLapsNb', '-1'});
     tmp.InsertLast({'S_InfiniteLaps', 'false'});
@@ -401,7 +323,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpNb', '0'});
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
-    @tmp = scriptDefaults[GameMode::Knockout];
+    @tmp = scriptDefaults[BRM::GameMode::Knockout];
     tmp.InsertLast({'S_PointsRepartition', ''});
     tmp.InsertLast({'S_FinishTimeout', '5'});
     tmp.InsertLast({'S_RoundsPerMap', '-1'});
@@ -411,7 +333,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_ChatTime', '6'});
     tmp.InsertLast({'S_EliminatedPlayersNbRanks', '4,16,16'});
     tmp.InsertLast({'S_RoundsWithoutElimination', '1'});
-    @tmp = scriptDefaults[GameMode::Cup];
+    @tmp = scriptDefaults[BRM::GameMode::Cup];
     tmp.InsertLast({'S_PointsRepartition', ''});
     tmp.InsertLast({'S_PointsLimit', '100'});
     tmp.InsertLast({'S_FinishTimeout', '-1'});
@@ -420,7 +342,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpNb', '0'});
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
-    @tmp = scriptDefaults[GameMode::Teams];
+    @tmp = scriptDefaults[BRM::GameMode::Teams];
     tmp.InsertLast({'S_PointsLimit', '100'});
     tmp.InsertLast({'S_FinishTimeout', '-1'});
     tmp.InsertLast({'S_MaxPointsPerRound', '6'});
@@ -434,9 +356,9 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
     tmp.InsertLast({'S_UseAlternateRules', 'true'});
-    @tmp = scriptDefaults[GameMode::RoyalTimeAttack];
+    @tmp = scriptDefaults[BRM::GameMode::RoyalTimeAttack];
     tmp.InsertLast({'S_TimeLimit', '150'});
-    @tmp = scriptDefaults[GameMode::TMWTTeams];
+    @tmp = scriptDefaults[BRM::GameMode::TMWTTeams];
     tmp.InsertLast({'S_MapPointsLimit', '10'});
     tmp.InsertLast({'S_MatchPointsLimit', '4'});
     tmp.InsertLast({'S_FinishTimeout', '-1'});
@@ -453,7 +375,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_PickAndBan_Enable', 'true'});
     tmp.InsertLast({'S_PickAndBan_Style', '{"Background": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/UI/TMWT_MatchIntroBackground.dds","TopLeftLogo": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/BrandsLogo/TMWT_Logo.dds","TopRightLogo": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/BrandsLogo/TMWT_TMGL.dds","BottomLogo": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/BrandsLogo/TMWT_Kaporal.dds"}'});
     tmp.InsertLast({'S_ChatTime', '600'});
-    @tmp = scriptDefaults[GameMode::TMWTMatchmaking];
+    @tmp = scriptDefaults[BRM::GameMode::TMWTMatchmaking];
     tmp.InsertLast({'S_MapPointsLimit', '10'});
     tmp.InsertLast({'S_MatchPointsLimit', '1'});
     tmp.InsertLast({'S_FinishTimeout', '-1'});
@@ -466,7 +388,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_MatchId', ''});
     tmp.InsertLast({'S_ChatTime', '600'});
     tmp.InsertLast({'S_DecoImageUrl_Checkpoint', 'file://Media/Manialinks/Nadeo/TMNext/Modes/Matchmaking/Decal_Matchmaking.dds'});
-    @tmp = scriptDefaults[GameMode::TeamsMatchmaking];
+    @tmp = scriptDefaults[BRM::GameMode::TeamsMatchmaking];
     tmp.InsertLast({'S_PointsLimit', '5'});
     tmp.InsertLast({'S_FinishTimeout', '-1'});
     tmp.InsertLast({'S_FinishTimeoutDivider', '3'});
@@ -501,7 +423,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_DecoImageUrl_Checkpoint', 'file://Media/Manialinks/Nadeo/TMNext/Modes/Matchmaking/Decal_Matchmaking.dds'});
     tmp.InsertLast({'S_ScriptEnvironment', 'development'});
     tmp.InsertLast({'S_SynchronizePlayersAtRoundStart', 'true'});
-    @tmp = scriptDefaults[GameMode::TimeAttackDaily];
+    @tmp = scriptDefaults[BRM::GameMode::TimeAttackDaily];
     tmp.InsertLast({'S_WarmUpNb', '0'});
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
@@ -514,9 +436,9 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_TimeLimit', '900'});
     tmp.InsertLast({'S_IntroMaxDuration', '15'});
     tmp.InsertLast({'S_QualificationsEndTime_MinMargin', '30000'});
-    @tmp = scriptDefaults[GameMode::KnockoutDaily];
-    @tmp = scriptDefaults[GameMode::COTDQualifications];
-    @tmp = scriptDefaults[GameMode::MultiTeams];
+    @tmp = scriptDefaults[BRM::GameMode::KnockoutDaily];
+    @tmp = scriptDefaults[BRM::GameMode::COTDQualifications];
+    @tmp = scriptDefaults[BRM::GameMode::MultiTeams];
     tmp.InsertLast({'S_TeamsNb', '10'});
     tmp.InsertLast({'S_PointsLimit', '50'});
     tmp.InsertLast({'S_FinishTimeout', '-1'});
@@ -526,7 +448,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpNb', '0'});
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
-    @tmp = scriptDefaults[GameMode::HeadToHead];
+    @tmp = scriptDefaults[BRM::GameMode::HeadToHead];
     tmp.InsertLast({'S_ChatTime', '60'});
     tmp.InsertLast({'S_ForceLapsNb', '2'});
     tmp.InsertLast({'S_MatchPointsLimit', '3'});
@@ -536,10 +458,10 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpNb', '1'});
     tmp.InsertLast({'S_WarmUpDuration', '10'});
     tmp.InsertLast({'S_EnableWinScreen', 'false'});
-    @tmp = scriptDefaults[GameMode::Final42TMGL];
-    AddChampionSpring2022Defaults(scriptDefaults[GameMode::ChampionSpring2022]);
-    AddChampionSpring2022Defaults(scriptDefaults[GameMode::CupClassic]);
-    @tmp = scriptDefaults[GameMode::CupClassic];
+    @tmp = scriptDefaults[BRM::GameMode::Final42TMGL];
+    AddChampionSpring2022Defaults(scriptDefaults[BRM::GameMode::ChampionSpring2022]);
+    AddChampionSpring2022Defaults(scriptDefaults[BRM::GameMode::CupClassic]);
+    @tmp = scriptDefaults[BRM::GameMode::CupClassic];
     SetGameModeOptionInList(tmp, 'S_CupPointsLimit', '120');
     SetGameModeOptionInList(tmp, 'S_RoundsPerMap', '4');
     SetGameModeOptionInList(tmp, 'S_PointsRepartition', '10,6,4,3,2,1');
@@ -668,7 +590,7 @@ class GameOpt {
 
 
 
-string GetScriptDefaultFor(GameMode mode, const string &in optName) {
+string GetScriptDefaultFor(BRM::GameMode mode, const string &in optName) {
     string[][]@ tmp = scriptDefaults[mode];
     for (uint i = 0; i < tmp.Length; i++) {
         auto item = tmp[i];

@@ -33,8 +33,8 @@ class ClubsTab : Tab {
         for (uint i = startIx; i < myClubs.Length; i++) {
             auto club = myClubs[i];
             // print(ColoredString(club['name']));
-            club['name'] = ColoredString(club['name']);
-            club['tag'] = ColoredString(club['tag']);
+            club['nameSafe'] = ColoredString(club['name']);
+            club['tagSafe'] = ColoredString(club['tag']);
             // print(club['name']);
         }
     }
@@ -115,27 +115,49 @@ class ClubsTab : Tab {
         int clubId = int(club['id']);
         string club_id = tostring(clubId);
 
+        // Creator, Admin, Content_Creator, Member?, VIP?
+        string role = string(club['role']);
+        bool isAdmin = role == "Admin" || role == "Creator";
+
         UI::TableNextRow();
         UI::TableNextColumn();
         UI::AlignTextToFramePadding();
         UI::Text(club_id);
 
         UI::TableNextColumn();
-        UI::Text(club['name']);
+        UI::Text(club['nameSafe']);
 
         UI::TableNextColumn();
-        UI::Text(club['tag']);
+        UI::Text(club['tagSafe']);
+#if DEV
+        if (isAdmin) {
+            UI::SameLine();
+            if (UI::Button("Alter##" + clubId)) {
+                ClubTagSetter::Open(CoroutineFuncUserdata(OnClubTagUpdated), club);
+            }
+        }
+#endif
 
         UI::TableNextColumn();
-        string role = string(club['role']);
         UI::Text(role);
 
         UI::TableNextColumn();
-        if (role == "Creator" || role == "Admin" || role == CONTENT_CREATOR) {
+        if (isAdmin || role == CONTENT_CREATOR) {
             UI::BeginDisabled(RoomsTabExists(clubId));
             if (UI::Button("Rooms##"+club_id))
-                OnClickRoomsForClub(clubId, club['name'], club['tag'], role);
+                OnClickRoomsForClub(clubId, club['nameSafe'], club['tagSafe'], role);
             UI::EndDisabled();
+        }
+    }
+
+    void OnClubTagUpdated(ref@ r) {
+        Json::Value@ resp = cast<Json::Value>(r);
+        for (uint i = 0; i < myClubs.Length; i++) {
+            if (int(myClubs[i]['id']) == int(resp['id'])) {
+                myClubs[i]['tag'] = resp['tag'];
+                myClubs[i]['tagSafe'] = ColoredString(resp['tag']);
+                break;
+            }
         }
     }
 
