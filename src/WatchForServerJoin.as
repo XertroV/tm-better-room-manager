@@ -66,6 +66,8 @@ namespace WatchServer {
         auto @rooms = j['rooms'];
         bool doNotRefresh = rooms.GetType() != Json::Type::Null && lastRefresh > 0 && Time::Now - lastRefresh < (30 * 60 * 1000);
         if (!doNotRefresh) {
+            j['lastRefresh'] = Time::Now;
+            trace("Refreshing WatchForServerJoin rooms for club: " + cid);
             auto activities = GetClubActivities(clubId, true, 100, 0);
             @rooms = activities['activityList'];
             auto pages = int(activities['maxPage']);
