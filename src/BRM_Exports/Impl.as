@@ -1,4 +1,5 @@
 namespace BRM {
+    // Get the setting type (integer, bool, text) for a given setting, e.g., S_TimeLimit
     string GetModeSettingType(const string &in settingName) {
         if (settingToType.Exists(settingName)) {
             string type;
@@ -9,6 +10,7 @@ namespace BRM {
         return "Unknown Setting: " + settingName;
     }
 
+    // Create an IRoomSettingsBuilder object for a given club and room
     IRoomSettingsBuilder@ CreateRoomBuilder(uint clubId, uint roomId) {
         return RoomSettingsBuilder(clubId, roomId);
     }
@@ -23,11 +25,12 @@ namespace BRM {
         return mainClubsTab.myClubs;
     }
 
+    // Get a room info from the API. <https://webservices.openplanet.dev/live/clubs/room-by-id>
     Json::Value@ GetRoomInfoFromAPI(uint clubId, uint roomId) {
         return GetClubRoom(clubId, roomId);
     }
 
-    // join a server via clubId + roomId
+    // Join a server by getting the joinlink for a given club and room
     void JoinServer(uint clubId, uint roomId, const string &in password = "") {
         string pw;
         if (password.Length > 0) {
@@ -57,10 +60,12 @@ namespace BRM {
         return true;
     }
 
+    // Returns true if the client is connected to a server
     bool IsInAServer(CGameCtnApp@ app) {
         return WatchServer::IsInAServer(cast<CTrackMania>(app));
     }
 
+    // Returns some basic info for the current server, including Club and Room IDs. Yields if waitForClubId=true otherwise might return null if club/room ID detection is still loading.
     ServerInfo@ GetCurrentServerInfo(CGameCtnApp@ app, bool waitForClubId = true) {
         auto tm = cast<CTrackMania>(app);
         if (IsInAServer(tm)) {

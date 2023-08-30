@@ -14,7 +14,7 @@ Returns a scirpt path, e.g., "TrackMania/TM_Cup_Online.Script.txt", for a given 
 
 ### GetCurrentServerInfo -- `ServerInfo@ GetCurrentServerInfo(CGameCtnApp@ app, bool waitForClubId = true)`
 
-Returns some basic info for the current server, including Club and Room IDs. Yields if waitForClubId=true otherwise might return null.
+Returns some basic info for the current server, including Club and Room IDs. Yields if waitForClubId=true otherwise might return null if club/room ID detection is still loading.
 
 ### GetModeSettingType -- `string GetModeSettingType(const string &in settingName)`
 
@@ -25,6 +25,10 @@ Get the setting type (integer, bool, text) for a given setting, e.g., S_TimeLimi
 Returns a JSON Array of JSON Objects.
 The format is equivalent to under .clubList in the payload returned by <https://webservices.openplanet.dev/live/clubs/clubs-mine>
 There are some additional fields, like nameSafe, tagSafe, and isAdmin (dump the json object for everything)
+
+### GetRoomInfoFromAPI -- `Json::Value@ GetRoomInfoFromAPI(uint clubId, uint roomId)`
+
+Get a room info from the API. <https://webservices.openplanet.dev/live/clubs/room-by-id>
 
 ### IsInAServer -- `bool IsInAServer(CGameCtnApp@ app)`
 
@@ -72,7 +76,7 @@ Add a map to the rooms map list
 
 Populate based on current room settings. This function may yield.
 
-#### GoToNextMapAndThenSetTimeLimit -- `IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int ct = 1)`
+#### GoToNextMapAndThenSetTimeLimit -- `IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit = -1, int ct = 1)`
 
 This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
 
@@ -87,6 +91,10 @@ Save the room; returns immediately
 #### SetChatTime -- `IRoomSettingsBuilder@ SetChatTime(int ct)`
 
 Set the chat time (seconds)
+
+#### SetLoadingScreenUrl -- `IRoomSettingsBuilder@ SetLoadingScreenUrl(const string &in url)`
+
+Set the loading screen image URL
 
 #### SetMaps -- `IRoomSettingsBuilder@ SetMaps(const array<string> &in maps)`
 
