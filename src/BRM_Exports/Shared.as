@@ -96,7 +96,7 @@ namespace BRM {
         // Set the chat time (seconds)
         IRoomSettingsBuilder@ SetChatTime(int ct);
 
-        // Set the chat time (seconds)
+        // This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
         IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int ct = 1);
 
         // Set the rooms map list
