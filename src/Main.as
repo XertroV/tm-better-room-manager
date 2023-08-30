@@ -53,7 +53,6 @@ void RenderInterface() {
     PresetChooser::Render();
     ScriptOptChooser::Render();
     RandomMapsChooser::Render();
-    ClubTagSetter::Render();
 
     UI::PopStyleColor();
 }

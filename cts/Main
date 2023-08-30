@@ -1,0 +1,4 @@
+
+#if DEV
+    ClubTagSetter::Render();
+#endif

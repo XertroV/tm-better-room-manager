@@ -1,6 +1,4 @@
-// funcdef void ScriptOptChosenCallback(GameOpt@ go);
-
-
+#if DEV
 namespace ClubTagSetter {
     bool active = false;
     CoroutineFuncUserdata@ cb = null;
@@ -111,3 +109,4 @@ namespace ClubTagSetter {
         }
     }
 }
+#endif

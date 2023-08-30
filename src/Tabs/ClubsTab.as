@@ -136,14 +136,6 @@ class ClubsTab : Tab {
 
         UI::TableNextColumn();
         UI::Text(club['tagSafe']);
-#if DEV
-        if (isAdmin) {
-            UI::SameLine();
-            if (UI::Button("Alter##" + clubId)) {
-                ClubTagSetter::Open(CoroutineFuncUserdata(OnClubTagUpdated), club);
-            }
-        }
-#endif
 
         UI::TableNextColumn();
         UI::Text(role);

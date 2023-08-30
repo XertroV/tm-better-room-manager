@@ -1,0 +1,9 @@
+
+#if DEV
+        if (isAdmin) {
+            UI::SameLine();
+            if (UI::Button("Alter##" + clubId)) {
+                ClubTagSetter::Open(CoroutineFuncUserdata(OnClubTagUpdated), club);
+            }
+        }
+#endif
