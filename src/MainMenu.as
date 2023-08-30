@@ -19,11 +19,14 @@ void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ s
     CopyLabel("\\$aaaServer", si.ServerName);
     CopyLabel("\\$aaaServerLogin", si.ServerLogin);
     auto extra = BRM::GetCurrentServerInfo(GetApp(), false);
-    if (extra.clubId > 0) {
+    if (extra !is null && extra.clubId > 0) {
         CopyLabel("\\$aaaClub ID", tostring(extra.clubId));
     }
-    if (extra.roomId > 0) {
+    if (extra !is null && extra.roomId > 0) {
         CopyLabel("\\$aaaRoom ID", tostring(extra.roomId));
+    }
+    if (!WatchServer::FinishedLoading) {
+        UI::Text("\\$888  Detecting Club/Room ID...");
     }
 
     UI::Separator();

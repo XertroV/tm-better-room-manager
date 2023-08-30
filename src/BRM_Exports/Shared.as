@@ -1,6 +1,4 @@
 namespace BRM {
-    // import Json::Value@ _SaveEditedRoomConfig(uint clubId, uint roomId, Json::Value@ data) from "BRM";
-
     shared enum GameMode {
         Unknown = 0,
         Cup = 1,
@@ -27,6 +25,7 @@ namespace BRM {
         XXX_LAST
     }
 
+    // Returns a scirpt path, e.g., "TrackMania/TM_Cup_Online.Script.txt", for a given `BRM::GameMode`
     shared const string GameModeToFullModeString(GameMode m) {
         switch (m) {
             case GameMode::Cup: return "TrackMania/TM_Cup_Online.Script.txt";
@@ -54,6 +53,7 @@ namespace BRM {
         return "";
     }
 
+    // Returns a `BRM::GameMode` based on the script path, e.g., "TrackMania/TM_Cup_Online.Script.txt"
     shared GameMode GameModeFromStr(const string &in modeStr) {
         if (modeStr == "TrackMania/TM_Cup_Online.Script.txt") return GameMode::Cup;
         if (modeStr == "TrackMania/TM_Knockout_Online.Script.txt") return GameMode::Knockout;
@@ -96,8 +96,11 @@ namespace BRM {
         // Set the chat time (seconds)
         IRoomSettingsBuilder@ SetChatTime(int ct);
 
+        // Set the loading screen image URL
+        IRoomSettingsBuilder@ SetLoadingScreenUrl(const string &in url);
+
         // This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
-        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int ct = 1);
+        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit = -1, int ct = 1);
 
         // Set the rooms map list
         IRoomSettingsBuilder@ SetMaps(const array<string> &in maps);

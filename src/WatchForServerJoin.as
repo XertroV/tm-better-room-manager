@@ -5,13 +5,15 @@ namespace WatchServer {
         while (true) {
             yield();
             while (!IsInAServer(app)) yield();
+            lastServerLogin = app.ManiaPlanetScriptAPI.CurrentServerLogin;
             startnew(OnJoinedServer);
-            while (IsInAServer(app)) yield();
+            while (IsInAServer(app) && lastServerLogin == app.ManiaPlanetScriptAPI.CurrentServerLogin) yield();
             startnew(OnLeftServer);
         }
     }
 
     Json::Value@ RefreshRoomsState = Json::Object();
+    string lastServerLogin;
 
     bool IsInAServer(CTrackMania@ app) {
         if (app.ManiaPlanetScriptAPI is null) return false;
@@ -35,9 +37,11 @@ namespace WatchServer {
         auto declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
         // wait up to 15s for club ID
         auto startedAt = Time::Now;
-        while (app.Network.ClientManiaAppPlayground !is null && !declaredVars.Contains("Net_DecoImage_ClubId = ") && Time::Now - startedAt < 15000) {
+        while (app.Network.ClientManiaAppPlayground !is null && !declaredVars.Contains("Net_DecoImage_ClubId = ") && Time::Now - startedAt < 15000
+            && ServerLogin == app.ManiaPlanetScriptAPI.CurrentServerLogin
+        ) {
             declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
-            sleep(1000);
+            sleep(250);
         }
         auto parts = declaredVars.Split("Net_DecoImage_ClubId = ");
         FinishedLoading = true;

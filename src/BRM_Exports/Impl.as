@@ -23,9 +23,8 @@ namespace BRM {
         return mainClubsTab.myClubs;
     }
 
-    const Json::Value@ GetClubRooms(uint clubId) {
-        // clubId
-        return null;
+    Json::Value@ GetRoomInfoFromAPI(uint clubId, uint roomId) {
+        return GetClubRoom(clubId, roomId);
     }
 
     // join a server via clubId + roomId
@@ -66,6 +65,7 @@ namespace BRM {
         auto tm = cast<CTrackMania>(app);
         if (IsInAServer(tm)) {
             while (waitForClubId && !WatchServer::FinishedLoading) yield();
+            if (!waitForClubId && !WatchServer::FinishedLoading) return null;
             return ServerInfo(WatchServer::ServerLogin, WatchServer::ServerName, WatchServer::ClubId, WatchServer::RoomId);
         }
         return null;
@@ -93,6 +93,7 @@ namespace BRM {
                 data['maps'].Add(currSettings['room']['maps'][i]);
             }
             data['script'] = currSettings['room']['script'];
+            gameMode = GameModeFromStr(data['script']);
             data['scalable'] = bool(currSettings['room']['scalable']) ? 1 : 0;
             data['maxPlayersPerServer'] = currSettings['room']['maxPlayers'];
             data['settings'] = Json::Array();
@@ -149,10 +150,15 @@ namespace BRM {
             return this.SetModeSetting("S_ChatTime", tostring(ct));
         }
 
+        IRoomSettingsBuilder@ SetLoadingScreenUrl(const string &in url) {
+            return this.SetModeSetting("S_LoadingScreenImageUrl", url);
+        }
+
         // This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
-        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int chat_time = 1) {
+        IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit = -1, int chat_time = 1) {
             this.SetTimeLimit(1)
                 .SetChatTime(chat_time)
+                .SetModeSetting("S_DelayBeforeNextMap", "1")
                 .SetMaps({mapUid})
                 .SetMode(BRM::GameMode::TimeAttack);
 

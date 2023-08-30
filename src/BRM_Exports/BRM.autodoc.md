@@ -2,15 +2,23 @@
 
 ### CreateRoomBuilder -- `IRoomSettingsBuilder@ CreateRoomBuilder(uint clubId, uint roomId)`
 
+Create an IRoomSettingsBuilder object for a given club and room
+
 ### GameModeFromStr -- `GameMode GameModeFromStr(const string &in modeStr)`
+
+Returns a `BRM::GameMode` based on the script path, e.g., "TrackMania/TM_Cup_Online.Script.txt"
 
 ### GameModeToFullModeString -- `const string GameModeToFullModeString(GameMode m)`
 
-### GetClubRooms -- `const Json::Value@ GetClubRooms(uint clubId)`
+Returns a scirpt path, e.g., "TrackMania/TM_Cup_Online.Script.txt", for a given `BRM::GameMode`
 
 ### GetCurrentServerInfo -- `ServerInfo@ GetCurrentServerInfo(CGameCtnApp@ app, bool waitForClubId = true)`
 
+Returns some basic info for the current server, including Club and Room IDs. Yields if waitForClubId=true otherwise might return null.
+
 ### GetModeSettingType -- `string GetModeSettingType(const string &in settingName)`
+
+Get the setting type (integer, bool, text) for a given setting, e.g., S_TimeLimit
 
 ### GetMyClubs -- `const Json::Value@ GetMyClubs()`
 
@@ -20,11 +28,11 @@ There are some additional fields, like nameSafe, tagSafe, and isAdmin (dump the 
 
 ### IsInAServer -- `bool IsInAServer(CGameCtnApp@ app)`
 
-### JoinLinkReady -- `bool JoinLinkReady(Json::Value@ pl)`
+Returns true if the client is connected to a server
 
 ### JoinServer -- `void JoinServer(uint clubId, uint roomId, const string &in password = "")`
 
-join a server via clubId + roomId
+Join a server by getting the joinlink for a given club and room
 
 # Types/Classes
 
@@ -52,7 +60,7 @@ join a server via clubId + roomId
 - `XXX_LAST`
 
 
-## BRM::IRoomSettingsBuilder (class)
+## BRM::IRoomSettingsBuilder (interface)
 
 ### Functions
 
