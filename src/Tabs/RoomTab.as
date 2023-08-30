@@ -535,38 +535,15 @@ class RoomTab : Tab {
         try {
             string pw;
             if (passworded) {
-                pw = ":" + string(GetRoomPassword(parent.clubId, roomId).Get('password', '???'));
+                pw = string(GetRoomPassword(parent.clubId, roomId).Get('password', '???'));
             }
-            Json::Value@ joinLink = GetJoinLink(parent.clubId, roomId);
-            uint count = 0;
-            while (!JoinLinkReady(joinLink) && count < 10) {
-                count++;
-                sleep(2000);
-                @joinLink = GetJoinLink(parent.clubId, roomId);
-            }
-            if (count >= 10) {
-                throw("No server was available after 10 retries (20+ seconds)");
-            }
-            string jl = joinLink.Get('joinLink', '');
-            ReturnToMenu();
-            //  -- already done with these join links
-            lastJoinedRoomLink = jl.Replace("#join", "#qjoin") + pw;
+            BRM::JoinServer(parent.clubId, roomId, pw);
             @lastJoinedRoomTab = this;
-            trace("Joining: " + lastJoinedRoomLink);
-            cast<CGameManiaPlanet>(GetApp()).ManiaPlanetScriptAPI.OpenLink(lastJoinedRoomLink, CGameManiaPlanetScriptAPI::ELinkType::ManialinkBrowser);
         } catch {
             NotifyError("Exception joining room: " + getExceptionInfo());
         }
         loading = false;
     }
-
-    bool JoinLinkReady(Json::Value@ pl) {
-        if (pl is null || pl.GetType() != Json::Type::Object) return false;
-        if (!pl.HasKey("joinLink") || !pl.HasKey("starting")) return false;
-        if (bool(pl.Get("starting", true))) return false;
-        return true;
-    }
-
 
     void OnClickChoosePreset() {
         loading = true;

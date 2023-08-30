@@ -13,7 +13,10 @@ namespace BRM {
         return RoomSettingsBuilder(clubId, roomId);
     }
 
-    // may yield
+    /** Returns a JSON Array of JSON Objects.
+     *  The format is equivalent to under .clubList in the payload returned by <https://webservices.openplanet.dev/live/clubs/clubs-mine>
+     *  There are some additional fields, like nameSafe, tagSafe, and isAdmin (dump the json object for everything)
+    */
     const Json::Value@ GetMyClubs() {
         while (mainClubsTab is null) yield();
         while (mainClubsTab.loading) yield();
@@ -25,6 +28,35 @@ namespace BRM {
         return null;
     }
 
+    // join a server via clubId + roomId
+    void JoinServer(uint clubId, uint roomId, const string &in password = "") {
+        string pw;
+        if (password.Length > 0) {
+            pw = ":" + password;
+        }
+        Json::Value@ joinLink = GetJoinLink(clubId, roomId);
+        uint count = 0;
+        while (!JoinLinkReady(joinLink) && count < 10) {
+            count++;
+            sleep(2000);
+            @joinLink = GetJoinLink(clubId, roomId);
+        }
+        if (count >= 10) {
+            throw("No server was available after 10 retries (20+ seconds)");
+        }
+        string jl = joinLink.Get('joinLink', '');
+        lastJoinedRoomLink = jl.Replace("#join", "#qjoin") + pw;
+        ReturnToMenu();
+        trace("Joining: " + lastJoinedRoomLink);
+        cast<CGameManiaPlanet>(GetApp()).ManiaPlanetScriptAPI.OpenLink(lastJoinedRoomLink, CGameManiaPlanetScriptAPI::ELinkType::ManialinkBrowser);
+    }
+
+    bool JoinLinkReady(Json::Value@ pl) {
+        if (pl is null || pl.GetType() != Json::Type::Object) return false;
+        if (!pl.HasKey("joinLink") || !pl.HasKey("starting")) return false;
+        if (bool(pl.Get("starting", true))) return false;
+        return true;
+    }
 
     bool IsInAServer(CGameCtnApp@ app) {
         return WatchServer::IsInAServer(cast<CTrackMania>(app));
@@ -117,11 +149,13 @@ namespace BRM {
             return this.SetModeSetting("S_ChatTime", tostring(ct));
         }
 
-        // This will yield! An easy 'go to next map' command for club rooms. Duration is 5s + 2 http requests to nadeo.
+        // This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
         IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit, int chat_time = 1) {
             this.SetTimeLimit(1)
                 .SetChatTime(chat_time)
-                .SetMaps({mapUid});
+                .SetMaps({mapUid})
+                .SetMode(BRM::GameMode::TimeAttack);
+
             auto resp = this.SaveRoom();
             sleep(5000);
             this.SetTimeLimit(limit);

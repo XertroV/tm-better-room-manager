@@ -28,6 +28,7 @@ S_PickAndBan_Enable
 S_PickAndBan_Style
 """;
 
+// Note: authoritative file is /GameModes.csv, this is updated programattically now, e.g., via /add_champ_spring_2022_mode_opts.py
 const string GameModeCSV = """,Cup,Knockout,Laps,Teams,TimeAttack,Rounds,RoyalTimeAttack,TMWTTeams,TMWTMatchmaking,TeamsMatchmaking,TimeAttackDaily,KnockoutDaily,COTDQualifications,CupClassic,ChampionSpring2022,MultiTeams,HeadToHead,Final42TMGL
 S_BalanceScore,,,,,,,,,,1,,,,,,,,
 S_BasicAuthHeader,,,,,,,,,,,1,,1,,,,,
