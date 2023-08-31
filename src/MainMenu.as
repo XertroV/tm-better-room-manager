@@ -63,15 +63,18 @@ void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ s
 void Draw_BRM_QuickMenu_Admin() {
     UI::Separator();
     UI::AlignTextToFramePadding();
-    UI::Text(" >> Room Admin");
+    UI::Text(" >> Room Admin (\\$fa4for TA only\\$z)");
     if (UI::MenuItem("Extend TimeLimit by 5 min")) {
         startnew(MenuAdmin_ExtendTimeLimit_5min);
+    }
+    if (UI::MenuItem("Go to Next Map")) {
+        startnew(MenuAdmin_GoToNextMap);
     }
 }
 
 void MenuAdmin_ExtendTimeLimit_5min() {
     auto builder = BRM::CreateRoomBuilder(WatchServer::ClubId, WatchServer::RoomId);
-    builder.GetCurrentSettingsAsync();
+    builder.LoadCurrentSettingsAsync();
     if (!builder.HasModeSetting("S_TimeLimit")) {
         NotifyError("Cannot extend time limit when the setting doesn't exist.");
         return;
@@ -84,4 +87,20 @@ void MenuAdmin_ExtendTimeLimit_5min() {
     builder.SetTimeLimit(currTimeLimit + 300)
         .SaveRoom();
     Notify("Extended time limit by 5 minutes.");
+}
+
+void MenuAdmin_GoToNextMap() {
+    auto builder = BRM::CreateRoomBuilder(WatchServer::ClubId, WatchServer::RoomId);
+    builder.LoadCurrentSettingsAsync();
+    if (!builder.HasModeSetting("S_TimeLimit")) {
+        NotifyError("Cannot go to next map when the setting doesn't exist.");
+        return;
+    }
+    auto currTimeLimit = Text::ParseInt(builder.GetModeSetting("S_TimeLimit"));
+    builder.SetTimeLimit(1)
+        .SaveRoom();
+    Notify("Set room time limit to 1 second, should trigger end of round.");
+    sleep(6000);
+    builder.SetTimeLimit(currTimeLimit).SaveRoom();
+    Notify("Restored time limit to " + currTimeLimit + " seconds.");
 }

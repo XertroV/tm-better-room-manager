@@ -72,13 +72,25 @@ Join a server by getting the joinlink for a given club and room
 
 Add a map to the rooms map list
 
-##### GetCurrentSettingsAsync -- `IRoomSettingsBuilder@ GetCurrentSettingsAsync()`
+##### LoadCurrentSettingsAsync -- `IRoomSettingsBuilder@ LoadCurrentSettingsAsync()`
 
 Populate based on current room settings. This function may yield.
+
+##### GetCurrentSettingsJson -- `Json::Value@ GetCurrentSettingsJson()`
+
+Get the current raw settings json object (which is mutable). Call LoadCurrentSettingsAsync
 
 ##### GoToNextMapAndThenSetTimeLimit -- `IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit = -1, int ct = 1)`
 
 This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
+
+##### GetModeSetting -- `string GetModeSetting(const string &in key)`
+
+Gets a game mode setting's current value. Throws if it does not exist.
+
+##### HasModeSetting -- `bool HasModeSetting(const string &in key)`
+
+Whether a game mode setting exists (note: you probably want to call LoadCurrentSettingsAsync first)
 
 ##### SaveRoom -- `Json::Value@ SaveRoom()`
 

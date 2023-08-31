@@ -91,7 +91,7 @@ namespace BRM {
         }
 
         // Populate based on current room settings. This function may yield.
-        IRoomSettingsBuilder@ GetCurrentSettingsAsync() {
+        IRoomSettingsBuilder@ LoadCurrentSettingsAsync() {
             @currSettings = GetClubRoom(clubId, roomId);
             data['maps'] = Json::Array();
             for (uint i = 0; i < currSettings['room']['maps'].Length; i++) {
@@ -107,6 +107,10 @@ namespace BRM {
                 data['settings'].Add(currSettings['room']['scriptSettings'][ssKeys[i]]);
             }
             return this;
+        }
+
+        Json::Value@ GetCurrentSettingsJson() {
+            return data;
         }
 
         IRoomSettingsBuilder@ SetMode(GameMode mode, bool withDefaultSettings = false) {

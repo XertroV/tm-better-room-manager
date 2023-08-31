@@ -38,19 +38,18 @@ namespace WatchServer {
         auto declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
         // wait up to Xs for club ID
         auto maxWait = 60 * 1000;
-        auto startedAt = Time::Now;
+        int startedAt = Time::Now;
         while (app.Network.ClientManiaAppPlayground !is null
             && !declaredVars.Contains("Net_DecoImage_ClubId = ")
             && Time::Now - startedAt < maxWait
             && ServerLogin == app.ManiaPlanetScriptAPI.CurrentServerLogin
         ) {
-            sleep(250);
             declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
+            sleep(250);
         }
         auto parts = declaredVars.Split("Net_DecoImage_ClubId = ");
-        FinishedLoading = true;
-        if (parts.Length <= 1) return;
-        FinishedLoading = false;
+        FinishedLoading = parts.Length <= 1;
+        if (FinishedLoading) return;
         ClubId = Text::ParseInt(parts[1].Split("\n")[0]);
         trace("Joined server with ClubId: " + ClubId + " / ServerLogin: " + ServerLogin);
         _CheckRoomsForClub();

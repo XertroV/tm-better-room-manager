@@ -8,15 +8,16 @@ namespace BRM {
         TimeAttack = 5,
         Rounds = 6,
         RoyalTimeAttack = 7,
-        // unofficial but included ones?
-        TMWTTeams,
-        TMWTMatchmaking,
-        TeamsMatchmaking,
-        TimeAttackDaily,
-        KnockoutDaily,
-        COTDQualifications,
-        CupClassic,
-        ChampionSpring2022,
+        // unofficial but included ones -- note: do not change order!
+        TMWTTeams = 8,
+        TMWTMatchmaking = 9,
+        TeamsMatchmaking = 10,
+        TimeAttackDaily = 11,
+        KnockoutDaily = 12,
+        COTDQualifications = 13,
+        CupClassic = 14,
+        ChampionSpring2022 = 15,
+        Royal = 16,
         // unlisted modes
         MultiTeams,
         HeadToHead,
@@ -44,6 +45,7 @@ namespace BRM {
             case GameMode::COTDQualifications: return "TrackMania/TM_COTDQualifications_Online.Script.txt";
             case GameMode::CupClassic: return "TrackMania/Legacy/TM_CupClassic_Online.Script.txt";
             case GameMode::ChampionSpring2022: return "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt";
+            case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
             // unlisted
             case GameMode::MultiTeams: return "TrackMania/TM_MultiTeams_Online.Script.txt";
             case GameMode::HeadToHead: return "TrackMania/TM_HeadToHead_Online.Script.txt";
@@ -71,6 +73,7 @@ namespace BRM {
         if (modeStr == "TrackMania/TM_COTDQualifications_Online.Script.txt") return GameMode::COTDQualifications;
         if (modeStr == "TrackMania/Legacy/TM_CupClassic_Online.Script.txt") return GameMode::CupClassic;
         if (modeStr == "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt") return GameMode::ChampionSpring2022;
+        if (modeStr == "TrackMania/TM_Royal_Online.Script.txt") return GameMode::Royal;
             // unlisted
         if (modeStr == "TrackMania/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
         if (modeStr == "TrackMania/TM_HeadToHead_Online.Script.txt") return GameMode::HeadToHead;
@@ -82,15 +85,18 @@ namespace BRM {
 
     shared interface IRoomSettingsBuilder {
         // Populate based on current room settings. This function may yield.
-        IRoomSettingsBuilder@ GetCurrentSettingsAsync();
+        IRoomSettingsBuilder@ LoadCurrentSettingsAsync();
+
+        // Get the current raw settings json object (which is mutable). Call LoadCurrentSettingsAsync
+        Json::Value@ GetCurrentSettingsJson();
 
         // Set the room game mode
         IRoomSettingsBuilder@ SetMode(GameMode mode, bool withDefaultSettings = false);
 
-        // Whether a game mode setting exists (note: you probably want to call GetCurrentSettingsAsync first)
+        // Whether a game mode setting exists (note: you probably want to call LoadCurrentSettingsAsync first)
         bool HasModeSetting(const string &in key);
 
-        // Gets a game mode setting's current value
+        // Gets a game mode setting's current value. Throws if it does not exist.
         string GetModeSetting(const string &in key);
 
         // Set a game mode setting (e.g., S_TimeLimit)
