@@ -87,7 +87,7 @@ namespace BRM {
         // Populate based on current room settings. This function may yield.
         IRoomSettingsBuilder@ LoadCurrentSettingsAsync();
 
-        // Get the current raw settings json object (which is mutable). Call LoadCurrentSettingsAsync
+        // Get the current raw settings json object (which is mutable). Call LoadCurrentSettingsAsync first to load current settings.
         Json::Value@ GetCurrentSettingsJson();
 
         // Set the room game mode

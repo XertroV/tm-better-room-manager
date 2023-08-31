@@ -78,7 +78,7 @@ Populate based on current room settings. This function may yield.
 
 ##### GetCurrentSettingsJson -- `Json::Value@ GetCurrentSettingsJson()`
 
-Get the current raw settings json object (which is mutable). Call LoadCurrentSettingsAsync
+Get the current raw settings json object (which is mutable). Call LoadCurrentSettingsAsync first to load current settings.
 
 ##### GoToNextMapAndThenSetTimeLimit -- `IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit = -1, int ct = 1)`
 
