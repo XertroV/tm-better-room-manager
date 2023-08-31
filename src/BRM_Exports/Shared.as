@@ -87,6 +87,12 @@ namespace BRM {
         // Set the room game mode
         IRoomSettingsBuilder@ SetMode(GameMode mode, bool withDefaultSettings = false);
 
+        // Whether a game mode setting exists (note: you probably want to call GetCurrentSettingsAsync first)
+        bool HasModeSetting(const string &in key);
+
+        // Gets a game mode setting's current value
+        string GetModeSetting(const string &in key);
+
         // Set a game mode setting (e.g., S_TimeLimit)
         IRoomSettingsBuilder@ SetModeSetting(const string &in key, const string &in value);
 
@@ -126,12 +132,14 @@ namespace BRM {
         string name;
         int clubId = -1;
         int roomId = -1;
+        bool isAdmin;
 
-        ServerInfo(const string &in login, const string &in name, int clubId, int roomId) {
+        ServerInfo(const string &in login, const string &in name, int clubId, int roomId, bool isAdmin) {
             this.login = login;
             this.name = name;
             this.clubId = clubId;
             this.roomId = roomId;
+            this.isAdmin = isAdmin;
         }
     }
 }

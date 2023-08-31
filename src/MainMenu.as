@@ -55,13 +55,33 @@ void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ s
     // }
     UI::EndDisabled();
 
-    if (lastJoinedRoomLink == si.JoinLink && lastJoinedRoomTab !is null) {
+    if (WatchServer::IsAdmin) {
         Draw_BRM_QuickMenu_Admin();
     }
 }
 
 void Draw_BRM_QuickMenu_Admin() {
-    auto roomTab = lastJoinedRoomTab;
-    if (roomTab is null) return;
+    UI::Separator();
+    UI::AlignTextToFramePadding();
+    UI::Text(" >> Room Admin");
+    if (UI::MenuItem("Extend TimeLimit by 5 min")) {
+        startnew(MenuAdmin_ExtendTimeLimit_5min);
+    }
+}
 
+void MenuAdmin_ExtendTimeLimit_5min() {
+    auto builder = BRM::CreateRoomBuilder(WatchServer::ClubId, WatchServer::RoomId);
+    builder.GetCurrentSettingsAsync();
+    if (!builder.HasModeSetting("S_TimeLimit")) {
+        NotifyError("Cannot extend time limit when the setting doesn't exist.");
+        return;
+    }
+    auto currTimeLimit = Text::ParseInt(builder.GetModeSetting("S_TimeLimit"));
+    if (currTimeLimit < 0) {
+        Notify("Time limit is already set to unlimited");
+        return;
+    }
+    builder.SetTimeLimit(currTimeLimit + 300)
+        .SaveRoom();
+    Notify("Extended time limit by 5 minutes.");
 }

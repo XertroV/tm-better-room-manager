@@ -71,7 +71,7 @@ namespace BRM {
         if (IsInAServer(tm)) {
             while (waitForClubId && !WatchServer::FinishedLoading) yield();
             if (!waitForClubId && !WatchServer::FinishedLoading) return null;
-            return ServerInfo(WatchServer::ServerLogin, WatchServer::ServerName, WatchServer::ClubId, WatchServer::RoomId);
+            return ServerInfo(WatchServer::ServerLogin, WatchServer::ServerName, WatchServer::ClubId, WatchServer::RoomId, WatchServer::IsAdmin);
         }
         return null;
     }
@@ -116,6 +116,27 @@ namespace BRM {
                 warn('todo: default settings');
             }
             return this;
+        }
+
+        bool HasModeSetting(const string &in key) {
+            for (uint i = 0; i < data['settings'].Length; i++) {
+                auto @s = data['settings'][i];
+                if (string(s['key']) == key) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        string GetModeSetting(const string &in key) {
+            for (uint i = 0; i < data['settings'].Length; i++) {
+                auto @s = data['settings'][i];
+                if (string(s['key']) == key) {
+                    return s['value'];
+                }
+            }
+            throw("Key not found in settings");
+            return "";
         }
 
         IRoomSettingsBuilder@ SetModeSetting(const string &in key, const string &in value) {

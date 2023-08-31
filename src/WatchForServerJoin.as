@@ -24,6 +24,7 @@ namespace WatchServer {
     string ServerName;
     int ClubId = -1;
     int RoomId = -1;
+    bool IsAdmin = false;
     bool FinishedLoading = false;
 
     void OnJoinedServer() {
@@ -35,13 +36,16 @@ namespace WatchServer {
         FinishedLoading = false;
         auto si = cast<CTrackManiaNetworkServerInfo>(app.Network.ServerInfo);
         auto declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
-        // wait up to 15s for club ID
+        // wait up to Xs for club ID
+        auto maxWait = 60 * 1000;
         auto startedAt = Time::Now;
-        while (app.Network.ClientManiaAppPlayground !is null && !declaredVars.Contains("Net_DecoImage_ClubId = ") && Time::Now - startedAt < 15000
+        while (app.Network.ClientManiaAppPlayground !is null
+            && !declaredVars.Contains("Net_DecoImage_ClubId = ")
+            && Time::Now - startedAt < maxWait
             && ServerLogin == app.ManiaPlanetScriptAPI.CurrentServerLogin
         ) {
-            declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
             sleep(250);
+            declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
         }
         auto parts = declaredVars.Split("Net_DecoImage_ClubId = ");
         FinishedLoading = true;
@@ -60,6 +64,15 @@ namespace WatchServer {
         int clubId = ClubId;
         if (clubId <= 0) {
             return;
+        }
+
+        // set IsAdmin flag
+        auto myClubs = BRM::GetMyClubs();
+        for (uint i = 0; i < myClubs.Length; i++) {
+            if (ClubId == int(myClubs[i]['id'])) {
+                IsAdmin = myClubs[i]['isAnyAdmin'];
+                break;
+            }
         }
 
         if (!RefreshRoomsState.HasKey(cid)) {
