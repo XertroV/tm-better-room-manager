@@ -18,6 +18,7 @@ namespace BRM {
         CupClassic = 14,
         ChampionSpring2022 = 15,
         Royal = 16,
+        TMWC2023 = 17,
         // unlisted modes
         MultiTeams,
         HeadToHead,
@@ -46,6 +47,7 @@ namespace BRM {
             case GameMode::CupClassic: return "TrackMania/Legacy/TM_CupClassic_Online.Script.txt";
             case GameMode::ChampionSpring2022: return "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt";
             case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
+            case GameMode::TMWC2023: return "TrackMania/TM_TMWC2023_Online.Script.txt";
             // unlisted
             case GameMode::MultiTeams: return "TrackMania/TM_MultiTeams_Online.Script.txt";
             case GameMode::HeadToHead: return "TrackMania/TM_HeadToHead_Online.Script.txt";
@@ -74,7 +76,8 @@ namespace BRM {
         if (modeStr == "TrackMania/Legacy/TM_CupClassic_Online.Script.txt") return GameMode::CupClassic;
         if (modeStr == "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt") return GameMode::ChampionSpring2022;
         if (modeStr == "TrackMania/TM_Royal_Online.Script.txt") return GameMode::Royal;
-            // unlisted
+        if (modeStr == "TrackMania/TM_TMWC2023_Online.Script.txt") return GameMode::TMWC2023;
+        // unlisted
         if (modeStr == "TrackMania/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
         if (modeStr == "TrackMania/TM_HeadToHead_Online.Script.txt") return GameMode::HeadToHead;
         if (modeStr == "TrackMania/TM_Final42TMGL_Online.Script.txt") return GameMode::Final42TMGL;
