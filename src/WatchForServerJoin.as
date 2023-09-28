@@ -17,6 +17,7 @@ namespace WatchServer {
 
     bool IsInAServer(CTrackMania@ app) {
         if (app.ManiaPlanetScriptAPI is null) return false;
+        if (app.Network.ClientManiaAppPlayground is null) return false;
         return app.ManiaPlanetScriptAPI.CurrentServerLogin.Length > 0;
     }
 
@@ -35,7 +36,7 @@ namespace WatchServer {
         RoomId = -1;
         FinishedLoading = false;
         auto si = cast<CTrackManiaNetworkServerInfo>(app.Network.ServerInfo);
-        auto declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
+        auto declaredVars = string(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
         // wait up to Xs for club ID
         auto maxWait = 60 * 1000;
         int startedAt = Time::Now;
@@ -44,7 +45,7 @@ namespace WatchServer {
             && Time::Now - startedAt < maxWait
             && ServerLogin == app.ManiaPlanetScriptAPI.CurrentServerLogin
         ) {
-            declaredVars = tostring(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
+            declaredVars = string(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
             sleep(250);
         }
         auto parts = declaredVars.Split("Net_DecoImage_ClubId = ");
