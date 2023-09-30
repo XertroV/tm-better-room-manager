@@ -41,14 +41,14 @@ namespace WatchServer {
         auto maxWait = 60 * 1000;
         int startedAt = Time::Now;
         while (app.Network.ClientManiaAppPlayground !is null
-            && !declaredVars.Contains("Net_DecoImage_ClubId = ")
+            && !declaredVars.Contains("Net_TMGame_DecoImage_ClubId = ")
             && Time::Now - startedAt < maxWait
             && ServerLogin == app.ManiaPlanetScriptAPI.CurrentServerLogin
         ) {
             declaredVars = string(app.Network.ClientManiaAppPlayground.Dbg_DumpDeclareForVariables(si.TeamProfile1, false));
             sleep(250);
         }
-        auto parts = declaredVars.Split("Net_DecoImage_ClubId = ");
+        auto parts = declaredVars.Split("Net_TMGame_DecoImage_ClubId = ");
         FinishedLoading = parts.Length <= 1;
         if (FinishedLoading) return;
         ClubId = Text::ParseInt(parts[1].Split("\n")[0]);
