@@ -239,7 +239,6 @@ class RoomTab : Tab {
         if (UI::BeginCombo("Mode", tostring(mode))) {
             for (int i = 1; i < int(BRM::GameMode::XXX_LAST); i++) {
                 // these don't work
-                if (i == int(BRM::GameMode::MultiTeams)) continue;
                 if (i == int(BRM::GameMode::HeadToHead)) continue;
                 if (i == int(BRM::GameMode::Final42TMGL)) continue;
                 if (UI::Selectable(tostring(BRM::GameMode(i)), i == int(mode))) mode = BRM::GameMode(i);

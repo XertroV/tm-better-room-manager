@@ -20,7 +20,7 @@ namespace BRM {
         Royal = 16,
         TMWC2023 = 17,
         // unlisted modes
-        MultiTeams,
+        MultiTeams = 18,
         HeadToHead,
         Final42TMGL,
         // leave last for loops
@@ -49,7 +49,7 @@ namespace BRM {
             case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
             case GameMode::TMWC2023: return "TrackMania/TM_TMWC2023_Online.Script.txt";
             // unlisted
-            case GameMode::MultiTeams: return "TrackMania/TM_MultiTeams_Online.Script.txt";
+            case GameMode::MultiTeams: return "TrackMania/Deprecated/TM_MultiTeams_Online.Script.txt";
             case GameMode::HeadToHead: return "TrackMania/TM_HeadToHead_Online.Script.txt";
             case GameMode::Final42TMGL: return "TrackMania/TM_Final42TMGL_Online.Script.txt";
         }
@@ -78,7 +78,7 @@ namespace BRM {
         if (modeStr == "TrackMania/TM_Royal_Online.Script.txt") return GameMode::Royal;
         if (modeStr == "TrackMania/TM_TMWC2023_Online.Script.txt") return GameMode::TMWC2023;
         // unlisted
-        if (modeStr == "TrackMania/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
+        if (modeStr == "TrackMania/Deprecated/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
         if (modeStr == "TrackMania/TM_HeadToHead_Online.Script.txt") return GameMode::HeadToHead;
         if (modeStr == "TrackMania/TM_Final42TMGL_Online.Script.txt") return GameMode::Final42TMGL;
         // default
