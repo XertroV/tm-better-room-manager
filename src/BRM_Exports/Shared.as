@@ -20,9 +20,9 @@ namespace BRM {
         Royal = 16,
         TMWC2023 = 17,
         // unlisted modes
-        MultiTeams,
-        HeadToHead,
-        Final42TMGL,
+        MultiTeams = 18,
+        HeadToHead = 19,
+        Final42TMGL = 20,
         // leave last for loops
         XXX_LAST
     }
@@ -49,9 +49,9 @@ namespace BRM {
             case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
             case GameMode::TMWC2023: return "TrackMania/TM_TMWC2023_Online.Script.txt";
             // unlisted
-            case GameMode::MultiTeams: return "TrackMania/TM_MultiTeams_Online.Script.txt";
-            case GameMode::HeadToHead: return "TrackMania/TM_HeadToHead_Online.Script.txt";
-            case GameMode::Final42TMGL: return "TrackMania/TM_Final42TMGL_Online.Script.txt";
+            case GameMode::MultiTeams: return "TrackMania/Deprecated/TM_MultiTeams_Online.Script.txt";
+            case GameMode::HeadToHead: return "TrackMania/Deprecated/TM_HeadToHead_Online.Script.txt";
+            case GameMode::Final42TMGL: return "TrackMania/Deprecated/TM_Final42TMGL_Online.Script.txt";
         }
         throw("Unknown mode");
         return "";
@@ -78,9 +78,9 @@ namespace BRM {
         if (modeStr == "TrackMania/TM_Royal_Online.Script.txt") return GameMode::Royal;
         if (modeStr == "TrackMania/TM_TMWC2023_Online.Script.txt") return GameMode::TMWC2023;
         // unlisted
-        if (modeStr == "TrackMania/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
-        if (modeStr == "TrackMania/TM_HeadToHead_Online.Script.txt") return GameMode::HeadToHead;
-        if (modeStr == "TrackMania/TM_Final42TMGL_Online.Script.txt") return GameMode::Final42TMGL;
+        if (modeStr == "TrackMania/Deprecated/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
+        if (modeStr == "TrackMania/Deprecated/TM_HeadToHead_Online.Script.txt") return GameMode::HeadToHead;
+        if (modeStr == "TrackMania/Deprecated/TM_Final42TMGL_Online.Script.txt") return GameMode::Final42TMGL;
         // default
         return GameMode::Unknown;
     }
