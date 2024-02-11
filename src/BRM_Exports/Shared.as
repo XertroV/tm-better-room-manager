@@ -22,9 +22,9 @@ namespace BRM {
         // Nov 20
         RoyalStars = 18,
         // unlisted modes
-        MultiTeams = 18,
-        HeadToHead = 19,
-        Final42TMGL = 20,
+        MultiTeams = 19,
+        HeadToHead = 20,
+        Final42TMGL = 21,
         // leave last for loops
         XXX_LAST
     }

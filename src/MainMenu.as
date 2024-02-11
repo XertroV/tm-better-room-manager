@@ -60,23 +60,46 @@ void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ s
     }
 }
 
-uint m_CustMoveOnInSeconds = 90;
+int m_CustMoveOnInSeconds = 90;
+int m_SetTimeLimitSeconds = -1;
 
 void Draw_BRM_QuickMenu_Admin() {
     UI::Separator();
     UI::AlignTextToFramePadding();
     UI::Text(" >> Room Admin (\\$fa4for TA only\\$z)");
+    if (UI::BeginMenu("Set Time Limit")) {
+        m_SetTimeLimitSeconds = Math::Clamp(UI::InputInt("Time Limit (S)", m_SetTimeLimitSeconds), -1, 99999);
+        string limit = m_SetTimeLimitSeconds <= 0 ? "Unlimited" : Time::Format(m_SetTimeLimitSeconds*1000, false, true, false);
+        UI::Text("\\$aaaNew Time Limit: " + limit);
+        if (UI::MenuItem("Set Time Limit")) {
+            startnew(MenuAdmin_SetTimeLimit, m_SetTimeLimitSeconds);
+        }
+        UI::EndMenu();
+    }
     if (UI::BeginMenu("Move On In...")) {
+        if (UI::MenuItem("15 Seconds")) {
+            startnew(MenuAdmin_MoveOnInSeconds, 15);
+        }
+        if (UI::MenuItem("30 Seconds")) {
+            startnew(MenuAdmin_MoveOnInSeconds, 30);
+        }
         if (UI::MenuItem("1 Minute")) {
             startnew(MenuAdmin_MoveOnInSeconds, 60);
         }
         if (UI::MenuItem("2 Minutes")) {
-            startnew(MenuAdmin_MoveOnInSeconds, 60);
+            startnew(MenuAdmin_MoveOnInSeconds, 120);
         }
         if (UI::MenuItem("5 Minutes")) {
-            startnew(MenuAdmin_MoveOnInSeconds, 60);
+            startnew(MenuAdmin_MoveOnInSeconds, 300);
         }
-
+        // custom
+        UI::Separator();
+        m_CustMoveOnInSeconds = Math::Clamp(UI::InputInt("Custom (S)", m_CustMoveOnInSeconds), 1, 99999);
+        UI::Text("\\$aaaNew remaining time: " + Time::Format(m_CustMoveOnInSeconds*1000, false, true, false));
+        string custLabel = m_CustMoveOnInSeconds < 120 ? tostring(m_CustMoveOnInSeconds) + " seconds" : Text::Format("%.1f minutes", float(m_CustMoveOnInSeconds) / 60.0);
+        if (UI::MenuItem("Set Move on in " + custLabel)) {
+            startnew(MenuAdmin_MoveOnInSeconds, int64(m_CustMoveOnInSeconds));
+        }
         UI::EndMenu();
     }
     if (UI::MenuItem("Extend TimeLimit by 5 min")) {
@@ -87,16 +110,26 @@ void Draw_BRM_QuickMenu_Admin() {
     }
 }
 
+void MenuAdmin_SetTimeLimit(int64 newTimeLimitSeconds) {
+    auto builder = BRM::CreateRoomBuilder(WatchServer::ClubId, WatchServer::RoomId);
+    builder.LoadCurrentSettingsAsync();
+    Notify("Setting room time limit to " + newTimeLimitSeconds + " seconds...");
+    builder.SetTimeLimit(newTimeLimitSeconds)
+        .SaveRoom();
+    Notify("\\$8f8Updated\\$z room time limit to " + newTimeLimitSeconds + " seconds.");
+}
+
+
 uint moiNonce = 0;
 
-void MenuAdmin_MoveOnInSeconds(uint moiSeconds) {
+void MenuAdmin_MoveOnInSeconds(int64 moiSeconds) {
     moiNonce += 1;
     auto nonce = moiNonce;
     auto builder = BRM::CreateRoomBuilder(WatchServer::ClubId, WatchServer::RoomId);
     builder.LoadCurrentSettingsAsync();
     if (!builder.HasModeSetting("S_TimeLimit")) {
-        NotifyError("Cannot move on when the setting doesn't exist.");
-        return;
+        // set default
+        builder.SetModeSetting("S_TimeLimit", "300");
     }
     auto currRoomTimeLimit = Text::ParseInt(builder.GetModeSetting("S_TimeLimit"));
     auto actualCurrArenaTime = GetArenaCurrentTimeSeconds();
@@ -105,7 +138,7 @@ void MenuAdmin_MoveOnInSeconds(uint moiSeconds) {
     builder.SetTimeLimit(newTimeLimit)
         .SaveRoom();
     Notify("\\$8f8Updated\\$z time limit to " + newTimeLimit + " seconds. Waiting for it to activate...");
-    sleep(2000 + Math::Min(moiSeconds, 5) * 1000);
+    sleep(2000 + Math::Max(moiSeconds, 5) * 1000);
     if (nonce != moiNonce) return;
     Notify("Restoring old room time limit: " + currRoomTimeLimit);
     builder.SetTimeLimit(currRoomTimeLimit)
