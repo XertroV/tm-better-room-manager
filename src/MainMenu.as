@@ -60,16 +60,57 @@ void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ s
     }
 }
 
+uint m_CustMoveOnInSeconds = 90;
+
 void Draw_BRM_QuickMenu_Admin() {
     UI::Separator();
     UI::AlignTextToFramePadding();
     UI::Text(" >> Room Admin (\\$fa4for TA only\\$z)");
+    if (UI::BeginMenu("Move On In...")) {
+        if (UI::MenuItem("1 Minute")) {
+            startnew(MenuAdmin_MoveOnInSeconds, 60);
+        }
+        if (UI::MenuItem("2 Minutes")) {
+            startnew(MenuAdmin_MoveOnInSeconds, 60);
+        }
+        if (UI::MenuItem("5 Minutes")) {
+            startnew(MenuAdmin_MoveOnInSeconds, 60);
+        }
+
+        UI::EndMenu();
+    }
     if (UI::MenuItem("Extend TimeLimit by 5 min")) {
         startnew(MenuAdmin_ExtendTimeLimit_5min);
     }
     if (UI::MenuItem("Go to Next Map")) {
         startnew(MenuAdmin_GoToNextMap);
     }
+}
+
+uint moiNonce = 0;
+
+void MenuAdmin_MoveOnInSeconds(uint moiSeconds) {
+    moiNonce += 1;
+    auto nonce = moiNonce;
+    auto builder = BRM::CreateRoomBuilder(WatchServer::ClubId, WatchServer::RoomId);
+    builder.LoadCurrentSettingsAsync();
+    if (!builder.HasModeSetting("S_TimeLimit")) {
+        NotifyError("Cannot move on when the setting doesn't exist.");
+        return;
+    }
+    auto currRoomTimeLimit = Text::ParseInt(builder.GetModeSetting("S_TimeLimit"));
+    auto actualCurrArenaTime = GetArenaCurrentTimeSeconds();
+    auto newTimeLimit = actualCurrArenaTime + moiSeconds;
+    Notify("Setting room time limit to " + newTimeLimit + " seconds");
+    builder.SetTimeLimit(newTimeLimit)
+        .SaveRoom();
+    Notify("\\$8f8Updated\\$z time limit to " + newTimeLimit + " seconds. Waiting for it to activate...");
+    sleep(2000 + Math::Min(moiSeconds, 5) * 1000);
+    if (nonce != moiNonce) return;
+    Notify("Restoring old room time limit: " + currRoomTimeLimit);
+    builder.SetTimeLimit(currRoomTimeLimit)
+        .SaveRoom();
+    Notify("\\$8f8Restored\\$z time limit to " + currRoomTimeLimit + " seconds.");
 }
 
 void MenuAdmin_ExtendTimeLimit_5min() {

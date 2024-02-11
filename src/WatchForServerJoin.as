@@ -1,5 +1,4 @@
 namespace WatchServer {
-
     void Main() {
         auto app = cast<CTrackMania>(GetApp());
         while (true) {
@@ -120,4 +119,37 @@ namespace WatchServer {
         RoomId = -1;
         FinishedLoading = false;
     }
+}
+
+
+int GetArenaCurrentTimeSeconds() {
+    return (PlaygroundNow() - GetRulesStartTime()) / 1000;
+}
+
+
+uint PlaygroundNow() {
+    auto app = GetApp();
+    auto pg = app.Network.PlaygroundClientScriptAPI;
+    if (pg is null) return uint(-1);
+    return uint(pg.GameTime);
+}
+
+// measured in ms
+uint GetRulesStartTime() {
+    auto app = GetApp();
+    auto cp = cast<CSmArenaClient>(app.CurrentPlayground);
+    if (cp is null || cp.Arena is null || cp.Arena.Rules is null) return uint(-1);
+    return uint(cp.Arena.Rules.RulesStateStartTime);
+}
+
+// measured in ms
+uint GetRulesEndTime() {
+    auto app = GetApp();
+    auto cp = cast<CSmArenaClient>(app.CurrentPlayground);
+    if (cp is null || cp.Arena is null || cp.Arena.Rules is null) return uint(-1);
+    return uint(cp.Arena.Rules.RulesStateEndTime);
+}
+
+int GetSecondsLeft() {
+    return (int64(GetRulesEndTime()) - int64(GetRulesStartTime())) / 1000;
 }
