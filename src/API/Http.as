@@ -1,7 +1,5 @@
 void AddAudiences() {
-    NadeoServices::AddAudience("NadeoClubServices");
     NadeoServices::AddAudience("NadeoLiveServices");
-    while (!NadeoServices::IsAuthenticated("NadeoClubServices")) yield();
     while (!NadeoServices::IsAuthenticated("NadeoLiveServices")) yield();
 }
 
@@ -23,7 +21,7 @@ Json::Value@ PostLiveEndpoint(const string &in route, Json::Value@ data) {
 
 Json::Value@ FetchClubEndpoint(const string &in route) {
     trace("[FetchClubEndpoint] Requesting: " + route);
-    auto req = NadeoServices::Get("NadeoClubServices", route);
+    auto req = NadeoServices::Get("NadeoLiveServices", route);
     req.Start();
     while(!req.Finished()) { yield(); }
     return Json::Parse(req.String());
@@ -41,12 +39,12 @@ Json::Value@ PostLiveApiPath(const string &in path, Json::Value@ data) {
 
 Json::Value@ CallCompApiPath(const string &in path) {
     AssertGoodPath(path);
-    return FetchClubEndpoint(NadeoServices::BaseURLCompetition() + path);
+    return FetchClubEndpoint(NadeoServices::BaseURLMeet() + path);
 }
 
 Json::Value@ CallClubApiPath(const string &in path) {
     AssertGoodPath(path);
-    return FetchClubEndpoint(NadeoServices::BaseURLClub() + path);
+    return FetchClubEndpoint(NadeoServices::BaseURLMeet() + path);
 }
 
 // Json::Value@ CallMapMonitorApiPath(const string &in path) {
