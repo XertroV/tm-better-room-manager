@@ -9,6 +9,7 @@ class RoomTab : Tab {
     Json::Value@ thisRoom = Json::Object();
     bool loading = false;
     bool saving = false;
+    bool isDedicated = false;
     LazyMap@[] lazyMaps;
     GameOpt@[] gameOpts;
     bool isEditing = true;
@@ -44,11 +45,7 @@ class RoomTab : Tab {
             thisRoom['clubName'] = ColoredString(thisRoom['clubName']);
             thisRoom['name'] = ColoredString(thisRoom['name']);
             thisRoom['room']['name'] = ColoredString(thisRoom['room']['name']);
-            if (thisRoom['room']['serverAccountId'] != ""){
-            mainTabs.RemoveAt(mainTabs.FindByRef(this));
-            NotifyWarning("This room is a dedicated Server!.");
-            return;
-            }else{
+            isDedicated = thisRoom['room']['serverAccountId'] != "";
             // if we created a new room, start active
             if (!isEditing) isActive = true;
             // if we created a room, we're definitely editing now
@@ -56,11 +53,9 @@ class RoomTab : Tab {
             ResetFormFromRoomInfo();
             PopulateMapsList();
             PopulateGameOpts();
-           } 
         } catch {
             NotifyWarning('Failed to update room info: ' + getExceptionInfo());
         }
-        
         loading = false;
     }
 
@@ -90,15 +85,20 @@ class RoomTab : Tab {
     }
 
     void DrawInner() override {
+        UI::BeginDisabled(isDedicated);
         DrawControlBar();
         UI::Separator();
         DrawMainBody();
+        UI::EndDisabled();
         // DrawRoomsTable();
     }
 
     float mapsCtrlBarRHSWidth = 100;
 
     void DrawMainBody() {
+        if (isDedicated) {
+            UI::TextWrapped("\\$f80Editing dedicated servers is not supported! (This is a dedicated server.)");
+        }
         UI::BeginDisabled(loading || saving);
         if (UI::BeginTable('edit-room-table##' + roomId, 3, UI::TableFlags::SizingStretchSame)) {
             UI::TableSetupColumn("lhs", UI::TableColumnFlags::WidthStretch, .45);
