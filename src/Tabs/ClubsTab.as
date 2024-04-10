@@ -133,12 +133,22 @@ class ClubsTab : Tab {
 
         UI::TableNextColumn();
         UI::Text(club['nameSafe']);
+        
+        string iconUrlPngSmall = club['iconUrlPngSmall'];
+        auto ClubImageSmall = Images::CachedFromURL(iconUrlPngSmall);
+        if (UI::IsItemHovered() && ClubImageSmall.m_texture !is null){
+        UI::BeginTooltip();
+        UI::Image(ClubImageSmall.m_texture, vec2(154,69));
+        UI::EndTooltip();
+        }
 
         UI::TableNextColumn();
         UI::Text(club['tagSafe']);
 
         UI::TableNextColumn();
         UI::Text(role);
+        
+        //trace(iconUrlPngSmall);;
 
         UI::TableNextColumn();
         if (isAdmin || role == CONTENT_CREATOR) {
