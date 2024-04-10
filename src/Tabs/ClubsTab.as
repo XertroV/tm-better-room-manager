@@ -135,13 +135,26 @@ class ClubsTab : Tab {
         UI::Text(club['nameSafe']);
         
         string iconUrlPngSmall = club['iconUrlPngSmall'];
+        
+        bool verified = club['verified'];
+        
         auto ClubImageSmall = Images::CachedFromURL(iconUrlPngSmall);
-        if (UI::IsItemHovered() && ClubImageSmall.m_texture !is null){
+        
+        if (UI::IsItemHovered() && ClubImageSmall.m_texture !is null && verified == true){
         UI::BeginTooltip();
         UI::Image(ClubImageSmall.m_texture, vec2(154,69));
+        UI::Button(Icons::CheckCircleO);
+        UI::Text('\\$00f Verified');
         UI::EndTooltip();
         }
-
+        
+        if (UI::IsItemHovered() && verified == false){
+        UI::BeginTooltip();
+        UI::Button(Icons::TimesCircleO);
+        UI::Text('\\$00f Not Verified');
+        UI::EndTooltip();
+        }
+        
         UI::TableNextColumn();
         UI::Text(club['tagSafe']);
 
