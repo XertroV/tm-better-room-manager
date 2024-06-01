@@ -32,9 +32,9 @@ class ClubsTab : Tab {
     void FixClubNamesTags(uint startIx = 0) {
         for (uint i = startIx; i < myClubs.Length; i++) {
             auto club = myClubs[i];
-            // print(ColoredString(club['name']));
-            club['nameSafe'] = ColoredString(club['name']);
-            club['tagSafe'] = ColoredString(club['tag']);
+            // print(Text::OpenplanetFormatCodes(club['name']));
+            club['nameSafe'] = Text::OpenplanetFormatCodes(club['name']);
+            club['tagSafe'] = Text::OpenplanetFormatCodes(club['tag']);
             // print(club['name']);
             string role = string(club['role']);
             bool isAdmin = role == "Admin" || role == "Creator";
@@ -133,34 +133,34 @@ class ClubsTab : Tab {
 
         UI::TableNextColumn();
         UI::Text(club['nameSafe']);
-        
+
         string iconUrlPngSmall = club['iconUrlPngSmall'];
-        
+
         bool verified = club['verified'];
-        
+
         auto ClubImageSmall = Images::CachedFromURL(iconUrlPngSmall);
-        
-        if (UI::IsItemHovered() && ClubImageSmall.m_texture !is null && verified == true){
+
+        if (UI::IsItemHovered() && ClubImageSmall.GetTex() !is null && verified == true){
         UI::BeginTooltip();
-        UI::Image(ClubImageSmall.m_texture, vec2(154,69));
+        UI::Image(ClubImageSmall.GetTex(), vec2(154,69));
         UI::Button(Icons::CheckCircleO);
         UI::Text('\\$00f Verified');
         UI::EndTooltip();
         }
-        
+
         if (UI::IsItemHovered() && verified == false){
         UI::BeginTooltip();
         UI::Button(Icons::TimesCircleO);
         UI::Text('\\$00f Not Verified');
         UI::EndTooltip();
         }
-        
+
         UI::TableNextColumn();
         UI::Text(club['tagSafe']);
 
         UI::TableNextColumn();
         UI::Text(role);
-        
+
         //trace(iconUrlPngSmall);;
 
         UI::TableNextColumn();
@@ -177,7 +177,7 @@ class ClubsTab : Tab {
         for (uint i = 0; i < myClubs.Length; i++) {
             if (int(myClubs[i]['id']) == int(resp['id'])) {
                 myClubs[i]['tag'] = resp['tag'];
-                myClubs[i]['tagSafe'] = ColoredString(resp['tag']);
+                myClubs[i]['tagSafe'] = Text::OpenplanetFormatCodes(resp['tag']);
                 break;
             }
         }

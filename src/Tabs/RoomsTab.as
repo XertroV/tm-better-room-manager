@@ -49,7 +49,7 @@ class RoomsTab : Tab {
         if (activityList.GetType() != Json::Type::Array) throw('activity list not an array');
         for (uint i = 0; i < activityList.Length; i++) {
             auto item = activityList[i];
-            item['name'] = ColoredString(item['name']);
+            item['name'] = Text::OpenplanetFormatCodes(item['name']);
             if ("room" == item['activityType']) {
                 myRooms.Add(item);
                 SetExistingRoomActive(item);

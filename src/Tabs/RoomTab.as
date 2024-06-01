@@ -42,9 +42,9 @@ class RoomTab : Tab {
         gameOpts.RemoveRange(0, gameOpts.Length);
         try {
             @thisRoom = GetClubRoom(parent.clubId, roomId);
-            thisRoom['clubName'] = ColoredString(thisRoom['clubName']);
-            thisRoom['name'] = ColoredString(thisRoom['name']);
-            thisRoom['room']['name'] = ColoredString(thisRoom['room']['name']);
+            thisRoom['clubName'] = Text::OpenplanetFormatCodes(thisRoom['clubName']);
+            thisRoom['name'] = Text::OpenplanetFormatCodes(thisRoom['name']);
+            thisRoom['room']['name'] = Text::OpenplanetFormatCodes(thisRoom['room']['name']);
             isDedicated = thisRoom['room']['serverAccountId'] != "";
             // if we created a new room, start active
             if (!isEditing) isActive = true;
@@ -215,7 +215,7 @@ class RoomTab : Tab {
 
     void DrawRoomEditForm() {
         bool changed = false;
-        name = ColoredString(UI::InputText("Room Name", name.Replace('\\', ''), changed));
+        name = Text::OpenplanetFormatCodes(UI::InputText("Room Name", name.Replace('\\', ''), changed));
         UI::Text("Name Preview: " + name);
         public = UI::Checkbox("Public?", public);
         DrawLocationCombo();
@@ -599,7 +599,7 @@ class LazyMap {
 
     void LoadMap() {
         auto map = GetMapFromUid(uid);
-        name = ColoredString(map.Name);
+        name = Text::OpenplanetFormatCodes(map.Name);
         author = map.AuthorDisplayName;
         authorTime = Time::Format(map.AuthorScore);
         goldTime = Time::Format(map.GoldScore);

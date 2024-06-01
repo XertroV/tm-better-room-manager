@@ -1,22 +1,47 @@
-// Greep's cached image utility
-class CachedImage
-{
-    string m_url;
-    UI::Texture@ m_texture;
+// rewrite of existing api
+class CachedImage {
+    string url;
+    protected MemoryBuffer@ buf;
+    protected UI::Texture@ tex;
+    bool success;
+    string error;
+    bool done;
 
-    void DownloadFromURLAsync()
-    {
-        auto req = Net::HttpRequest();
-        req.Method = Net::HttpMethod::Get;
-        req.Url = m_url;
-        req.Start();
-        while (!req.Finished()) {
-            yield();
+    CachedImage(const string &in url) {
+        this.url = url;
+        startnew(CoroutineFunc(DownloadFile));
+    }
+
+    void DownloadFile() {
+        trace("Downloading image: " + url);
+        Net::HttpRequest@ req = Net::HttpGet(url);
+        while (!req.Finished()) yield();
+        auto code = req.ResponseCode();
+        done = true;
+        if (code >= 200 || code < 300) {
+            @buf = req.Buffer();
+            success = true;
+        } else {
+            error = "Failed to download image: " + code + " / " + req.Error();
+            success = false;
         }
-        @m_texture = UI::LoadTexture(req.Buffer());
-        if (m_texture.GetSize().x == 0) {
-            @m_texture = null;
+    }
+
+    bool hasWarnedOnFailed = false;
+    UI::Texture@ GetTex() {
+        if (!done || !success) return null;
+        if (tex is null && buf !is null) {
+            @tex = UI::LoadTexture(buf);
+            if (tex.GetSize().x <= 0.4) {
+                if (!hasWarnedOnFailed) {
+                    warn("Failed to load image: " + url + " / size.x = " + tex.GetSize().x);
+                    hasWarnedOnFailed = true;
+                }
+                @buf = null;
+                @tex = null;
+            }
         }
+        return tex;
     }
 }
 
@@ -24,28 +49,17 @@ namespace Images
 {
     dictionary g_cachedImages;
 
-    CachedImage@ FindExisting(const string &in url)
-    {
-        CachedImage@ ret = null;
-        g_cachedImages.Get(url, @ret);
-        return ret;
+    CachedImage@ FindExisting(const string &in url) {
+        if (g_cachedImages.Exists(url)) return cast<CachedImage>(g_cachedImages[url]);
+        return null;
     }
 
-    CachedImage@ CachedFromURL(const string &in url)
-    {
-        // Return existing image if it already exists
-        auto existing = FindExisting(url);
-        if (existing !is null) {
-            return existing;
+    CachedImage@ CachedFromURL(const string &in url) {
+        auto@ img = FindExisting(url);
+        if (img is null) {
+            @img = CachedImage(url);
+            @g_cachedImages[url] = img;
         }
-
-        // Create a new cached image object and remember it for future reference
-        auto ret = CachedImage();
-        ret.m_url = url;
-        g_cachedImages.Set(url, @ret);
-
-        // Begin downloading
-        startnew(CoroutineFunc(ret.DownloadFromURLAsync));
-        return ret;
+        return img;
     }
 }

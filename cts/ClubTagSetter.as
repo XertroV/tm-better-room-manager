@@ -55,7 +55,7 @@ namespace ClubTagSetter {
         // btnWidth = UI::GetCursorPos().x - pos.x;
         // UI::Dummy(vec2());
 
-        UI::Text("Current Tag: " + ColoredString(currentTag));
+        UI::Text("Current Tag: " + Text::OpenplanetFormatCodes(currentTag));
         UI::Text("Current Tag: " + currentTag);
         if (UI::Button("Copy Tag")) {
             IO::SetClipboard(currentTag);
@@ -66,7 +66,7 @@ namespace ClubTagSetter {
         m_newTag = UI::InputText("New Tag", m_newTag, changed);
 
         UI::BeginDisabled(loading);
-        UI::Text("Preview: " + ColoredString(m_newTag));
+        UI::Text("Preview: " + Text::OpenplanetFormatCodes(m_newTag));
         if (UI::Button("Set Tag")) {
             loading = true;
             startnew(OnClickSetTag);

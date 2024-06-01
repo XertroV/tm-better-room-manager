@@ -71,7 +71,7 @@ namespace MapChooser {
         filteredMaps.RemoveRange(0, filteredMaps.Length);
         for (uint i = 0; i < knownMaps.Length; i++) {
             auto map = knownMaps[i];
-            mapNameClean = StripFormatCodes(map.Name).ToLower();
+            mapNameClean = Text::StripFormatCodes(map.Name).ToLower();
             bool match = true;
             for (uint p = 0; p < searchParts.Length; p++) {
                 if (!mapNameClean.Contains(searchParts[p])) {
@@ -334,7 +334,7 @@ namespace MapChooser {
     }
 
     void DrawMapSelectable(CGameCtnChallengeInfo@ map) {
-        if (UI::Selectable(ColoredString(map.Name), chosenMap !is null && chosenMap.Id.Value == map.Id.Value)) {
+        if (UI::Selectable(Text::OpenplanetFormatCodes(map.Name), chosenMap !is null && chosenMap.Id.Value == map.Id.Value)) {
             @chosenMap = map;
         }
     }
@@ -382,7 +382,7 @@ namespace MapChooser {
                 auto @mapInfo = resp.MapInfos[i];
                 MapInfos.InsertLast(mapInfo);
                 selected.InsertLast(true);
-                MapNames.InsertLast(ColoredString(mapInfo.NameForUi));
+                MapNames.InsertLast(Text::OpenplanetFormatCodes(mapInfo.NameForUi));
             }
             nbSelected = selected.Length;
         }
