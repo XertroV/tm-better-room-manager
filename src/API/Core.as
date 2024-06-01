@@ -75,24 +75,6 @@ CMapRecord@ GetPlayersRecordOnMap(const string &in mapUid, const string &in wsid
 }
 
 
-
-// Do not keep handles to these objects around
-CGameNaturalLeaderBoardInfoScript@[]@ GetMapTopRecords(const string &in mapUid, uint count = 10) {
-    auto app = cast<CGameManiaPlanet>(GetApp());
-    auto userId = app.MenuManager.MenuCustom_CurrentManiaApp.UserMgr.Users[0].Id;
-    auto resp = app.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr.MapLeaderBoard_GetPlayerList(userId, mapUid, "PersonalBest", "Global", 0, count);
-    WaitAndClearTaskLater(resp, app.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr);
-    if (resp.HasFailed || !resp.HasSucceeded) {
-        throw('GetMapTopRecords failed: ' + resp.ErrorCode + ", " + resp.ErrorType + ", " + resp.ErrorDescription);
-    }
-    if (resp.LeaderBoardInfo.Length == 0) return {};
-    CGameNaturalLeaderBoardInfoScript@[] ret;
-    for (uint i = 0; i < resp.LeaderBoardInfo.Length; i++) {
-        ret.InsertLast(resp.LeaderBoardInfo[i]);
-    }
-    return ret;
-}
-
 // Do not keep handles to these objects around
 CNadeoServicesMap@ GetMapFromUid(const string &in mapUid) {
     auto app = cast<CGameManiaPlanet>(GetApp());
