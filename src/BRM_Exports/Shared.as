@@ -25,6 +25,10 @@ namespace BRM {
         MultiTeams = 19,
         HeadToHead = 20,
         Final42TMGL = 21,
+        // more legacy
+        CupLong = 22,
+        CupShort = 23,
+        RoundsBoulet = 24,
         // leave last for loops
         XXX_LAST
     }
@@ -48,10 +52,14 @@ namespace BRM {
             case GameMode::COTDQualifications: return "TrackMania/TM_COTDQualifications_Online.Script.txt";
             case GameMode::CupClassic: return "TrackMania/Legacy/TM_CupClassic_Online.Script.txt";
             case GameMode::ChampionSpring2022: return "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt";
+            // more legacy added june 2024
+            case GameMode::CupLong: return "TrackMania/Legacy/TM_CupLong_Online.Script.txt";
+            case GameMode::CupShort: return "TrackMania/Legacy/TM_CupShort_Online.Script.txt";
+            case GameMode::RoundsBoulet: return "TrackMania/Legacy/TM_RoundsBoulet_Online.Script.txt";
+
             case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
             case GameMode::TMWC2023: return "TrackMania/TM_TMWC2023_Online.Script.txt";
             case GameMode::RoyalStars: return "TrackMania/TM_RoyalStars_Online.Script.txt";
-            // unlisted
             case GameMode::MultiTeams: return "TrackMania/Deprecated/TM_MultiTeams_Online.Script.txt";
             case GameMode::HeadToHead: return "TrackMania/Deprecated/TM_HeadToHead_Online.Script.txt";
             case GameMode::Final42TMGL: return "TrackMania/Deprecated/TM_Final42TMGL_Online.Script.txt";
@@ -78,6 +86,11 @@ namespace BRM {
         if (modeStr == "TrackMania/TM_COTDQualifications_Online.Script.txt") return GameMode::COTDQualifications;
         if (modeStr == "TrackMania/Legacy/TM_CupClassic_Online.Script.txt") return GameMode::CupClassic;
         if (modeStr == "TrackMania/Legacy/TM_ChampionSpring2022_Online.Script.txt") return GameMode::ChampionSpring2022;
+        // more legacy added june 2024
+        if (modeStr == "TrackMania/Legacy/TM_CupLong_Online.Script.txt") return GameMode::CupLong;
+        if (modeStr == "TrackMania/Legacy/TM_CupShort_Online.Script.txt") return GameMode::CupShort;
+        if (modeStr == "TrackMania/Legacy/TM_RoundsBoulet_Online.Script.txt") return GameMode::RoundsBoulet;
+
         if (modeStr == "TrackMania/TM_Royal_Online.Script.txt") return GameMode::Royal;
         if (modeStr == "TrackMania/TM_TMWC2023_Online.Script.txt") return GameMode::TMWC2023;
         if (modeStr == "TrackMania/TM_RoyalStars_Online.Script.txt") return GameMode::RoyalStars;

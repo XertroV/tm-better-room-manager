@@ -350,11 +350,12 @@ class RoomTab : Tab {
         saving = true;
         if (isEditing) {
             ConstructAndSaveRoomConfig();
+            SetRoomPublicStatus();
+            LoadRoom();
         } else {
+            // this calls set public status and load room depending on success of creation
             ConstructAndSaveNewRoom();
         }
-        SetRoomPublicStatus();
-        LoadRoom();
     }
 
     Json::Value@ GenRoomConfigJson() {
@@ -384,9 +385,18 @@ class RoomTab : Tab {
 
     void ConstructAndSaveNewRoom() {
         auto resp = CreateClubRoom(parent.clubId, GenRoomConfigJson());
-        roomId = resp['activityId'];
-        tabName = Icons::Server + " " + name + "\\$z (" + roomId + ")";
-        startnew(CoroutineFunc(LoadRoom));
+        auto respStr = Json::Write(resp);
+        trace('Club room create response: ' + respStr);
+        try {
+            roomId = resp['activityId'];
+            tabName = Icons::Server + " " + name + "\\$z (" + roomId + ")";
+            SetRoomPublicStatus();
+            LoadRoom();
+        } catch {
+            NotifyError("Failed to create room: " + respStr);
+            saving = false;
+            loading = false;
+        }
     }
 
     void SetRoomPublicStatus() {
