@@ -27,6 +27,7 @@ void RenderMenu() {
 
 void RenderMainUI() {
     RenderRoomManagerWindow();
+    RenderPoppedOutWindows();
     RenderAddMapWindow();
 }
 
@@ -46,6 +47,19 @@ void RenderRoomManagerWindow() {
         UI::EndDisabled();
     }
     UI::End();
+}
+
+void RenderPoppedOutWindows() {
+    if (!WindowOpen) return;
+    vec2 size = vec2(1200, 700);
+    vec2 pos = (vec2(Draw::GetWidth(), Draw::GetHeight()) - size) / 2.;
+    for (uint i = 0; i < mainTabs.Length; i++) {
+        UI::SetNextWindowSize(int(size.x), int(size.y), UI::Cond::FirstUseEver);
+        UI::SetNextWindowPos(int(pos.x), int(pos.y), UI::Cond::FirstUseEver);
+        UI::BeginDisabled(IsAnyChooserActive());
+        mainTabs[i].DrawWindow();
+        UI::EndDisabled();
+    }
 }
 
 array<Tab@> mainTabs;

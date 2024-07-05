@@ -15,11 +15,15 @@ class RoomTab : Tab {
     bool isEditing = true;
     bool isActive = true;
 
+    int get_WindowFlags() override {
+        return UI::WindowFlags::NoCollapse;
+    }
+
     // roomId = -1 to create a new room
     RoomTab(RoomsTab@ parent, int _roomId, const string &in roomName, bool public, bool isActive) {
         isEditing = _roomId > 0;
         this.roomName = isEditing ? roomName : "New Room";
-        super(Icons::Server + " " + this.roomName + "\\$z (" + _roomId + ")", false);
+        super(Icons::Server + " " + this.roomName + "\\$z (" + _roomId + ")", true);
         // have to set isEditing again for some reason -- weird.
         isEditing = _roomId > 0;
         this.isActive = isActive;
