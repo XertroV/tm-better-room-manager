@@ -127,6 +127,7 @@ class RoomTab : Tab {
             ControlButton(Icons::Plus + "##add-map" + roomId, CoroutineFunc(OnClickAddMap));
             ControlButton(Icons::Plus + " Random##"+roomId, CoroutineFunc(OnClickAddRandom));
             ControlButton(Icons::TrashO + " All##"+roomId, CoroutineFunc(OnClickRmAll));
+            ControlButton("Export list", CoroutineFunc(OnClickExportList));
             mapsCtrlBarRHSWidth = UI::GetCursorPos().x - pos.x;
             AddSimpleTooltip("Refresh to undo.");
             UI::Dummy(vec2());
@@ -200,6 +201,19 @@ class RoomTab : Tab {
         mode = BRM::GameModeFromStr(room['script']);
         scalable = room['scalable'];
         @scriptSettings = room['scriptSettings'];
+    }
+
+    void OnClickExportList() {
+        auto json = Json::Object();
+        json["maps"] = Json::Array();
+        for (uint i = 0; i < lazyMaps.Length; i++) {
+            json["maps"].Add(lazyMaps[i].ToJson());
+        }
+        auto folderLocation = IO::FromDataFolder("BRM_Map_Export");
+        IO::CreateFolder(folderLocation);
+        auto filename = Text::Format(folderLocation + "/%d_mapExport.json", Time::Stamp);
+        Json::ToFile(filename,json);
+        Notify("Exported to " + filename);
     }
 
     string name;
@@ -636,6 +650,19 @@ class LazyMap {
             else
                 UI::Image(tex);
         }
+    }
+
+    Json::Value@ ToJson() {
+        auto j = Json::Object();
+        j['uid'] = uid;
+        j['name'] = name;
+        j['author'] = author;
+        j['authorTime'] = authorTime;
+        j['goldTime'] = goldTime;
+        j['silverTime'] = silverTime;
+        j['bronzeTime'] = bronzeTime;
+        j['thumbUrl'] = thumbUrl;
+        return j;
     }
 }
 

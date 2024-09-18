@@ -162,7 +162,7 @@ namespace RandomMapsChooser {
 
     string chosenKey;
     float btnWidth = 100;
-
+    string blacklist;
 
     void DrawInner() {
         if (!loadingMaps)
@@ -208,6 +208,11 @@ namespace RandomMapsChooser {
             DrawTagsCheckboxes(tags);
         }
 
+        UI::Separator();
+        if (UI::CollapsingHeader("Map Blacklist")) {
+            blacklist = Text::OpenplanetFormatCodes(UI::InputText("Blacklist (mapUid1, mapUid2, ..., mapUidN)", blacklist));
+        }
+
         UI::EndDisabled();
     }
 
@@ -243,6 +248,7 @@ namespace RandomMapsChooser {
             }
             tags[i].checked = UI::Checkbox(tostring(tags[i].type), tags[i].checked);
         }
+        UI::Columns(1);
     }
 
     void DrawOptSelectable(const string &in key) {
@@ -283,6 +289,7 @@ namespace RandomMapsChooser {
     }
 
     void GetMapsTillDone() {
+        dictionary blacklistDict = ParseBlacklistToDict(blacklist);
         string tagStr = toTagString(tags);
         while (loadingMaps && int(gotMaps.Length) < nbMaps) {
             auto @newMap = GetARandomMap(tagStr);
@@ -294,6 +301,11 @@ namespace RandomMapsChooser {
             int len = LengthNameToSecs(newMap['LengthName']);
             if (len < minLen || maxLen < len) continue;
             string mapUid = newMap['TrackUID'];
+            if (blacklistDict.Exists(mapUid)) {
+                warn("Skipping blacklisted map: " + mapUid);
+                continue;
+            }
+
             if (IsMapUploadedToNadeo(mapUid)) {
                 if (loadingMaps && int(gotMaps.Length) < nbMaps)
                     gotMaps.InsertLast(LazyMap(mapUid));
@@ -310,6 +322,15 @@ namespace RandomMapsChooser {
     }
 }
 
+dictionary ParseBlacklistToDict(const string& in blacklist) {
+    dictionary blacklistDict;
+    string cleanBlacklist = blacklist.Replace(" ", "");
+    array<string> blacklistArray = cleanBlacklist.Split(",");
+    for (uint i = 0; i < blacklistArray.Length; i++) {
+        blacklistDict.Set(blacklistArray[i], true);
+    }
+    return blacklistDict;
+}
 
 
 bool IsMapUploadedToNadeo(const string &in uid) {
