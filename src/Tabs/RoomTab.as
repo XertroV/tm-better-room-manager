@@ -127,9 +127,14 @@ class RoomTab : Tab {
             ControlButton(Icons::Plus + "##add-map" + roomId, CoroutineFunc(OnClickAddMap));
             ControlButton(Icons::Plus + " Random##"+roomId, CoroutineFunc(OnClickAddRandom));
             ControlButton(Icons::TrashO + " All##"+roomId, CoroutineFunc(OnClickRmAll));
-            ControlButton("Export list", CoroutineFunc(OnClickExportList));
-            mapsCtrlBarRHSWidth = UI::GetCursorPos().x - pos.x;
             AddSimpleTooltip("Refresh to undo.");
+            UI::Text("|");
+            UI::SameLine();
+            ControlButton(Icons::MapO + Icons::ListUl + " Export##" + roomId, CoroutineFunc(OnClickExportList));
+            AddSimpleTooltip("Export map list to JSON file.");
+            ControlButton(Icons::FolderOpenO + "##exp-folder"+roomId, CoroutineFunc(OnClickOpenExportFolder));
+            AddSimpleTooltip("Open map list export folder.");
+            mapsCtrlBarRHSWidth = UI::GetCursorPos().x - pos.x;
             UI::Dummy(vec2());
 
             DrawRoomMapsForm();
@@ -203,17 +208,26 @@ class RoomTab : Tab {
         @scriptSettings = room['scriptSettings'];
     }
 
+    string GetExportFolder() {
+        return IO::FromStorageFolder("BRM_Map_Export");
+    }
+
     void OnClickExportList() {
         auto json = Json::Object();
         json["maps"] = Json::Array();
         for (uint i = 0; i < lazyMaps.Length; i++) {
             json["maps"].Add(lazyMaps[i].ToJson());
         }
-        auto folderLocation = IO::FromDataFolder("BRM_Map_Export");
+        auto folderLocation = GetExportFolder();
         IO::CreateFolder(folderLocation);
+
         auto filename = Text::Format(folderLocation + "/%d_mapExport.json", Time::Stamp);
-        Json::ToFile(filename,json);
-        Notify("Exported to " + filename);
+        Json::ToFile(filename, json);
+        Notify("Exported Map List: " + filename);
+    }
+
+    void OnClickOpenExportFolder() {
+        OpenExplorerPath(GetExportFolder());
     }
 
     string name;

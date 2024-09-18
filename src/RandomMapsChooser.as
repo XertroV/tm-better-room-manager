@@ -1,6 +1,6 @@
 funcdef void RandomMapsCallback(LazyMap@[]@ maps);
 
-const int NUM_TAGS = 47;
+const int NUM_TAGS = 66;
 
 class Tag {
     bool checked;
@@ -181,7 +181,9 @@ namespace RandomMapsChooser {
 
     string chosenKey;
     float btnWidth = 100;
-    string blacklist;
+
+    [Setting hidden]
+    string uidBlacklist;
 
     void DrawInner() {
         if (!loadingMaps)
@@ -229,7 +231,12 @@ namespace RandomMapsChooser {
 
         UI::Separator();
         if (UI::CollapsingHeader("Map Blacklist")) {
-            blacklist = Text::OpenplanetFormatCodes(UI::InputText("Blacklist (mapUid1, mapUid2, ..., mapUidN)", blacklist));
+            UI::TextWrapped("Blacklist maps with these UIDs. Separate UIDs with commas. \n\t\\$i(Example: 5fGlGwXEd6kNdfeZpmIsHw66FZd, 4Tk25U832EwU2LG8aLHZ0cEsx4m)");
+            auto mlTextWidth = UI::GetWindowContentRegionWidth() * 0.6;
+            bool changed;
+            uidBlacklist = UI::InputTextMultiline("Blacklist (Comma Separated UIDs)", uidBlacklist, changed, vec2(mlTextWidth, 100));
+            if (changed) UpdateBlacklistPreview();
+            DrawBlacklistPreview();
         }
 
         UI::EndDisabled();
@@ -261,8 +268,9 @@ namespace RandomMapsChooser {
         if (tags is null) return;
         UI::AlignTextToFramePadding();
         UI::Columns(6);
+        auto nbPerCol = (NUM_TAGS - 1) / 6 + 1;
         for (uint i = 0; i < tags.Length; i++) {
-            if ((i % 8 == 0) && i != 0) {
+            if ((i % nbPerCol == 0) && i != 0) {
                 UI::NextColumn();
             }
             tags[i].checked = UI::Checkbox(tostring(tags[i].type), tags[i].checked);
@@ -308,7 +316,7 @@ namespace RandomMapsChooser {
     }
 
     void GetMapsTillDone() {
-        dictionary blacklistDict = ParseBlacklistToDict(blacklist);
+        auto blacklistDict = ParseBlacklistToDict(uidBlacklist);
         string tagStr = toTagString(tags);
         while (loadingMaps && int(gotMaps.Length) < nbMaps) {
             auto @newMap = GetARandomMap(tagStr);
@@ -321,7 +329,7 @@ namespace RandomMapsChooser {
             if (len < minLen || maxLen < len) continue;
             string mapUid = newMap['TrackUID'];
             if (blacklistDict.Exists(mapUid)) {
-                warn("Skipping blacklisted map: " + mapUid);
+                trace("Skipping blacklisted map: " + mapUid);
                 continue;
             }
 
@@ -341,14 +349,54 @@ namespace RandomMapsChooser {
     }
 }
 
-dictionary ParseBlacklistToDict(const string& in blacklist) {
+dictionary@ ParseBlacklistToDict(const string &in blacklist, bool warnOnInvalid = true) {
     dictionary blacklistDict;
-    string cleanBlacklist = blacklist.Replace(" ", "");
-    array<string> blacklistArray = cleanBlacklist.Split(",");
+    auto@ blacklistArray = blacklist.Replace("\n", ",").Split(",");
     for (uint i = 0; i < blacklistArray.Length; i++) {
-        blacklistDict.Set(blacklistArray[i], true);
+        auto uid = blacklistArray[i].Trim();
+        // skip empty-ish strings
+        if (uid.Length < 2) continue;
+        // warn on otherwise bad-looking UIDs, but add them so we can give feedback
+        if (uid.Length != 27) {
+            if (warnOnInvalid) NotifyWarning("Invalid UID in blacklist: " + uid);
+            // continue;
+        }
+        blacklistDict[uid] = true;
     }
     return blacklistDict;
+}
+
+string[]@ blacklistElements;
+
+void UpdateBlacklistPreview() {
+    auto bl = ParseBlacklistToDict(RandomMapsChooser::uidBlacklist, false);
+    @blacklistElements = bl.GetKeys();
+}
+
+void DrawBlacklistPreview() {
+    if (blacklistElements is null) {
+        UpdateBlacklistPreview();
+    }
+    if (blacklistElements is null) {
+        UI::Text("\\$f80No blacklist preview (this is a bug).");
+        return;
+    }
+    if (UI::BeginChild("BlacklistPreview", vec2(-1, -1), UI::ChildFlags::Border | UI::ChildFlags::AutoResizeY, UI::WindowFlags::AlwaysVerticalScrollbar)) {
+        UI::Columns(2);
+        for (uint i = 0; i < blacklistElements.Length; i++) {
+            UI::Text(blacklistElements[i]);
+        }
+        UI::NextColumn();
+        for (uint i = 0; i < blacklistElements.Length; i++) {
+            if (blacklistElements[i].Length == 27) {
+                UI::Text("\\$0f0" + Icons::CheckSquareO);
+            } else {
+                UI::Text("\\$f80" + Icons::TimesCircleO + " Bad length");
+            }
+        }
+        UI::Columns(1);
+    }
+    UI::EndChild();
 }
 
 
