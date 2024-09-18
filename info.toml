@@ -2,7 +2,7 @@
 name     = "Better Room Manager"
 author   = "XertroV"
 category = "Club"
-version  = "0.2.8"
+version  = "0.2.9"
 siteid   = 312
 
 [script]
