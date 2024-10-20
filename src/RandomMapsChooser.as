@@ -357,7 +357,7 @@ dictionary@ ParseBlacklistToDict(const string &in blacklist, bool warnOnInvalid 
         // skip empty-ish strings
         if (uid.Length < 2) continue;
         // warn on otherwise bad-looking UIDs, but add them so we can give feedback
-        if (uid.Length != 27) {
+        if (uid.Length > 27 || uid.Length < 24) {
             if (warnOnInvalid) NotifyWarning("Invalid UID in blacklist: " + uid);
             // continue;
         }
