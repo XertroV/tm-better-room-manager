@@ -22,4 +22,7 @@ namespace BRM {
 
     // Get a room info from the API. <https://webservices.openplanet.dev/live/clubs/room-by-id>
     import Json::Value@ GetRoomInfoFromAPI(uint clubId, uint roomId) from "BRM";
+
+    // Create an INewsScoreBoardManager for creating news-based scoreboards
+    import INewsScoreBoardManager@ CreateNewsScoreBoardManager(int clubId, const string &in serverName = "", bool autoCreateNews = false) from "BRM";
 }

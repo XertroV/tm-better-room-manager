@@ -8,7 +8,7 @@ Json::Value@ FetchLiveEndpoint(const string &in route) {
     auto req = NadeoServices::Get("NadeoLiveServices", route);
     req.Start();
     while(!req.Finished()) { yield(); }
-    return Json::Parse(req.String());
+    return req.Json();
 }
 
 Json::Value@ PostLiveEndpoint(const string &in route, Json::Value@ data) {
@@ -16,7 +16,7 @@ Json::Value@ PostLiveEndpoint(const string &in route, Json::Value@ data) {
     auto req = NadeoServices::Post("NadeoLiveServices", route, Json::Write(data));
     req.Start();
     while(!req.Finished()) { yield(); }
-    return Json::Parse(req.String());
+    return req.Json();
 }
 
 Json::Value@ FetchClubEndpoint(const string &in route) {
@@ -24,7 +24,7 @@ Json::Value@ FetchClubEndpoint(const string &in route) {
     auto req = NadeoServices::Get("NadeoLiveServices", route);
     req.Start();
     while(!req.Finished()) { yield(); }
-    return Json::Parse(req.String());
+    return req.Json();
 }
 
 Json::Value@ CallLiveApiPath(const string &in path) {
@@ -56,7 +56,7 @@ Json::Value@ CallClubApiPath(const string &in path) {
 //     req.Headers['Authorization'] = 'openplanet ' + token;
 //     req.Start();
 //     while(!req.Finished()) { yield(); }
-//     return Json::Parse(req.String());
+//     return req.Json();
 // }
 
 // Ensure we aren't calling a bad path

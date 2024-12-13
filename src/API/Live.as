@@ -118,3 +118,31 @@ Json::Value@ GetRecords(const string &in mapUid, uint length = 100, uint offset 
 Json::Value@ GetRecords(const string &in groupId, const string &in mapUid, uint length = 100, uint offset = 0) {
     return CallLiveApiPath("/api/token/leaderboard/group/" + groupId + "/map/" + mapUid + "/top?onlyWorld=true&" + LengthAndOffset(length, offset));
 }
+
+namespace Live {
+    // name max: 20 chars
+    // headline max: 40 chars
+    // body max: 2000 chars
+    Json::Value@ SetNewsDetails(int clubId, int activityId, const string &in name, const string &in headline, const string &in body) {
+        Json::Value@ data = Json::Object();
+        data["name"] = name;
+        data["headline"] = headline;
+        data["body"] = body;
+        // https://live-services.trackmania.nadeo.live/api/token/club/46587/news/602018/edit
+        return PostLiveEndpoint("/api/token/club/"+clubId+"/news/"+activityId+"/edit", data);
+    }
+
+    Json::Value@ GetNewsDetails(int clubId, int activityId) {
+        // https://live-services.trackmania.nadeo.live/api/token/club/46587/news/602018
+        return CallLiveApiPath("/api/token/club/"+clubId+"/news/"+activityId);
+    }
+
+    Json::Value@ CreateNews(int clubId, const string &in name, const string &in headline, const string &in body) {
+        Json::Value@ data = Json::Object();
+        data["name"] = name;
+        data["headline"] = headline;
+        data["body"] = body;
+        // https://live-services.trackmania.nadeo.live/api/token/club/46587/news/create
+        return PostLiveEndpoint("/api/token/club/"+clubId+"/news/create", data);
+    }
+}

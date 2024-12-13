@@ -113,6 +113,10 @@ namespace BRM {
             return data;
         }
 
+        GameMode GetMode() {
+            return gameMode;
+        }
+
         IRoomSettingsBuilder@ SetMode(GameMode mode, bool withDefaultSettings = false) {
             this.gameMode = mode;
             data['script'] = GameModeToFullModeString(mode);
@@ -169,6 +173,12 @@ namespace BRM {
             data['settings'].Add(s);
         }
 
+        int GetTimeLimit() {
+            if (!this.HasModeSetting("S_TimeLimit")) {
+                return -1;
+            }
+            return Text::ParseInt(this.GetModeSetting("S_TimeLimit"));
+        }
 
         // Set the time limit (seconds)
         IRoomSettingsBuilder@ SetTimeLimit(int limit) {
@@ -243,5 +253,9 @@ namespace BRM {
         Json::Value@ SaveRoom() {
             return SaveEditedRoomConfig(clubId, roomId, data);
         }
+    }
+
+    INewsScoreBoardManager@ CreateNewsScoreBoardManager(int clubId, const string &in serverName = "", bool autoCreateNews = false) {
+        return NewsScoreBoardManager(clubId, serverName, autoCreateNews);
     }
 }

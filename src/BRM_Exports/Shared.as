@@ -110,6 +110,9 @@ namespace BRM {
         // Get the current raw settings json object (which is mutable). Call LoadCurrentSettingsAsync first to load current settings.
         Json::Value@ GetCurrentSettingsJson();
 
+        // Gets the room's current game mode
+        GameMode GetMode( );
+
         // Set the room game mode
         IRoomSettingsBuilder@ SetMode(GameMode mode, bool withDefaultSettings = false);
 
@@ -121,6 +124,9 @@ namespace BRM {
 
         // Set a game mode setting (e.g., S_TimeLimit)
         IRoomSettingsBuilder@ SetModeSetting(const string &in key, const string &in value);
+
+        // Get the time limit (or -1 if it's absent)
+        int GetTimeLimit( );
 
         // Set the time limit (seconds)
         IRoomSettingsBuilder@ SetTimeLimit(int limit);
@@ -167,5 +173,77 @@ namespace BRM {
             this.roomId = roomId;
             this.isAdmin = isAdmin;
         }
+    }
+
+    shared interface INewsScoreBoardManager {
+        // Get the news activity id
+        int get_NewsActivityId( );
+
+        // Get the associated room/server name
+        string get_ServerName( );
+
+        // Get the news name
+        string get_NewsName( );
+
+        // Get a section of the scoreboard (heading + 12 entries typical for each column)
+        INewsScoreBoardSection@ GetOrCreateSection(const string &in sectionName);
+
+        // Get a section of the scoreboard (heading + 12 entries typical for each column)
+        INewsScoreBoardSection@ GetSection(const string &in sectionName);
+
+        // Remove all sections
+        void DeleteAllSections( );
+
+        // Clear each section of all entries
+        void ClearAllEntries( );
+
+        // Find or create the news activity -- required to call this before update if autocreate was false; will block. can be called more than once and will immediately return in that case.
+        void EnsureNewsActivityCreatedAsync( );
+
+        // Save the scoreboard; will block
+        void UpdateNewsAsync( );
+
+        // Save the scoreboard; launch a coroutine
+        void UpdateNewsInBg( );
+    }
+
+    shared interface INewsScoreBoardSection {
+        // Get the section name
+        string get_SectionName( );
+
+        // Get the section entries
+        array<INewsScoreBoardEntry@>@ get_Entries();
+
+        // Add an entry to the section
+        void AddEntry(int rank, const string &in name, int wrs = -1, int ats = -1, int golds = -1, int mapsPlayed = -1);
+
+        // Clear all entries from the section
+        void ClearEntries( );
+
+        // Get the section as a string suitable for news
+        string ToNewsString( );
+    }
+
+    shared interface INewsScoreBoardEntry {
+        // Get the rank
+        int get_Rank( );
+
+        // Get the name
+        string get_Name( );
+
+        // Get # world records
+        int get_WRs( );
+
+        // Get # author times
+        int get_ATs( );
+
+        // Get # golds
+        int get_Golds( );
+
+        // Get # maps played
+        int get_MapsPlayed( );
+
+        // Get the entry as a string suitable for news
+        string ToNewsString( );
     }
 }
