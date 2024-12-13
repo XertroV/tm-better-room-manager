@@ -1,5 +1,5 @@
 class NewsScoreBoardManager : BRM::INewsScoreBoardManager {
-	NewsScoreBoardSection@[] sections;
+	BRM::INewsScoreBoardSection@[] sections;
 	private string _serverName;
 	private string _newsName;
 	private int newsActivityId = -1;
@@ -73,7 +73,7 @@ class NewsScoreBoardManager : BRM::INewsScoreBoardManager {
 	BRM::INewsScoreBoardSection@ GetSection(const string &in sectionName) {
 		for (uint i = 0; i < sections.Length; i++) {
 			auto section = sections[i];
-			if (section.get_SectionName() == sectionName) {
+			if (section.SectionName == sectionName) {
 				return section;
 			}
 		}
