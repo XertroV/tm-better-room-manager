@@ -7,7 +7,10 @@ class RoomTab : Tab {
     RoomsTab@ parent;
     string roomName;
     Json::Value@ thisRoom = Json::Object();
+    string loadingMsg = "";
     bool loading = false;
+    bool loadingMsgCancellable = false;
+
     bool saving = false;
     bool isDedicated = false;
     LazyMap@[] lazyMaps;
@@ -36,7 +39,7 @@ class RoomTab : Tab {
     uint maxPage = 0;
 
     void LoadRoom() {
-        loading = true;
+        SetLoading(true, "Loading room info...");
         saving = false;
         lazyMaps.RemoveRange(0, lazyMaps.Length);
         gameOpts.RemoveRange(0, gameOpts.Length);
@@ -56,7 +59,7 @@ class RoomTab : Tab {
         } catch {
             NotifyWarning('Failed to update room info: ' + getExceptionInfo());
         }
-        loading = false;
+        SetLoading(false);
     }
 
     void PopulateMapsList() {
@@ -82,6 +85,12 @@ class RoomTab : Tab {
             auto opt = opts[keys[i]];
             gameOpts.InsertLast(GameOpt(opt['key'], opt['value'], opt['type']));
         }
+    }
+
+    void SetLoading(bool _loading, const string &in msg = "", bool isCancelable = false) {
+        loading = _loading;
+        loadingMsg = msg;
+        loadingMsgCancellable = isCancelable;
     }
 
     void DrawInner() override {
@@ -171,12 +180,12 @@ class RoomTab : Tab {
     }
 
     void OnClickAddRandom() {
-        loading = true;
+        SetLoading(true, "Add random map(s)");
         RandomMapsChooser::Open(RandomMapsCallback(OnGotRandomMaps));
     }
 
     void OnGotRandomMaps(LazyMap@[]@ maps) {
-        loading = false;
+        SetLoading(false);
         if (maps is null) return;
         for (uint i = 0; i < maps.Length; i++) {
             this.lazyMaps.InsertLast(maps[i]);
@@ -184,12 +193,12 @@ class RoomTab : Tab {
     }
 
     void OnClickAddMap() {
-        loading = true;
+        SetLoading(true, "Pick a map");
         MapChooser::Open(MapChosenCallback(OnMapsChosen));
     }
 
     void OnMapsChosen(LazyMap@[]@ maps) {
-        loading = false;
+        SetLoading(false);
         if (maps is null) return;
         for (uint i = 0; i < maps.Length; i++) {
             this.lazyMaps.InsertLast(maps[i]);
@@ -352,12 +361,12 @@ class RoomTab : Tab {
     }
 
     void OnClickAddScriptOpt() {
-        loading = true;
+        SetLoading(true, "Pick a script option");
         ScriptOptChooser::Open(ScriptOptChosenCallback(AddScriptOpt), gameOpts, mode);
     }
 
     void AddScriptOpt(GameOpt@ go) {
-        loading = false;
+        SetLoading(false);
         if (go is null) return;
         gameOpts.InsertLast(go);
     }
@@ -423,7 +432,7 @@ class RoomTab : Tab {
         } catch {
             NotifyError("Failed to create room: " + respStr);
             saving = false;
-            loading = false;
+            SetLoading(false);
         }
     }
 
@@ -544,6 +553,19 @@ class RoomTab : Tab {
         if (loading) {
             UI::Text("Loading...");
             UI::SameLine();
+            if (loadingMsg.Length > 0) {
+                UI::Text("\\$i\\$bfb" + loadingMsg);
+                UI::SameLine();
+            }
+            if (loadingMsgCancellable) {
+                UI::EndDisabled();
+                if (UI::Button(Icons::Times + "##cancel-load" + roomId)) {
+                    SetLoading(false);
+                }
+                UI::BeginDisabled();
+                AddSimpleTooltip(Icons::QuestionCircleO + "  Don't wait for the load to finish.");
+                UI::SameLine();
+            }
         } else if (saving) {
             UI::Text("Saving...");
             UI::SameLine();
@@ -572,7 +594,7 @@ class RoomTab : Tab {
     }
 
     void OnClickJoinRoom() {
-        loading = true;
+        SetLoading(true, "Joining room...", true);
         try {
             string pw;
             if (passworded) {
@@ -583,16 +605,16 @@ class RoomTab : Tab {
         } catch {
             NotifyError("Exception joining room: " + getExceptionInfo());
         }
-        loading = false;
+        SetLoading(false);
     }
 
     void OnClickChoosePreset() {
-        loading = true;
+        SetLoading(true, "Pick a preset");
         PresetChooser::Open(PresetChosenCallback(OnChosenPreset));
     }
 
     void OnChosenPreset(Json::Value@ preset) {
-        loading = false;
+        SetLoading(false);
         if (preset is null) return;
         print('on chosen preset cb: ' + Json::Write(preset));
         region = SvrLocFromString(preset['region']);
@@ -609,12 +631,12 @@ class RoomTab : Tab {
 
     void OnClickSavePreset() {
         // todo
-        loading = true;
+        SetLoading(true, "Save preset...");
         PresetSaver::Open(CoroutineFunc(OnSavedPreset), this);
     }
 
     void OnSavedPreset() {
-        loading = false;
+        SetLoading(false);
     }
 }
 
