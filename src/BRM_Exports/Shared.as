@@ -146,6 +146,9 @@ namespace BRM {
         // Add a map to the rooms map list
         IRoomSettingsBuilder@ AddMaps(const array<string> &in maps);
 
+        // Get the room's maps
+        string[]@ GetMapUids( );
+
         // Set the room player limit (1 - 100)
         IRoomSettingsBuilder@ SetPlayerLimit(uint limit);
 
@@ -157,6 +160,9 @@ namespace BRM {
 
         // saves the room and returns the result; will yield internally
         Json::Value@ SaveRoom();
+
+        // Disable all warmups
+        IRoomSettingsBuilder@ DisableWarmups();
     }
 
     shared class ServerInfo {

@@ -238,6 +238,15 @@ namespace BRM {
             return this;
         }
 
+        string[]@ GetMapUids() {
+            string[]@ uids = array<string>();
+            uids.Reserve(data['maps'].Length);
+            for (uint i = 0; i < data['maps'].Length; i++) {
+                uids.InsertLast(data['maps'][i]);
+            }
+            return uids;
+        }
+
         // returns immediately
         IRoomSettingsBuilder@ SaveRoomInCoro() {
             startnew(CoroutineFunc(this.SaveRoomCoro));
@@ -252,6 +261,12 @@ namespace BRM {
         // saves the room and returns the result
         Json::Value@ SaveRoom() {
             return SaveEditedRoomConfig(clubId, roomId, data);
+        }
+
+        IRoomSettingsBuilder@ DisableWarmups() {
+            return this.SetModeSetting("S_WarmUpNb", "0");
+            return this.SetModeSetting("S_WarmUpDuration", "0");
+            return this.SetModeSetting("S_WarmUpTimeout", "-1");
         }
     }
 
