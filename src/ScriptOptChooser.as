@@ -56,7 +56,7 @@ namespace ScriptOptChooser {
     float btnWidth = 100;
 
     void DrawInner() {
-        SubHeading("Add Game Option:");
+        SubHeading("\\$6f6\\$iAdd Game Option:");
         UI::SameLine();
         UI::SetCursorPos(vec2(UI::GetContentRegionMax().x - btnWidth, UI::GetCursorPos().y));
         auto pos = UI::GetCursorPos();
