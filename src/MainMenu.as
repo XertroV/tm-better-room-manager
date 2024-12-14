@@ -16,7 +16,7 @@ void RenderMenuMain() {
 }
 
 void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ si) {
-    CopyLabel("\\$aaaServer", si.ServerName);
+    CopyLabel("\\$aaaServer", Text::OpenplanetFormatCodes(si.ServerName));
     CopyLabel("\\$aaaServerLogin", si.ServerLogin);
     auto extra = BRM::GetCurrentServerInfo(GetApp(), false);
     if (extra !is null && extra.clubId > 0) {
