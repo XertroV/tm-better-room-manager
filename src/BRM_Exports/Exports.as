@@ -25,4 +25,7 @@ namespace BRM {
 
     // Create an INewsScoreBoardManager for creating news-based scoreboards
     import INewsScoreBoardManager@ CreateNewsScoreBoardManager(int clubId, const string &in serverName = "", bool autoCreateNews = false) from "BRM";
+
+    // Get the game to download a map and put it in the cache.
+	import void PreCacheMap(const string &in url) from "BRM";
 }

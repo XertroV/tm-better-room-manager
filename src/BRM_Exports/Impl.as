@@ -273,4 +273,11 @@ namespace BRM {
     INewsScoreBoardManager@ CreateNewsScoreBoardManager(int clubId, const string &in serverName = "", bool autoCreateNews = false) {
         return NewsScoreBoardManager(clubId, serverName, autoCreateNews);
     }
+
+    void PreCacheMap(const string &in url) {
+        auto audio = cast<CTrackMania>(GetApp()).MenuManager.MenuCustom_CurrentManiaApp.Audio;
+        auto sound = audio.CreateSound(url);
+        // clean up the sound to avoid polluting the audio engine
+        audio.DestroySound(sound);
+    }
 }

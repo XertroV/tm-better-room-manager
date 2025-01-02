@@ -124,6 +124,10 @@ namespace MapChooser {
                 DrawInner();
                 UI::EndTabItem();
             }
+            if (UI::BeginTabItem("By UID")) {
+                DrawByUIDInner();
+                UI::EndTabItem();
+            }
             UI::EndTabBar();
             UI::EndDisabled();
         }
@@ -211,6 +215,29 @@ namespace MapChooser {
         SubHeading("TMX Map Pack ID (only first 100 maps will be added)");
         tmxMapPackId = UI::InputText("##tmx-map-pack-id", tmxMapPackId);
         if (UI::Button("Add maps from Map Pack via ID")) startnew(OnClickAddMapsTmxMapPack);
+    }
+
+    string m_uid;
+    void DrawByUIDInner() {
+        SubHeading("Map UID");
+        UI::AlignTextToFramePadding();
+        UI::TextWrapped("Warning: This will not check if the map is uploaded to Nadeo. Non-uploaded maps can cause softlocks.");
+        bool changed = false;
+        m_uid = UI::InputText("Map UID##map-uid", m_uid, changed, UI::InputTextFlags::EnterReturnsTrue);
+        if (UI::Button("Add map by UID") || changed) {
+            m_uid = m_uid.Trim();
+            if (m_uid.Length < 25 || m_uid.Length > 27) {
+                NotifyWarning("Invalid UID: " + m_uid + ", length: " + m_uid.Length);
+            } else {
+                cb({LazyMap(m_uid)});
+                active = false;
+                // can't yield
+                // if (!IsMapUploadedToNadeo(m_uid)) {
+                //     NotifyWarning("Map with UID " + m_uid + " is not uploaded to Nadeo.");
+                // } else {
+                // }
+            }
+        }
     }
 
     void OnClickAddMapsTmxTrackIds() {
