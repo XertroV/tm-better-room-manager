@@ -94,3 +94,7 @@ string[]@ Slice(string[] &in list, uint from, uint to) {
     }
     return r;
 }
+
+void BRM_PleaseReportError() {
+    warn("BRM::PreCacheMap: Please report this to @XertroV in the openplanet discord: https://openplanet.dev/link/discord ; https://discord.com/channels/276076890714800129/1063781798104010772");
+}

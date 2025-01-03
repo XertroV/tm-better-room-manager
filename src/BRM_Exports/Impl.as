@@ -278,6 +278,16 @@ namespace BRM {
         auto audio = cast<CTrackMania>(GetApp()).MenuManager.MenuCustom_CurrentManiaApp.Audio;
         auto sound = audio.CreateSound(url);
         // clean up the sound to avoid polluting the audio engine
-        audio.DestroySound(sound);
+        if (sound is null) {
+            error("BRM::PreCacheMap: Null response trying to pre-cache: " + url);
+            BRM_PleaseReportError();
+        } else {
+            audio.DestroySound(sound);
+        }
+    }
+
+    // Wrap PreCacheMap since it works for any asset (music, images, map mods, etc.) that we might want to load.
+    void PreCacheAsset(const string &in url) {
+        PreCacheMap(url);
     }
 }
