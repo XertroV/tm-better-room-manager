@@ -274,15 +274,15 @@ namespace BRM {
         return NewsScoreBoardManager(clubId, serverName, autoCreateNews);
     }
 
-    dictionary seenPreCacheUrls;
+    dictionary seenPreCacheThings;
 
-    void PreCacheMap(const string &in url) {
+    void PreCacheAsset(const string &in url) {
         // avoid trying to pre-cache the same map/asset multiple times
-        if (seenPreCacheUrls.Exists(url)) {
+        if (seenPreCacheThings.Exists(url)) {
             trace("BRM::PreCacheMap: Already pre-cached: " + url);
             return;
         }
-        seenPreCacheUrls[url] = true;
+        seenPreCacheThings[url] = true;
         auto audio = cast<CTrackMania>(GetApp()).MenuManager.MenuCustom_CurrentManiaApp.Audio;
         auto sound = audio.CreateSound(url);
         // clean up the sound to avoid polluting the audio engine
@@ -294,8 +294,20 @@ namespace BRM {
         }
     }
 
-    // Wrap PreCacheMap since it works for any asset (music, images, map mods, etc.) that we might want to load.
-    void PreCacheAsset(const string &in url) {
-        PreCacheMap(url);
+    void PreCacheMap(const string &in url) {
+        PreCacheAsset(url);
+    }
+
+    // this retrieves a map url from nadeo and precaches it. safe to call more than once with the same UID (does nothing 2nd+ time). Will yield.
+    void PreCacheMapByUid_Async(const string &in uid, const string &in name = "<Unk Name>") {
+        if (seenPreCacheThings.Exists(uid)) return;
+        seenPreCacheThings[uid] = true;
+        string url = Core::GetMapUrl(uid);
+        if (url == "") {
+            warn("PreCacheMapByUid_Async: Could not get map url for " + uid + " - " + name);
+            return;
+        }
+        trace("PreCacheMapByUid_Async: Caching map: " + uid + " - " + name + " @ " + url);
+        PreCacheAsset(url);
     }
 }

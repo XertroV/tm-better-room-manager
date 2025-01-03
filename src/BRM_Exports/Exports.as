@@ -31,4 +31,7 @@ namespace BRM {
 
     // Get the game to download an asset and put it in the cache.
 	import void PreCacheAsset(const string &in url) from "BRM";
+
+    // this retrieves a map url from nadeo and precaches it. safe to call more than once with the same UID (does nothing 2nd+ time). Will yield.
+    import void PreCacheMapByUid_Async(const string &in uid, const string &in name = "<Unk Name>") from "BRM";
 }
