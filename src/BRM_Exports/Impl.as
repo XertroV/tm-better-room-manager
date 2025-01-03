@@ -274,7 +274,15 @@ namespace BRM {
         return NewsScoreBoardManager(clubId, serverName, autoCreateNews);
     }
 
+    dictionary seenPreCacheUrls;
+
     void PreCacheMap(const string &in url) {
+        // avoid trying to pre-cache the same map/asset multiple times
+        if (seenPreCacheUrls.Exists(url)) {
+            trace("BRM::PreCacheMap: Already pre-cached: " + url);
+            return;
+        }
+        seenPreCacheUrls[url] = true;
         auto audio = cast<CTrackMania>(GetApp()).MenuManager.MenuCustom_CurrentManiaApp.Audio;
         auto sound = audio.CreateSound(url);
         // clean up the sound to avoid polluting the audio engine
