@@ -28,4 +28,7 @@ namespace BRM {
 
     // Get the game to download a map and put it in the cache.
 	import void PreCacheMap(const string &in url) from "BRM";
+
+    // Get the game to download an asset and put it in the cache.
+	import void PreCacheAsset(const string &in url) from "BRM";
 }
