@@ -39,6 +39,7 @@ class RoomTab : Tab {
     uint maxPage = 0;
 
     void LoadRoom() {
+        if (loading) return;
         SetLoading(true, "Loading room info...");
         saving = false;
         lazyMaps.RemoveRange(0, lazyMaps.Length);
@@ -255,7 +256,11 @@ class RoomTab : Tab {
         name = Text::OpenplanetFormatCodes(UI::InputText("Room Name", name.Replace('\\', ''), changed));
         UI::Text("Name Preview: " + name);
         public = UI::Checkbox("Public?", public);
+
+        UI::BeginDisabled(isEditing);
         DrawLocationCombo();
+        UI::EndDisabled();
+
         maxPlayers = UI::SliderInt("Max. Players", maxPlayers, 2, 100);
         scalable = UI::Checkbox("Scalable?", scalable);
         UI::BeginDisabled(isEditing);

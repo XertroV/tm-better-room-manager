@@ -66,6 +66,15 @@ void SetUpTabs() {
 #endif
 }
 
+void MarkRoomTabStale(int roomId) {
+    for (uint i = 0; i < mainTabs.Length; i++) {
+        auto rt = cast<RoomTab>(mainTabs[i]);
+        if (rt is null) continue;
+        if (rt.roomId != roomId) continue;
+        startnew(CoroutineFunc(rt.LoadRoom));
+        break;
+    }
+}
 
 
 bool IsAnyChooserActive() {

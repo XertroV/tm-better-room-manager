@@ -268,7 +268,9 @@ namespace BRM {
 
         // saves the room and returns the result
         Json::Value@ SaveRoom() {
-            return SaveEditedRoomConfig(clubId, roomId, data);
+            auto resp = SaveEditedRoomConfig(clubId, roomId, data);
+            MarkRoomTabStale(roomId);
+            return resp;
         }
 
         IRoomSettingsBuilder@ DisableWarmups() {
