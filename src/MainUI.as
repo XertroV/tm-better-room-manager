@@ -55,6 +55,15 @@ void SetUpTabs() {
     // mainTabs.InsertLast(AboutTab());
     @mainClubsTab = ClubsTab();
     mainTabs.InsertLast(mainClubsTab);
+#if DEV
+    // auto @statClub = RoomsTab(82393, "Stat's club", "", "admin");
+    // mainTabs.InsertLast(statClub);
+    // mainTabs.InsertLast(RoomTab(statClub, 703876, "the room", true, true));
+    // auto @builder = BRM::CreateRoomBuilder(82393, 703876);
+    // builder.LoadCurrentSettingsAsync();
+    // print("got room config: " + Json::Write(builder.GetCurrentSettingsJson()));
+    // hmm works fine, why did he get a bad response?
+#endif
 }
 
 
@@ -115,6 +124,7 @@ bool ControlButton(const string &in label, CoroutineFunc@ onClick, vec2 size = v
 
 void CopyLabel(const string &in label, const string &in value) {
     UI::Text(label + ": " + value);
+    if (UI::IsItemHovered()) UI::SetMouseCursor(UI::MouseCursor::Hand);
     if (UI::IsItemClicked()) {
         Notify("Copying: " + value);
         IO::SetClipboard(value);

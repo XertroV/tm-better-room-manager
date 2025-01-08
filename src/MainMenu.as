@@ -16,6 +16,11 @@ void RenderMenuMain() {
 }
 
 void Draw_BRM_QuickMenu(CTrackManiaNetwork@ net, CTrackManiaNetworkServerInfo@ si) {
+    if (UI::MenuItem("Main BRM Window", "", WindowOpen)) {
+        WindowOpen = !WindowOpen;
+    }
+    UI::Separator();
+
     CopyLabel("\\$aaaServer", Text::OpenplanetFormatCodes(si.ServerName));
     CopyLabel("\\$aaaServerLogin", si.ServerLogin);
     auto extra = BRM::GetCurrentServerInfo(GetApp(), false);

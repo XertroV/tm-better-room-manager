@@ -150,6 +150,27 @@ uint GetRulesEndTime() {
     return uint(cp.Arena.Rules.RulesStateEndTime);
 }
 
-int GetSecondsLeft() {
-    return (int64(GetRulesEndTime()) - int64(GetRulesStartTime())) / 1000;
+// int GetSecondsLeft() {
+//     return (int64(GetRulesEndTime()) - int64(GetRulesStartTime())) / 1000;
+// }
+
+
+void AwaitPodiumWithTimeout(uint timeout) {
+    auto start = Time::Now;
+    auto app = GetApp();
+    while (Time::Now < start + timeout) {
+        auto pg = cast<CSmArenaClient>(app.CurrentPlayground);
+        if (pg is null) return;
+        if (pg.GameTerminals.Length == 0) return;
+        auto gt = pg.GameTerminals[0];
+        if (gt is null) return;
+        auto seq = gt.UISequence_Current;
+        if (seq == SGamePlaygroundUIConfig::EUISequence::Podium
+            || seq == SGamePlaygroundUIConfig::EUISequence::UIInteraction
+            || seq == SGamePlaygroundUIConfig::EUISequence::None) {
+            return;
+        }
+        yield();
+    }
+    warn("Timeout waiting for podium");
 }

@@ -93,18 +93,28 @@ namespace BRM {
         // Populate based on current room settings. This function may yield.
         IRoomSettingsBuilder@ LoadCurrentSettingsAsync() {
             @currSettings = GetClubRoom(clubId, roomId);
-            data['maps'] = Json::Array();
-            for (uint i = 0; i < currSettings['room']['maps'].Length; i++) {
-                data['maps'].Add(currSettings['room']['maps'][i]);
-            }
-            data['script'] = currSettings['room']['script'];
-            gameMode = GameModeFromStr(data['script']);
-            data['scalable'] = bool(currSettings['room']['scalable']) ? 1 : 0;
-            data['maxPlayersPerServer'] = currSettings['room']['maxPlayers'];
-            data['settings'] = Json::Array();
-            auto ssKeys = currSettings['room']['scriptSettings'].GetKeys();
-            for (uint i = 0; i < ssKeys.Length; i++) {
-                data['settings'].Add(currSettings['room']['scriptSettings'][ssKeys[i]]);
+            try {
+                data['maps'] = Json::Array();
+                for (uint i = 0; i < currSettings['room']['maps'].Length; i++) {
+                    data['maps'].Add(currSettings['room']['maps'][i]);
+                }
+                data['script'] = currSettings['room']['script'];
+                gameMode = GameModeFromStr(data['script']);
+                data['scalable'] = bool(currSettings['room']['scalable']) ? 1 : 0;
+                data['maxPlayersPerServer'] = currSettings['room']['maxPlayers'];
+                data['settings'] = Json::Array();
+                auto ssKeys = currSettings['room']['scriptSettings'].GetKeys();
+                for (uint i = 0; i < ssKeys.Length; i++) {
+                    data['settings'].Add(currSettings['room']['scriptSettings'][ssKeys[i]]);
+                }
+            } catch {
+                NotifyError("LoadCurrentSettingsAsync failed: " + getExceptionInfo());
+                yield(5);
+                NotifyError("Failed to load room settings: " + Json::Write(currSettings));
+                yield(5);
+                NotifyError("RoomBuilder data: " + Json::Write(data));
+                yield(5);
+                throw("Failed to load room settings, throwing to avoid invalid state");
             }
             return this;
         }
@@ -194,16 +204,14 @@ namespace BRM {
             return this.SetModeSetting("S_LoadingScreenImageUrl", url);
         }
 
-        // This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
         IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit = -1, int chat_time = 1) {
-            this.SetTimeLimit(1)
+            this.SetTimeLimit(Math::Max(GetArenaCurrentTimeSeconds() + 1, 5))
                 .SetChatTime(chat_time)
                 .SetModeSetting("S_DelayBeforeNextMap", "1")
                 .SetMaps({mapUid})
                 .SetMode(BRM::GameMode::TimeAttack);
-
             auto resp = this.SaveRoom();
-            sleep(5000);
+            AwaitPodiumWithTimeout(12000);
             this.SetTimeLimit(limit);
             auto resp2 = this.SaveRoom();
             return this;

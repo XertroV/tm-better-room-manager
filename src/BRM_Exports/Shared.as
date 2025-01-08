@@ -137,7 +137,7 @@ namespace BRM {
         // Set the loading screen image URL
         IRoomSettingsBuilder@ SetLoadingScreenUrl(const string &in url);
 
-        // This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is 5s + 2 http requests to nadeo.
+        // This will yield! An easy 'go to next map' command for club rooms in TimeAttack mode. Duration is < 12s + 2 http requests to nadeo.
         IRoomSettingsBuilder@ GoToNextMapAndThenSetTimeLimit(const string &in mapUid, int limit = -1, int ct = 1);
 
         // Set the rooms map list
