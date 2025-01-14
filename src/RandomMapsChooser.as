@@ -1,6 +1,6 @@
 funcdef void RandomMapsCallback(LazyMap@[]@ maps);
 
-const int NUM_TAGS = 66;
+const int NUM_TAGS = 67;
 
 class Tag {
     bool checked;
@@ -11,6 +11,9 @@ class Tag {
     }
     void setChecked(bool check){
         this.checked = check;
+    }
+    void toggle() {
+        this.checked = !this.checked;
     }
 }
 
@@ -47,6 +50,7 @@ enum TagTypes {
     MultiLap = 8,
     Nascar = 28,
     NoBrake = 61,
+    NoGrip = 67,
     NoSteer = 63,
     Obstacle = 31,
     Offroad = 9,
@@ -110,13 +114,14 @@ void setAllTags(array<Tag@>& tags, bool val) {
 }
 
 void setAllTagsToDefault(Tag@[]& tags) {
-    setAllTags(tags, true);
+    RandomMapsChooser::includeMode = 0;
+    setAllTags(tags, false);
     // default off: 23,37,40,46,47
     // see API/TMX.as for list used in HTTP request formation
-    uint[] defaultOff = {23,37,40,46,47};
+    uint[] defaultOff = {23,40,46};
     for (uint i = 0; i < defaultOff.Length; i++) {
         if (defaultOff[i] > tags.Length) continue;
-        tags[defaultOff[i] - 1].setChecked(false);
+        tags[defaultOff[i] - 1].setChecked(true);
     }
 }
 
@@ -223,9 +228,18 @@ namespace RandomMapsChooser {
         if (UI::CollapsingHeader("Tags (TMX)")) {
             if (UI::Button("Defaults")) setAllTagsToDefault(tags);
             UI::SameLine();
-            if (UI::Button("Check All")) setAllTags(tags, true);
+            // if (UI::Button("Check All")) setAllTags(tags, true);
+            // UI::SameLine();
+            // if (UI::Button("Uncheck All")) setAllTags(tags, false);
+            if (UI::Button("Exclude")) SetIncludeMode(tags, false);
             UI::SameLine();
-            if (UI::Button("Uncheck All")) setAllTags(tags, false);
+            if (UI::Button("Include Any")) SetIncludeMode(tags, true);
+            UI::SameLine();
+            if (UI::Button("Include All")) SetIncludeMode(tags, true, true);
+            // UI::SameLine();
+            UI::AlignTextToFramePadding();
+            UI::TextWrapped("Mode: " + GetIncludeModeStr() + ". " + GetIncludeModeDesc());
+            DrawTagsValidation(tags);
             DrawTagsCheckboxes(tags);
         }
 
@@ -240,6 +254,32 @@ namespace RandomMapsChooser {
         }
 
         UI::EndDisabled();
+    }
+
+    // exclude = 0, include = 1, include all = 2
+    int includeMode = 0;
+    void SetIncludeMode(array<Tag@>& tags, bool include, bool all = false) {
+        auto lastInclude = includeMode;
+        includeMode = include ? (all ? 2 : 1) : 0;
+        UpdateTagCheckboxes(tags, includeMode, lastInclude);
+    }
+
+    string GetIncludeModeStr() {
+        switch (includeMode) {
+            case 0: return "Exclude";
+            case 1: return "Include Any";
+            case 2: return "Include All";
+        }
+        return "Unknown";
+    }
+
+    string GetIncludeModeDesc() {
+        switch (includeMode) {
+            case 0: return "Exclude maps with any of up to 10 tags.";
+            case 1: return "Include maps with any of up to 10 tags.";
+            case 2: return "Include maps with all of up to 3 tags.";
+        }
+        return "Unknown Mode: " + includeMode + ".";
     }
 
     int LengthInput(const string &in label, int num) {
@@ -264,6 +304,15 @@ namespace RandomMapsChooser {
         return ret;
     }
 
+    void UpdateTagCheckboxes(array<Tag@>& tags, int mode, int lastMode) {
+        if (mode == lastMode) return;
+        if (mode == 0) {
+            setAllTagsToDefault(tags);
+        } else if (lastMode == 0) {
+            setAllTags(tags, false);
+        }
+    }
+
     void DrawTagsCheckboxes(array<Tag@>& tags) {
         if (tags is null) return;
         UI::AlignTextToFramePadding();
@@ -284,12 +333,30 @@ namespace RandomMapsChooser {
         }
     }
 
+    void DrawTagsValidation(array<Tag@>& tags) {
+        uint nbChecked = 0;
+        for (uint i = 0; i < tags.Length; i++) {
+            if (tags[i].checked) nbChecked++;
+        }
+        uint maxTags = includeMode == 2 ? 3 : 10;
+        UI::AlignTextToFramePadding();
+        if ((0 < nbChecked || includeMode == 0) && nbChecked <= maxTags) {
+            // good
+            UI::TextWrapped("\\$4f4" + Icons::CheckSquareO + " " + nbChecked + " tags selected.");
+        } else {
+            UI::TextWrapped("\\$fa4" + Icons::TimesCircleO + " " + nbChecked + " tags selected. Must be between 1 and " + maxTags + ", inclusive.");
+        }
+    }
+
     void OnChooseRandomSettings() {
         loadingMaps = true;
         startnew(RunGetMaps);
     }
 
+    uint getMapReqFailed = 0;
+
     void RunGetMaps() {
+        getMapReqFailed = 0;
         awaitany({
             startnew(GetMapsTillDone),
             startnew(GetMapsTillDone),
@@ -318,16 +385,26 @@ namespace RandomMapsChooser {
     void GetMapsTillDone() {
         auto blacklistDict = ParseBlacklistToDict(uidBlacklist);
         string tagStr = toTagString(tags);
-        while (loadingMaps && int(gotMaps.Length) < nbMaps) {
-            auto @newMap = GetARandomMap(tagStr);
-            if (newMap is null) continue;
-            @newMap = newMap['results'][0];
+        while (loadingMaps && int(gotMaps.Length) < nbMaps && getMapReqFailed < 10) {
+            auto @newMap = GetARandomMap(tagStr, includeMode == 0, includeMode == 2);
+            if (newMap is null) {
+                getMapReqFailed++;
+                continue;
+            }
+            @newMap = newMap['Results'][0];
             // return type: https://api2.mania.exchange/Method/Index/4
-            MapDifficulty diff = MapDifficultyFromStr(newMap['DifficultyName']);
-            if (diff < minDifficulty || maxDifficulty < diff) continue;
-            int len = LengthNameToSecs(newMap['LengthName']);
-            if (len < minLen || maxLen < len) continue;
-            string mapUid = newMap['TrackUID'];
+            // https://api2.mania.exchange/Method/Index/53
+            MapDifficulty diff = MapDifficulty(int(newMap['Difficulty']));
+            if (diff < minDifficulty || maxDifficulty < diff) {
+                warn("Skipping map with difficulty: " + int(newMap['MapId']) + ", " + tostring(diff));
+                continue;
+            }
+            int len = float(newMap['Length']) / 1000;
+            if (len < minLen || maxLen < len) {
+                warn("Skipping map with length: " + int(newMap['MapId']) + ", " + len);
+                continue;
+            }
+            string mapUid = newMap['MapUid'];
             if (blacklistDict.Exists(mapUid)) {
                 trace("Skipping blacklisted map: " + mapUid);
                 continue;
@@ -337,7 +414,7 @@ namespace RandomMapsChooser {
                 if (loadingMaps && int(gotMaps.Length) < nbMaps)
                     gotMaps.InsertLast(LazyMap(mapUid));
             } else {
-                warn('skipping unuploaded map: ' + int(newMap['TrackID']) + ", " + mapUid);
+                warn('skipping unuploaded map: ' + int(newMap['MapId']) + ", " + mapUid);
             }
         }
     }
