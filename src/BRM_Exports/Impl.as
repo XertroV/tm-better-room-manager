@@ -161,9 +161,10 @@ namespace BRM {
             auto s = Json::Object();
             auto type = BRM::GetModeSettingType(key);
             if (type.StartsWith("Unknown Setting")) {
-                throw(type);
+                type = GuessTypeFromValue(value);
+                // throw(type);
             }
-            s['type'] = BRM::GetModeSettingType(key);
+            s['type'] = type;
             s['key'] = key;
             s['value'] = value;
             this.AddSetting(s);
@@ -320,4 +321,27 @@ namespace BRM {
         trace("PreCacheMapByUid_Async: Caching map: " + uid + " - " + name + " @ " + url);
         PreCacheAsset(url);
     }
+}
+
+
+string GuessTypeFromValue(const string &in value) {
+    if (value == "true" || value == "false") {
+        return "boolean";
+    }
+    // if (value == "0" || value == "1") {
+    //     return "bool";
+    // }
+    // if (value == "0.0" || value == "1.0") {
+    //     return "bool";
+    // }
+    // if (value == "0.0" || value == "1.0") {
+    //     return "bool";
+    // }
+    if (!Regex::IsMatch(value, "^[0-9\\.]+$")) {
+        return "text";
+    }
+    if (value.Contains(".")) {
+        return "float";
+    }
+    return "integer";
 }

@@ -26,6 +26,16 @@ S_SynchronizePlayersAtMapStart
 S_DisableGoToMap
 S_PickAndBan_Enable
 S_PickAndBan_Style
+// ---- custom settings ----
+X_ProxVC_Player_VoiceLoc
+X_ProxVC_Player_EarsLoc
+X_ProxVC_UnspawnedPlayer_VoiceLoc
+X_ProxVC_UnspawnedPlayer_EarsLoc
+X_ProxVC_Spec_VoiceLoc
+X_ProxVC_Spec_EarsLoc
+X_ProxVC_Player_Team
+X_ProxVC_UnspawnedPlayer_Team
+X_ProxVC_Spec_Team
 """;
 
 // Note: authoritative file is /GameModes.csv, this is updated programattically now, e.g., via /add_champ_spring_2022_mode_opts.py
@@ -153,6 +163,16 @@ S_WarmUpDuration,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1
 S_WarmUpNb,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1
 S_WarmUpTimeout,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1
 S_WorldRecords,,,,,,,,,,,,,,,,,,,,1,1,,,
+// Custom settings
+X_ProxVC_Player_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Player_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_UnspawnedPlayer_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_UnspawnedPlayer_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Spec_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Spec_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Player_Team,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_UnspawnedPlayer_Team,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Spec_Team,,,,,,,,,,,,,,,,,,,,,,,,
 """;
 
 string[][]@ _GetGameModeValidOpts() {
@@ -163,6 +183,7 @@ string[][]@ _GetGameModeValidOpts() {
     for (uint l = 1; l < lines.Length; l++) {
         if (lines[l].Length < 5) continue;
         auto parts = lines[l].Split(',');
+        if (parts.Length < 2) continue;
         auto settingName = parts[0];
         for (uint gm = 1; gm < int(BRM::GameMode::XXX_LAST); gm++) {
             if (parts[gm] == "1" || universalModeSettings.Find(settingName) > -1) {
@@ -316,6 +337,18 @@ dictionary@ _GetSettingsToType() {
     ret["S_WarmUpTimeout"] = "integer";
     ret["S_WinnersRatio"] = "float";
     ret["S_WorldRecords"] = "text";
+    // CUSTOM SETTINGS
+    // prmutations of (Player, UnspawendPlayer, and Spec) * (Voice,  Ears)
+    ret["X_ProxVC_Player_VoiceLoc"] = "integer";
+    ret["X_ProxVC_Player_EarsLoc"] = "integer";
+    ret["X_ProxVC_UnspawnedPlayer_VoiceLoc"] = "integer";
+    ret["X_ProxVC_UnspawnedPlayer_EarsLoc"] = "integer";
+    ret["X_ProxVC_Spec_VoiceLoc"] = "integer";
+    ret["X_ProxVC_Spec_EarsLoc"] = "integer";
+    // force teams for ProxVC
+    ret["X_ProxVC_Player_Team"] = "text";
+    ret["X_ProxVC_UnspawnedPlayer_Team"] = "text";
+    ret["X_ProxVC_Spec_Team"] = "text";
     return ret;
 }
 
@@ -628,6 +661,12 @@ void AddChampionSpring2022Defaults(string[][]@ &in opts) {
     opts.InsertLast({'S_SponsorsUrl', ''});
 }
 
+#if DEV
+[Setting category="Experimental"]
+bool S_AllowCustomSettings = true;
+#else
+bool S_AllowCustomSettings = false;
+#endif
 
 
 class GameOpt {
@@ -638,15 +677,18 @@ class GameOpt {
     string strVal;
 
     GameOpt(const string &in key, const string &in value, const string &in type) {
-        if (!settingToType.Exists(key)) throw('GameOpt unknown key: ' + key);
+        bool sttExists = settingToType.Exists(key);
+        if (!sttExists && !S_AllowCustomSettings) throw('GameOpt unknown key: ' + key);
         this.key = key;
         this.value = value;
-        settingToType.Get(key, this.type);
+        if (sttExists) settingToType.Get(key, this.type);
+        else this.type = type;
 
         if (this.type != type) throw("Mismatching types for " + key + ": " + type + " and " + this.type + " (latter from dict)");
 
         if (type == "boolean") boolVal = value == "true";
         else if (type == "integer") intVal = Text::ParseInt(value);
+        else if (type == "float") floatVal = Text::ParseFloat(value);
         else strVal = value;
     }
 

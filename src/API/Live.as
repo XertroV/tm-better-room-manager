@@ -49,7 +49,7 @@ Json::Value@ GetClubActivities(uint clubId, uint length = 100, uint offset = 0) 
     return CallLiveApiPath("/api/token/club/" + clubId + "/activity?" + LengthAndOffset(length, offset));
 }
 
-// See: [json/get_club_room.json](json/get_club_room.json) for response
+// https://webservices.openplanet.dev/live/clubs/room-by-id
 Json::Value@ GetClubRoom(uint clubId, uint roomId) {
     return CallLiveApiPath("/api/token/club/" + clubId + "/room/" + roomId);
 }
@@ -59,7 +59,7 @@ Json::Value@ SaveEditedRoomConfig(uint clubId, uint roomId, Json::Value@ data) {
     return PostLiveApiPath("/api/token/club/" + clubId + "/room/" + roomId + "/edit", data);
 }
 
-// Payload: {public: 0 or 1}
+// Payload: {public: 0 or 1} or {active: 0 or 1}
 Json::Value@ EditClubActivity(uint clubId, uint roomId, Json::Value@ data) {
     return PostLiveApiPath("/api/token/club/" + clubId + "/activity/" + roomId + "/edit", data);
 }

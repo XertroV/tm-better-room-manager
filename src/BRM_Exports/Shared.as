@@ -56,13 +56,12 @@ namespace BRM {
             case GameMode::CupLong: return "TrackMania/Legacy/TM_CupLong_Online.Script.txt";
             case GameMode::CupShort: return "TrackMania/Legacy/TM_CupShort_Online.Script.txt";
             case GameMode::RoundsBoulet: return "TrackMania/Legacy/TM_RoundsBoulet_Online.Script.txt";
-
-            case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
             case GameMode::TMWC2023: return "TrackMania/TM_TMWC2023_Online.Script.txt";
-            case GameMode::RoyalStars: return "TrackMania/TM_RoyalStars_Online.Script.txt";
             case GameMode::MultiTeams: return "TrackMania/Deprecated/TM_MultiTeams_Online.Script.txt";
             case GameMode::HeadToHead: return "TrackMania/Deprecated/TM_HeadToHead_Online.Script.txt";
             case GameMode::Final42TMGL: return "TrackMania/Deprecated/TM_Final42TMGL_Online.Script.txt";
+            case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
+            case GameMode::RoyalStars: return "TrackMania/TM_RoyalStars_Online.Script.txt";
         }
         throw("Unknown mode");
         return "";
