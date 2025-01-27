@@ -235,7 +235,7 @@ dictionary@ _GetSettingsToType() {
     ret["S_DecoImageUrl_Screen16x9"] = "text";
     ret["S_DecoImageUrl_Screen8x1"] = "text";
     ret["S_DecoImageUrl_WhoAmIUrl"] = "text";
-    ret["S_DelayBeforeNextMap"] = "text";
+    ret["S_DelayBeforeNextMap"] = "integer";
     ret["S_DisableGiveUp"] = "boolean";
     ret["S_DisableGoToMap"] = "boolean";
     ret["S_Division"] = "text";
@@ -443,7 +443,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_IsMatchmaking', 'false'});
     tmp.InsertLast({'S_PickAndBan_Enable', 'true'});
     tmp.InsertLast({'S_PickAndBan_Style', '{"Background": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/UI/TMWT_MatchIntroBackground.dds","TopLeftLogo": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/BrandsLogo/TMWT_Logo.dds","TopRightLogo": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/BrandsLogo/TMWT_TMGL.dds","BottomLogo": "file://Media/Manialinks/Nadeo/TMNext/Modes/TMWT/BrandsLogo/TMWT_Kaporal.dds"}'});
-    tmp.InsertLast({'S_ChatTime', '600'});
+    tmp.InsertLast({'S_ChatTime', '6'});
     @tmp = scriptDefaults[BRM::GameMode::TMWTMatchmaking];
     tmp.InsertLast({'S_MapPointsLimit', '10'});
     tmp.InsertLast({'S_MatchPointsLimit', '1'});
@@ -455,7 +455,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_EarlyEndMatchCallback', 'true'});
     tmp.InsertLast({'S_MatchmakingId', ''});
     tmp.InsertLast({'S_MatchId', ''});
-    tmp.InsertLast({'S_ChatTime', '600'});
+    tmp.InsertLast({'S_ChatTime', '6'});
     tmp.InsertLast({'S_DecoImageUrl_Checkpoint', 'file://Media/Manialinks/Nadeo/TMNext/Modes/Matchmaking/Decal_Matchmaking.dds'});
     @tmp = scriptDefaults[BRM::GameMode::TeamsMatchmaking];
     tmp.InsertLast({'S_PointsLimit', '5'});
@@ -518,7 +518,7 @@ string[][][]@ _GetScriptDefaults() {
     tmp.InsertLast({'S_WarmUpDuration', '0'});
     tmp.InsertLast({'S_WarmUpTimeout', '-1'});
     @tmp = scriptDefaults[BRM::GameMode::HeadToHead];
-    tmp.InsertLast({'S_ChatTime', '60'});
+    tmp.InsertLast({'S_ChatTime', '6'});
     tmp.InsertLast({'S_ForceLapsNb', '2'});
     tmp.InsertLast({'S_MatchPointsLimit', '3'});
     tmp.InsertLast({'S_MapPointsLimit', '3'});
@@ -542,7 +542,7 @@ string[][][]@ _GetScriptDefaults() {
     SetGameModeOptionInList(tmp, "S_SegmentBonusTime", "1");
     SetGameModeOptionInList(tmp, "S_MatchWaitingScreenDuration", "20");
     SetGameModeOptionInList(tmp, "S_RoundWaitingScreenDuration", "20");
-    SetGameModeOptionInList(tmp, "S_ChatTime", "120");
+    SetGameModeOptionInList(tmp, "S_ChatTime", "6");
     SetGameModeOptionInList(tmp, "S_AddBotsUntil", "20");
     SetGameModeOptionInList(tmp, "S_MaxBotsTeams", "10");
     SetGameModeOptionInList(tmp, "S_MinBotLevel", "0");
@@ -558,7 +558,7 @@ string[][][]@ _GetScriptDefaults() {
     SetGameModeOptionInList(tmp, "S_MatchId", "");
     SetGameModeOptionInList(tmp, "S_Division", "");
     @tmp = scriptDefaults[BRM::GameMode::TMWC2023];
-    tmp.InsertLast({"S_ChatTime", "600"});
+    tmp.InsertLast({"S_ChatTime", "6"});
     tmp.InsertLast({"S_UseClublinks", "0"});
     tmp.InsertLast({"S_UseClublinksSponsors", "0"});
     tmp.InsertLast({"S_NeutralEmblemUrl", ""});
@@ -637,7 +637,7 @@ void AddChampionSpring2022Defaults(string[][]@ &in opts) {
     opts.InsertLast({'S_KOCheckpointNb', '3'});
     opts.InsertLast({'S_KOCheckpointTime', '1000'});
     opts.InsertLast({'S_KOValidationDelay', '1000'});
-    opts.InsertLast({'S_ChatTime', '600'});
+    opts.InsertLast({'S_ChatTime', '6'});
     opts.InsertLast({'S_WarmUpNb', '0'});
     opts.InsertLast({'S_WarmUpDuration', '0'});
     opts.InsertLast({'S_WarmUpTimeout', '-1'});

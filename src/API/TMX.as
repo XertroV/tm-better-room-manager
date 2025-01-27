@@ -54,11 +54,11 @@ Json::Value@ GetMapsByTrackIDs(string[] &in tids) {
     return Json::Parse(req.String());
 }
 
-const string mapPackMapsEndpoint = "https://trackmania.exchange/api/mappack/get_mappack_tracks/{id}";
+const string mapPackMapsEndpoint = "https://trackmania.exchange/api/maps?count=100&fields="+TMX_API_FIELDS+"&{params_str}";
 
 // returns json array of maps
 Json::Value@ GetMapsFromMapPackId(const string &in mpId) {
-    string url = mapPackMapsEndpoint.Replace("{id}", mpId);
+    string url = mapPackMapsEndpoint.Replace("{params_str}", "mappackid=" + mpId);
     auto req = PluginGetRequest(url);
     req.Start();
     while (!req.Finished()) yield();
@@ -66,5 +66,5 @@ Json::Value@ GetMapsFromMapPackId(const string &in mpId) {
         warn("[status:" + req.ResponseCode() + "] Error getting map pack maps from TMX: " + req.Error());
         return null;
     }
-    return Json::Parse(req.String());
+    return req.Json();
 }

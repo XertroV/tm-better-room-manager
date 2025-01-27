@@ -295,7 +295,8 @@ namespace MapChooser {
         loading = true;
         tmxTotal = 1;
         tmxDone = 0;
-        auto mpMaps = GetMapsFromMapPackId(tmxMapPackId);
+        auto mpMapsR = GetMapsFromMapPackId(tmxMapPackId);
+        auto mpMaps = mpMapsR['Results'];
         while (mpMaps.Length > 100) {
             mpMaps.Remove(mpMaps.Length - 1);
         }
@@ -306,8 +307,8 @@ namespace MapChooser {
         int[] tids;
         for (uint i = 0; i < mpMaps.Length; i++) {
             auto track = mpMaps[i];
-            uids.InsertLast(track['TrackUID']);
-            tids.InsertLast(track['TrackID']);
+            uids.InsertLast(track['MapUid']);
+            tids.InsertLast(track['MapId']);
         }
 
         EnsureMapsHelper(tids, uids);
