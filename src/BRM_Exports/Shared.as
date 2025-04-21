@@ -29,6 +29,8 @@ namespace BRM {
         CupLong = 22,
         CupShort = 23,
         RoundsBoulet = 24,
+        // 2025
+        TMWC2025 = 25,
         // leave last for loops
         XXX_LAST
     }
@@ -62,6 +64,8 @@ namespace BRM {
             case GameMode::Final42TMGL: return "TrackMania/Deprecated/TM_Final42TMGL_Online.Script.txt";
             case GameMode::Royal: return "TrackMania/TM_Royal_Online.Script.txt";
             case GameMode::RoyalStars: return "TrackMania/TM_RoyalStars_Online.Script.txt";
+            // 2025
+            case GameMode::TMWC2025: return "TrackMania/TM_TMWT2025_Online.Script.txt";
         }
         throw("Unknown mode");
         return "";
@@ -97,6 +101,8 @@ namespace BRM {
         if (modeStr == "TrackMania/Deprecated/TM_MultiTeams_Online.Script.txt") return GameMode::MultiTeams;
         if (modeStr == "TrackMania/Deprecated/TM_HeadToHead_Online.Script.txt") return GameMode::HeadToHead;
         if (modeStr == "TrackMania/Deprecated/TM_Final42TMGL_Online.Script.txt") return GameMode::Final42TMGL;
+        // 2025
+        if (modeStr == "TrackMania/TM_TMWT2025_Online.Script.txt") return GameMode::TMWC2025;
         // default
         return GameMode::Unknown;
     }

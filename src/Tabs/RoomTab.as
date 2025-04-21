@@ -314,9 +314,15 @@ class RoomTab : Tab {
                             auto go = gameOpts[i];
                             UI::TableNextColumn();
                             UI::AlignTextToFramePadding();
-                            UI::Text(go.key);
+                            if (go.isDangerous) {
+                                UI::Text("\\$f91" + go.key);
+                                AddDangerousTooltip();
+                            } else {
+                                UI::Text(go.key);
+                            }
                             UI::TableNextColumn();
                             go.DrawOption(false);
+                            if (go.isDangerous) AddDangerousTooltip();
                             UI::TableNextColumn();
                             if (UI::Button(Icons::QuestionCircleO + "##url-" + go.key)) OpenBrowserURL(go.DocsUrl());
                             UI::SameLine();
@@ -331,6 +337,10 @@ class RoomTab : Tab {
                 UI::Text("No game options set.");
             }
         }
+    }
+
+    void AddDangerousTooltip() {
+        AddSimpleTooltip("\\$<\\$f91 " + Icons::ExclamationTriangle + "  Warning!\\$> This value is \\$iPUBLIC\\$z and you should not put private authorization info here.");
     }
 
     void OnModeChanged() {
