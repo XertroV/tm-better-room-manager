@@ -250,6 +250,7 @@ class RoomTab : Tab {
     Json::Value@ scriptSettings = Json::Object();
     BRM::GameMode mode = BRM::GameMode::TimeAttack;
     bool _creatingRoom = false;
+    bool m_EnableBigServers = false;
 
     void DrawRoomEditForm() {
         bool changed = false;
@@ -261,7 +262,14 @@ class RoomTab : Tab {
         DrawLocationCombo();
         UI::EndDisabled();
 
-        maxPlayers = UI::SliderInt("Max. Players", maxPlayers, 2, 100);
+        if (UI::IsKeyDown(UI::Key::LeftAlt)) {
+            m_EnableBigServers = UI::Checkbox("\\$i Enable Big Servers?", m_EnableBigServers);
+        }
+        maxPlayers = UI::SliderInt("Max. Players", maxPlayers, 2, m_EnableBigServers ? 255 : 100);
+        if (maxPlayers > 100) {
+            // UI::SameLine();
+            UI::TextWrapped("\\$f80 " + Icons::ExclamationTriangle + "  More than 100 players may degrade server quality and stability.");
+        }
         scalable = UI::Checkbox("Scalable?", scalable);
         UI::BeginDisabled(isEditing);
         passworded = UI::Checkbox("Password?", passworded);
@@ -634,6 +642,7 @@ class RoomTab : Tab {
         print('on chosen preset cb: ' + Json::Write(preset));
         region = SvrLocFromString(preset['region']);
         maxPlayers = preset['maxPlayersPerServer'];
+        m_EnableBigServers = maxPlayers > 100;
         mode = BRM::GameModeFromStr(preset['script']);
         scalable = int(preset['scalable']) == 1;
         gameOpts.RemoveRange(0, gameOpts.Length);
