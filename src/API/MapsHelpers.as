@@ -41,15 +41,15 @@ void EnsureMapsHelper(int[] &in tids, string[] &in uids) {
     ReturnToMenu();
 
     warn("Getting maps that aren't uploaded to nadeo services: " + string::Join(uids, ", "));
-    // request all the maps
-    Meta::PluginCoroutine@[] coros;
+    // Run sequentially for broader compatibility (no Meta::PluginCoroutine or await)
     for (uint i = 0; i < uids.Length; i++) {
         auto uid = uids[i];
         auto tid = tids[i];
-        auto coro = startnew(DownloadMapAndUpload, MapUidTidData(uid, tid));
-        coros.InsertLast(coro);
+        if (!IsMapUploadedToNadeo(uid)) {
+            DownloadTmxMapToLocal(tid);
+            UploadMapFromLocal(uid);
+        }
     }
-    await(coros);
     warn("Finished uploading maps.");
 }
 

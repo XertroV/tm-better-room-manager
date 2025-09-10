@@ -177,11 +177,16 @@ namespace MapChooser {
     void OnClickAddMapsFromFolder() {
         loading = true;
         auto maps = CurrentFolder.OnClickAddSelectedMaps();
-        Meta::PluginCoroutine@[] coros;
+        // Run upload checks sequentially to avoid PluginCoroutine/await
+        startnew(CoroutineFuncUserdata(OnClickAddMapsFromFolder_Coro), maps);
+    }
+
+    void OnClickAddMapsFromFolder_Coro(ref@ r) {
+        string[]@ maps = cast<string[]@>(r);
+        if (maps is null) { loading = false; return; }
         for (uint i = 0; i < maps.Length; i++) {
-            coros.InsertLast(startnew(CheckMapIsUploadedAndUploadIfNot_Coro, array<string> = {maps[i]}));
+            CheckMapIsUploadedAndUploadIfNot_Coro(array<string> = {maps[i]});
         }
-        await(coros);
         LazyMap@[] ret;
         for (uint i = 0; i < maps.Length; i++) {
             ret.InsertLast(LazyMap(maps[i]));

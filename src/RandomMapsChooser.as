@@ -157,6 +157,13 @@ namespace RandomMapsChooser {
     bool uncheckAll = false;
     int nbMaps = 12;
 
+    // Player-history filters
+    [Setting hidden]
+    bool skipMapsWithPB = false;
+
+    // cache PB lookups during a single fetch session
+    dictionary@ pbCache;
+
     bool Open(RandomMapsCallback@ callback) {
         if (active) return false;
         active = true;
@@ -217,6 +224,13 @@ namespace RandomMapsChooser {
         SubHeading("Difficulty (TMX)");
         minDifficulty = DifficultyCombo('Min: ', minDifficulty);
         maxDifficulty = DifficultyCombo('Max: ', maxDifficulty);
+
+        UI::Separator();
+        if (UI::CollapsingHeader("Player Filters")) {
+            UI::AlignTextToFramePadding();
+            skipMapsWithPB = UI::Checkbox("Skip maps where I have a Personal Best (PB)", skipMapsWithPB);
+            AddSimpleTooltip("Checks your online PB via Nadeo services; may slow down fetching slightly.");
+        }
 
         UI::Separator();
         UI::AlignTextToFramePadding();
@@ -350,6 +364,8 @@ namespace RandomMapsChooser {
 
     void OnChooseRandomSettings() {
         loadingMaps = true;
+        // reset PB cache for this session
+        @pbCache = dictionary();
         startnew(RunGetMaps);
     }
 
@@ -408,6 +424,28 @@ namespace RandomMapsChooser {
             if (blacklistDict.Exists(mapUid)) {
                 trace("Skipping blacklisted map: " + mapUid);
                 continue;
+            }
+
+            // Skip maps where the player already has a PB (optional)
+            if (skipMapsWithPB) {
+                bool hasPb = false;
+                int cached;
+                if (pbCache !is null && pbCache.Get(mapUid, cached)) {
+                    hasPb = cached == 1;
+                } else {
+                    try {
+                        auto rec = GetMyPbOnMap(mapUid);
+                        hasPb = rec !is null;
+                    } catch {
+                        // If the request fails, assume no PB to avoid over-filtering
+                        hasPb = false;
+                    }
+                    if (pbCache !is null) pbCache[mapUid] = hasPb ? 1 : 0;
+                }
+                if (hasPb) {
+                    warn("Skipping map (has PB): " + mapUid);
+                    continue;
+                }
             }
 
             if (IsMapUploadedToNadeo(mapUid)) {
