@@ -177,7 +177,7 @@ namespace MapChooser {
     void OnClickAddMapsFromFolder() {
         loading = true;
         auto maps = CurrentFolder.OnClickAddSelectedMaps();
-        Meta::PluginCoroutine@[] coros;
+        awaitable@[] coros;
         for (uint i = 0; i < maps.Length; i++) {
             coros.InsertLast(startnew(CheckMapIsUploadedAndUploadIfNot_Coro, array<string> = {maps[i]}));
         }
