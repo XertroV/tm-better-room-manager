@@ -186,7 +186,7 @@ namespace MapChooser {
         for (uint i = 0; i < maps.Length; i++) {
             ret.InsertLast(LazyMap(maps[i]));
         }
-        startnew(CoroutineFuncUserdata(RunCallbackMulti), ret);
+        startnew(RunCallbackMulti, ret);
         loading = false;
         active = false;
     }
@@ -249,7 +249,7 @@ namespace MapChooser {
             if (s.Length > 0)
                 trackIds.InsertLast(s);
         }
-        startnew(CoroutineFuncUserdata(AddMapsFromTmxIds), trackIds);
+        startnew(AddMapsFromTmxIds, trackIds);
     }
 
     // Json::Value@[] tmpMapsTmx;
@@ -286,7 +286,7 @@ namespace MapChooser {
         for (uint i = 0; i < uids.Length; i++) {
             ret.InsertLast(LazyMap(uids[i]));
         }
-        startnew(CoroutineFuncUserdata(RunCallbackMulti), ret);
+        startnew(RunCallbackMulti, ret);
         loading = false;
         active = false;
     }
@@ -318,7 +318,7 @@ namespace MapChooser {
         for (uint i = 0; i < uids.Length; i++) {
             ret.InsertLast(LazyMap(uids[i]));
         }
-        startnew(CoroutineFuncUserdata(RunCallbackMulti), ret);
+        startnew(RunCallbackMulti, ret);
         loading = false;
         active = false;
 
