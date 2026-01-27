@@ -42,7 +42,7 @@ void EnsureMapsHelper(int[] &in tids, string[] &in uids) {
 
     warn("Getting maps that aren't uploaded to nadeo services: " + string::Join(uids, ", "));
     // request all the maps
-    Meta::PluginCoroutine@[] coros;
+    awaitable@[] coros;
     for (uint i = 0; i < uids.Length; i++) {
         auto uid = uids[i];
         auto tid = tids[i];
