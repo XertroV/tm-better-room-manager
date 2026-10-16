@@ -40,7 +40,7 @@ void EnsureMapsHelper(int[] &in tids, string[] &in uids) {
 
     ReturnToMenu();
 
-    warn("Getting maps that aren't uploaded to nadeo services: " + string::Join(uids, ", "));
+    warn("Getting maps that aren't uploaded to nadeo services: " + Text::Join(uids, ", "));
     // request all the maps
     awaitable@[] coros;
     for (uint i = 0; i < uids.Length; i++) {

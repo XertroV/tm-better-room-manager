@@ -140,7 +140,7 @@ class NewsScoreBoardSection : BRM::INewsScoreBoardSection {
 			auto entry = entries[i];
 			arr.InsertLast(entry.ToNewsString());
 		}
-		return string::Join(arr, "");
+		return Text::Join(arr, "");
 	}
 }
 
@@ -187,7 +187,7 @@ class NewsScoreBoardEntry : BRM::INewsScoreBoardEntry {
 	}
 
 	string ToNewsString() {
-		return string::Join({
+		return Text::Join({
 			"# " + rank + ". " + name,
 			tostring(wrs),
 			tostring(ats),

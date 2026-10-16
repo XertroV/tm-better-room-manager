@@ -43,7 +43,7 @@ const string multiMapEndpoint = "https://trackmania.exchange/api/maps/get_map_in
 
 // returns json array of maps
 Json::Value@ GetMapsByTrackIDs(string[] &in tids) {
-    string url = multiMapEndpoint + string::Join(tids, ",");
+    string url = multiMapEndpoint + Text::Join(tids, ",");
     auto req = PluginGetRequest(url);
     req.Start();
     while (!req.Finished()) yield();
