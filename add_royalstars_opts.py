@@ -16,7 +16,7 @@ for i, line in enumerate(reader):
 
 
 def insert_col_if_missing(name, index):
-    if len(header_row) >= index or name != header_row[index]:
+    if len(header_row) <= index or name != header_row[index]:
         header_row.insert(index, name)
         for row in rows:
             row.insert(index, "")
