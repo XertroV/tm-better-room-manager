@@ -183,15 +183,15 @@ S_WorldRecords,,,,,,,,,,,,,,,,,,,,1,1,,,,,
 //
 // Custom settings
 //
-X_ProxVC_Player_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_Player_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_UnspawnedPlayer_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_UnspawnedPlayer_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_Spec_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_Spec_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_Player_Team,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_UnspawnedPlayer_Team,,,,,,,,,,,,,,,,,,,,,,,,,
-X_ProxVC_Spec_Team,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Player_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Player_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_UnspawnedPlayer_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_UnspawnedPlayer_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Spec_VoiceLoc,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Spec_EarsLoc,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Player_Team,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_UnspawnedPlayer_Team,,,,,,,,,,,,,,,,,,,,,,,,,,
+X_ProxVC_Spec_Team,,,,,,,,,,,,,,,,,,,,,,,,,,
 """;
 
 string[][]@ _GetGameModeValidOpts() {
