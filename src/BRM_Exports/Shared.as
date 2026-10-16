@@ -31,6 +31,8 @@ namespace BRM {
         RoundsBoulet = 24,
         // 2025
         TMWC2025 = 25,
+        // EWC26
+        CupEsport = 26,
         // leave last for loops
         XXX_LAST
     }
@@ -66,6 +68,8 @@ namespace BRM {
             case GameMode::RoyalStars: return "TrackMania/TM_RoyalStars_Online.Script.txt";
             // 2025
             case GameMode::TMWC2025: return "TrackMania/TM_TMWT2025_Online.Script.txt";
+            // EWC26
+            case GameMode::CupEsport: return "TrackMania/Community/TM_CupEsport_Online.Script.txt";
         }
         throw("Unknown mode");
         return "";
@@ -103,6 +107,8 @@ namespace BRM {
         if (modeStr == "TrackMania/Deprecated/TM_Final42TMGL_Online.Script.txt") return GameMode::Final42TMGL;
         // 2025
         if (modeStr == "TrackMania/TM_TMWT2025_Online.Script.txt") return GameMode::TMWC2025;
+        // EWC26
+        if (modeStr == "TrackMania/Community/TM_CupEsport_Online.Script.txt") return GameMode::CupEsport;
         // default
         return GameMode::Unknown;
     }

@@ -39,140 +39,147 @@ X_ProxVC_Spec_Team
 """;
 
 // Note: authoritative file is /GameModes.csv, this is updated programattically now, e.g., via /add_champ_spring_2022_mode_opts.py
-const string GameModeCSV = """,Cup,Knockout,Laps,Teams,TimeAttack,Rounds,RoyalTimeAttack,TMWTTeams,TMWTMatchmaking,TeamsMatchmaking,TimeAttackDaily,KnockoutDaily,COTDQualifications,CupClassic,ChampionSpring2022,Royal,TMWC2023,RoyalStars,MultiTeams,HeadToHead,Final42TMGL,CupLong,CupShort,RoundsBoulet,TMWC2025
-S_AddBotsUntil,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_AlwaysDisplayUnlockTimer,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_ApiAuthorizationHeader,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_ApiCompetitionUid,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_ApiStageUid,,,,,,,,,,,,,,,,,1,,,,,,,,
-S_ApiTourUid,,,,,,,,,,,,,,,,,1,,,,,,,,
-S_ApiUrl,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_BalanceScore,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_BasicAuthHeader,,,,,,,,,,,1,,1,,,,1,,,,,,,,
-S_BestLapBonusPoints,,,,,,,,,,,,,,,,,,,,,,,,,
-S_Bots_Clan,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_Bots_EnablePlaying,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_Bots_EnableRecording,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_Bots_GhostDBId,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_Bots_GhostsPerBot,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_Bots_LevelRange,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_Bots_LevelShift,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_Bots_PBMultiplier,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_ChatTime,1,1,1,1,1,1,1,1,1,1,,1,,1,1,1,1,,,1,1,1,1,1,1
-S_ClubId,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_ClubName,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_CompetitionName,,,,,,,,,,,,1,,1,1,,,,,,,1,1,,
-S_CrashDetectionThreshold,,,,,,,,,,,,,,,,,1,,,,,,,,
-S_CumulatePoints,,,,1,,,,,,1,,,,,,,,,,,,,,,
-S_CupPointsLimit,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_DecoImageUrl_Checkpoint,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_DecoImageUrl_DecalSponsor4x1,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_DecoImageUrl_Screen16x1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,1,,,1,1,1,1,1,
-S_DecoImageUrl_Screen16x9,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,1,,,1,1,1,1,1,
-S_DecoImageUrl_Screen8x1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,1,,,1,1,1,1,1,
-S_DecoImageUrl_WhoAmIUrl,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_DelayBeforeNextMap,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,1
-S_DisableGiveUp,,,1,,,,,,,,,,,,,,,,,,,,,,
-S_DisableGoToMap,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_DisableMatchIntro,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_Division,,,,,,,,,,,,1,,,,1,,,,,,,,,
-S_EarlyEndMatchCallback,,1,,,,,,1,1,1,,1,,1,1,,1,,,,,1,1,,
-S_EliminatedPlayersNbRanks,,1,,,,,,,,,,1,,,,,,,,,,,,,
-S_EnableAmbientSound,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,
-S_EnableDossardColor,,,,,,,,1,,,,,,,,,1,,,,,,,,1
-S_EnableGhostsUpload,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_EnableJoinLeaveNotifications,1,1,1,1,1,1,1,1,1,1,1,1,1,,,1,1,,,,,,,1,1
-S_EnablePreMatch,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_EnableTrophiesGain,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_EnableWinScreen,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,
-S_EndRoundPostScoreUpdateDuration,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_EndRoundPreScoreUpdateDuration,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_FinalistsAccountIds,,,,,,,,,,,,,,,,,,,,1,1,,,,
-S_FinishTimeout,1,1,1,1,,1,,1,1,1,,1,,1,1,,1,,1,1,1,1,1,1,1
-S_FinishTimeoutDivider,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_ForceLapsNb,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,1,1,,,1,1
-S_ForceRoadSpectatorsNb,,,,,,,,1,,,,,,1,1,,1,,,1,1,1,1,,1
-S_GhostDBId,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_HeaderLogoUrl,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_HideScoresHeader,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_InfiniteLaps,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_IntroBackgroundUrl,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_IntroLogoUrl,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_IntroMaxDuration,,,,,,,,,,,1,,1,,,,,,,,,,,,
-S_IsChannelServer,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,
-S_IsMatchmaking,,,,,,,,1,,,,,,,,1,1,,,,,,,,1
-S_IsSplitScreen,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_IsSuperRoyal,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_IsSuperRoyalFinale,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_KOCheckpointNb,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,
-S_KOCheckpointTime,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,
-S_KOValidationDelay,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,
-S_LoadMatchState,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_LoadingScreenImageUrl,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_LogLevel,,,,,,,,,,,1,,,,,,,,,,,,,,
-S_MapPointsLimit,,,,,,,,1,1,,,,,,,,1,,,1,1,,,,1
-S_MapWorldRecord,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_MapsPerMatch,,,,1,,1,,,,1,,,,,,,,,1,,,,,1,
-S_MatchId,,,,,,,,,1,1,,,,,,1,,,,,,,,,
-S_MatchInfo,,,,,,,,1,,,,,,,,,1,,,,,,,,1
-S_MatchLevel,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_MatchPointsLimit,,,,,,,,1,1,,,,,1,1,,1,,,1,1,1,1,,1
-S_MatchPosition,,1,,,,,,,,,,1,,,,,,,,,,,,,
-S_MatchStyle,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_MatchType,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_MatchWaitingScreenDuration,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_MatchmakingId,,,,,,,,,1,1,,,,,,,,,,,,,,,
-S_MaxBotLevel,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_MaxBotsTeams,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_MaxPointsPerRound,,,,1,,,,,,1,,,,,,,,,,,,,,,
-S_MinBotLevel,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_NbOfWinners,1,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,
-S_NeutralEmblemUrl,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,1
-S_NoRoundTie,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_OverridePlayerProfiles,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,
-S_PickAndBan_Enable,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_PickAndBan_Style,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_PlayerPartition,,,,,,,,,,,1,,1,,,,,,,,,,,,
-S_PointsGap,,,,1,,,,,,1,,,,,,,,,,,,,,,
-S_PointsLimit,1,,,1,,1,,,,1,,,,,,,,,1,,,,,1,
-S_PointsRepartition,1,1,,1,,1,,,,1,,1,,1,1,,1,,,1,1,1,1,1,1
-S_PointsRepartition1VS,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_PointsRepartition2VS,,,,,,,,,,1,,,,,,,,,,,,,,,
-S_QualificationsEndTime_MinMargin,,,,,,,,,,,1,,,,,,,,,,,,,,
-S_RankedCompetitionType,,,,,,,,,,,1,1,1,,,,,,,,,,,,
-S_RespawnBehaviour,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_RoundWaitingScreenDuration,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_RoundsPerMap,1,1,,1,,1,,,,1,,1,,1,1,,,,1,,,1,1,1,
-S_RoundsWithoutElimination,,1,,,,,,,,,,1,,,,,,,,,,,,,
-S_ScriptEnvironment,1,1,1,1,1,1,1,,,1,1,1,,,,,1,,,,,,,1,1
-S_SeasonIds,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,
-S_SegmentBonusTime,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_SegmentUnlockInterval,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_Sign16x9DefaultUrl,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_Sign2x3DefaultUrl,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_Sign64x10DefaultUrl,,,,,,,,,,,,,,,,,,,,,,,,,1
-S_SponsorsUrl,,,,,,,,1,,,,,,1,1,,1,,,,,1,1,,1
-S_StepNb,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_StopMatchIfNotEnoughPlayers,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_SuperRoyalRoundNumber,,,,,,,,,,,,,,,,1,,,,,,,,,
-S_SynchronizePlayersAtMapStart,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_SynchronizePlayersAtRoundStart,1,1,1,1,1,1,,,,1,,1,,,,,1,,,1,1,,,1,1
-S_TeamsNb,,,,,,,,,,,,,,,,,,,1,,,,,,
-S_TeamsUrl,,,,,,,,1,1,,,,,,,,1,,,,,,,,1
-S_TimeLimit,,,1,,1,,1,,,,1,,1,,,1,,,,,,,,,
-S_TrackNb,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_TracksTotal,,,,,,,,,,,,,,1,1,,,,,,,1,1,,
-S_TrustClientSimu,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_UseAlternateRules,,,,1,,,,,,1,,,,,,,,,,,,,,,
-S_UseClublinks,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,
-S_UseClublinksSponsors,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,
-S_UseCrudeExtrapolation,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1
-S_UseCustomPointsRepartition,,,,1,,,,,,1,,,,,,,,,,,,,,,
-S_UseTieBreak,,,,1,,,,,,1,,,,,,,,,1,,,,,,
-S_WarmUpDuration,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1,1
-S_WarmUpNb,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1,1
-S_WarmUpTimeout,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1,1
-S_WorldRecords,,,,,,,,,,,,,,,,,,,,1,1,,,,
+const string GameModeCSV = """,Cup,Knockout,Laps,Teams,TimeAttack,Rounds,RoyalTimeAttack,TMWTTeams,TMWTMatchmaking,TeamsMatchmaking,TimeAttackDaily,KnockoutDaily,COTDQualifications,CupClassic,ChampionSpring2022,Royal,TMWC2023,RoyalStars,MultiTeams,HeadToHead,Final42TMGL,CupLong,CupShort,RoundsBoulet,TMWC2025,CupEsport
+S_AddBotsUntil,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_AlwaysDisplayUnlockTimer,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_ApiAuthorizationHeader,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_ApiCompetitionUid,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_ApiStageUid,,,,,,,,,,,,,,,,,1,,,,,,,,,
+S_ApiTourUid,,,,,,,,,,,,,,,,,1,,,,,,,,,
+S_ApiUrl,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_BalanceScore,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_BasicAuthHeader,,,,,,,,,,,1,,1,,,,1,,,,,,,,,
+S_BestLapBonusPoints,,,,,,,,,,,,,,,,,,,,,,,,,,
+S_Bots_Clan,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_Bots_EnablePlaying,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_Bots_EnableRecording,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_Bots_GhostDBId,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_Bots_GhostsPerBot,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_Bots_LevelRange,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_Bots_LevelShift,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_Bots_PBMultiplier,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_ChatTime,1,1,1,1,1,1,1,1,1,1,,1,,1,1,1,1,,,1,1,1,1,1,1,
+S_ClubId,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_ClubName,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_CompetitionName,,,,,,,,,,,,1,,1,1,,,,,,,1,1,,,
+S_CrashDetectionThreshold,,,,,,,,,,,,,,,,,1,,,,,,,,,1
+S_CumulatePoints,,,,1,,,,,,1,,,,,,,,,,,,,,,,
+S_CupPointsLimit,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_DecoImageUrl_Checkpoint,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_DecoImageUrl_DecalSponsor4x1,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_DecoImageUrl_Screen16x1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,1,,,1,1,1,1,1,,1
+S_DecoImageUrl_Screen16x9,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,1,,,1,1,1,1,1,,1
+S_DecoImageUrl_Screen8x1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,1,,,1,1,1,1,1,,1
+S_DecoImageUrl_WhoAmIUrl,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_DelayBeforeNextMap,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,1,
+S_DisableGiveUp,,,1,,,,,,,,,,,,,,,,,,,,,,,
+S_DisableGoToMap,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_DisableManiapubsOnScreens,,,,,,,,,,,,,,,,,,,,,,,,,,1
+S_DisableMatchIntro,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_DisableScoresHeaderInterface,,,,,,,,,,,,,,,,,,,,,,,,,,1
+S_Division,,,,,,,,,,,,1,,,,1,,,,,,,,,,
+S_EarlyEndMatchCallback,,1,,,,,,1,1,1,,1,,1,1,,1,,,,,1,1,,,
+S_EliminatedPlayersNbRanks,,1,,,,,,,,,,1,,,,,,,,,,,,,,
+S_EnableAmbientSound,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,,
+S_EnableDossardColor,,,,,,,,1,,,,,,,,,1,,,,,,,,1,
+S_EnableGhostsUpload,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_EnableJoinLeaveNotifications,1,1,1,1,1,1,1,1,1,1,1,1,1,,,1,1,,,,,,,1,1,1
+S_EnablePreMatch,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,1
+S_EnableTrophiesGain,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_EnableWinScreen,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,,
+S_EndRoundPostScoreUpdateDuration,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_EndRoundPreScoreUpdateDuration,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_FinalistsAccountIds,,,,,,,,,,,,,,,,,,,,1,1,,,,,
+S_FinishTimeout,1,1,1,1,,1,,1,1,1,,1,,1,1,,1,,1,1,1,1,1,1,1,1
+S_FinishTimeoutDivider,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_ForceLapsNb,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,1,1,,,1,1,1
+S_ForceRoadSpectatorsNb,,,,,,,,1,,,,,,1,1,,1,,,1,1,1,1,,1,
+S_GhostDBId,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_HeaderLogoUrl,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_HideScoresHeader,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_InfiniteLaps,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_IntroBackgroundUrl,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_IntroLogoUrl,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_IntroMaxDuration,,,,,,,,,,,1,,1,,,,,,,,,,,,,
+S_IsChannelServer,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,,
+S_IsMatchmaking,,,,,,,,1,,,,,,,,1,1,,,,,,,,1,
+S_IsSplitScreen,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_IsSuperRoyal,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_IsSuperRoyalFinale,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_KOCheckpointNb,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,,
+S_KOCheckpointTime,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,,
+S_KOValidationDelay,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,,
+S_LoadMatchState,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_LoadingScreenImageUrl,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_LogLevel,,,,,,,,,,,1,,,,,,,,,,,,,,,
+S_MapPointsLimit,,,,,,,,1,1,,,,,,,,1,,,1,1,,,,1,
+S_MapWorldRecord,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_MapsPerMatch,,,,1,,1,,,,1,,,,,,,,,1,,,,,1,,
+S_MatchId,,,,,,,,,1,1,,,,,,1,,,,,,,,,,
+S_MatchInfo,,,,,,,,1,,,,,,,,,1,,,,,,,,1,
+S_MatchLevel,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_MatchPointsLimit,,,,,,,,1,1,,,,,1,1,,1,,,1,1,1,1,,1,
+S_MatchPosition,,1,,,,,,,,,,1,,,,,,,,,,,,,,
+S_MatchStyle,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_MatchType,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_MatchWaitingScreenDuration,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_MatchmakingId,,,,,,,,,1,1,,,,,,,,,,,,,,,,
+S_MaxBotLevel,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_MaxBotsTeams,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_MaxPointsPerRound,,,,1,,,,,,1,,,,,,,,,,,,,,,,
+S_MinBotLevel,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_NbOfWinners,1,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,,1
+S_NeutralEmblemUrl,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,1,
+S_NoRoundTie,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_OverridePlayerProfiles,,,,,,,,,,,,,,1,1,,,,,1,1,1,1,,,
+S_PickAndBan_Enable,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_PickAndBan_Style,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_PlayerPartition,,,,,,,,,,,1,,1,,,,,,,,,,,,,
+S_PlayerProfilesUrl,,,,,,,,,,,,,,,,,,,,,,,,,,1
+S_PointsGap,,,,1,,,,,,1,,,,,,,,,,,,,,,,
+S_PointsLimit,1,,,1,,1,,,,1,,,,,,,,,1,,,,,1,,1
+S_PointsRepartition,1,1,,1,,1,,,,1,,1,,1,1,,1,,,1,1,1,1,1,1,1
+S_PointsRepartition1VS,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_PointsRepartition2VS,,,,,,,,,,1,,,,,,,,,,,,,,,,
+S_QualificationsEndTime_MinMargin,,,,,,,,,,,1,,,,,,,,,,,,,,,
+S_RankedCompetitionType,,,,,,,,,,,1,1,1,,,,,,,,,,,,,
+S_RespawnBehaviour,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_RoundWaitingScreenDuration,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_RoundsPerMap,1,1,,1,,1,,,,1,,1,,1,1,,,,1,,,1,1,1,,1
+S_RoundsWithoutElimination,,1,,,,,,,,,,1,,,,,,,,,,,,,,
+S_ScriptEnvironment,1,1,1,1,1,1,1,,,1,1,1,,,,,1,,,,,,,1,1,
+S_SeasonIds,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,,1
+S_SegmentBonusTime,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_SegmentUnlockInterval,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_Sign16x9DefaultUrl,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_Sign2x3DefaultUrl,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_Sign64x10DefaultUrl,,,,,,,,,,,,,,,,,,,,,,,,,1,
+S_SponsorsUrl,,,,,,,,1,,,,,,1,1,,1,,,,,1,1,,1,1
+S_StepNb,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_StopMatchIfNotEnoughPlayers,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_SuperRoyalRoundNumber,,,,,,,,,,,,,,,,1,,,,,,,,,,
+S_SynchronizePlayersAtMapStart,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_SynchronizePlayersAtRoundStart,1,1,1,1,1,1,,,,1,,1,,,,,1,,,1,1,,,1,1,
+S_TeamsNb,,,,,,,,,,,,,,,,,,,1,,,,,,,
+S_TeamsUrl,,,,,,,,1,1,,,,,,,,1,,,,,,,,1,
+S_TimeLimit,,,1,,1,,1,,,,1,,1,,,1,,,,,,,,,,
+S_TournamentStatsApiAuthorizationHeader,,,,,,,,,,,,,,,,,,,,,,,,,,1
+S_TournamentStatsApiCompetitionUid,,,,,,,,,,,,,,,,,,,,,,,,,,1
+S_TournamentStatsApiUrl,,,,,,,,,,,,,,,,,,,,,,,,,,1
+S_TrackNb,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_TracksTotal,,,,,,,,,,,,,,1,1,,,,,,,1,1,,,
+S_TrustClientSimu,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_UseAlternateRules,,,,1,,,,,,1,,,,,,,,,,,,,,,,
+S_UseClublinks,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,,
+S_UseClublinksSponsors,1,1,1,1,1,1,1,,,,,1,,,,,1,,,,,,,1,,
+S_UseCrudeExtrapolation,1,1,1,1,1,1,1,1,1,1,1,1,1,,,,1,,,,,,,1,1,1
+S_UseCustomPointsRepartition,,,,1,,,,,,1,,,,,,,,,,,,,,,,
+S_UsePublicRecords,,,,,,,,,,,,,,,,,,,,,,,,,,1
+S_UseTieBreak,,,,1,,,,,,1,,,,,,,,,1,,,,,,,
+S_WarmUpDuration,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1,1,1
+S_WarmUpNb,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1,1,1
+S_WarmUpTimeout,1,1,1,1,1,1,,1,1,1,1,1,,1,1,,1,,1,1,1,1,1,1,1,1
+S_WorldRecords,,,,,,,,,,,,,,,,,,,,1,1,,,,,
 //
 // Custom settings
 //
@@ -223,20 +230,20 @@ dictionary@ _GetSettingsToType() {
     ret["S_AlwaysDisplayUnlockTimer"] = "boolean";
     ret["S_ApiAuthorizationHeader"] = "text";
     ret["S_ApiCompetitionUid"] = "text";
-    ret["S_ApiUrl"] = "text";
     ret["S_ApiStageUid"] = "text";
     ret["S_ApiTourUid"] = "text";
+    ret["S_ApiUrl"] = "text";
     ret["S_BalanceScore"] = "boolean";
     ret["S_BasicAuthHeader"] = "text";
     ret["S_BestLapBonusPoints"] = "integer";
-    ret["S_Bots_EnablePlaying"] = "boolean";
     ret["S_Bots_Clan"] = "integer";
-    ret["S_Bots_GhostsPerBot"] = "integer";
+    ret["S_Bots_EnablePlaying"] = "boolean";
     ret["S_Bots_EnableRecording"] = "boolean";
     ret["S_Bots_GhostDBId"] = "integer";
-    ret["S_Bots_PBMultiplier"] = "float";
-    ret["S_Bots_LevelShift"] = "integer";
+    ret["S_Bots_GhostsPerBot"] = "integer";
     ret["S_Bots_LevelRange"] = "integer";
+    ret["S_Bots_LevelShift"] = "integer";
+    ret["S_Bots_PBMultiplier"] = "float";
     ret["S_ChatTime"] = "integer";
     ret["S_ClubId"] = "integer";
     ret["S_ClubName"] = "text";
@@ -253,7 +260,9 @@ dictionary@ _GetSettingsToType() {
     ret["S_DelayBeforeNextMap"] = "integer";
     ret["S_DisableGiveUp"] = "boolean";
     ret["S_DisableGoToMap"] = "boolean";
+    ret["S_DisableManiapubsOnScreens"] = "boolean";
     ret["S_DisableMatchIntro"] = "boolean";
+    ret["S_DisableScoresHeaderInterface"] = "boolean";
     ret["S_Division"] = "text";
     ret["S_EarlyEndMatchCallback"] = "boolean";
     ret["S_EliminatedPlayersNbRanks"] = "text";
@@ -266,11 +275,11 @@ dictionary@ _GetSettingsToType() {
     ret["S_EnableWinScreen"] = "boolean";
     ret["S_EndRoundPostScoreUpdateDuration"] = "integer";
     ret["S_EndRoundPreScoreUpdateDuration"] = "integer";
-    ret["S_ForceRoadSpectatorsNb"] = "integer";
     ret["S_FinalistsAccountIds"] = "text";
     ret["S_FinishTimeout"] = "integer";
     ret["S_FinishTimeoutDivider"] = "integer";
     ret["S_ForceLapsNb"] = "integer";
+    ret["S_ForceRoadSpectatorsNb"] = "integer";
     ret["S_ForceWinnersNb"] = "integer";
     ret["S_GhostDBId"] = "integer";
     ret["S_HeaderLogoUrl"] = "text";
@@ -296,25 +305,26 @@ dictionary@ _GetSettingsToType() {
     ret["S_MatchId"] = "text";
     ret["S_MatchInfo"] = "text";
     ret["S_MatchLevel"] = "integer";
-    ret["S_MatchmakingId"] = "text";
-    ret["S_MatchStyle"] = "integer";
-    ret["S_MatchType"] = "integer";
     ret["S_MatchPointsLimit"] = "integer";
     ret["S_MatchPosition"] = "integer";
+    ret["S_MatchStyle"] = "integer";
+    ret["S_MatchType"] = "integer";
     ret["S_MatchWaitingScreenDuration"] = "integer";
+    ret["S_MatchmakingId"] = "text";
     ret["S_MaxBotLevel"] = "integer";
     ret["S_MaxBotsTeams"] = "integer";
     ret["S_MaxPointsPerRound"] = "integer";
     ret["S_MinBotLevel"] = "integer";
     ret["S_NbOfWinners"] = "integer";
-    ret["S_NoRoundTie"] = "boolean";
     ret["S_NeutralEmblemUrl"] = "text";
+    ret["S_NoRoundTie"] = "boolean";
     ret["S_OverridePlayerProfiles"] = "text";
     ret["S_PauseBeforeRoundNb"] = "integer";
     ret["S_PauseDuration"] = "integer";
     ret["S_PickAndBan_Enable"] = "boolean";
     ret["S_PickAndBan_Style"] = "text";
     ret["S_PlayerPartition"] = "text";
+    ret["S_PlayerProfilesUrl"] = "text";
     ret["S_PointsGap"] = "integer";
     ret["S_PointsLimit"] = "integer";
     ret["S_PointsRepartition"] = "text";
@@ -323,11 +333,11 @@ dictionary@ _GetSettingsToType() {
     ret["S_QualificationsEndTime_MinMargin"] = "integer";
     ret["S_RankedCompetitionType"] = "text";
     ret["S_RespawnBehaviour"] = "integer";
+    ret["S_RoundWaitingScreenDuration"] = "integer";
     ret["S_RoundsLimit"] = "integer";
     ret["S_RoundsPerMap"] = "integer";
     ret["S_RoundsWithAPhaseChange"] = "text";
     ret["S_RoundsWithoutElimination"] = "integer";
-    ret["S_RoundWaitingScreenDuration"] = "integer";
     ret["S_ScriptEnvironment"] = "text";
     ret["S_SeasonIds"] = "text";
     ret["S_SegmentBonusTime"] = "integer";
@@ -344,15 +354,19 @@ dictionary@ _GetSettingsToType() {
     ret["S_TeamsNb"] = "integer";
     ret["S_TeamsUrl"] = "text";
     ret["S_TimeLimit"] = "integer";
+    ret["S_TimeOutPlayersNumber"] = "integer";
+    ret["S_TournamentStatsApiAuthorizationHeader"] = "text";
+    ret["S_TournamentStatsApiCompetitionUid"] = "text";
+    ret["S_TournamentStatsApiUrl"] = "text";
     ret["S_TrackNb"] = "integer";
     ret["S_TracksTotal"] = "integer";
-    ret["S_TimeOutPlayersNumber"] = "integer";
     ret["S_TrustClientSimu"] = "boolean";
     ret["S_UseAlternateRules"] = "boolean";
     ret["S_UseClublinks"] = "boolean";
     ret["S_UseClublinksSponsors"] = "boolean";
     ret["S_UseCrudeExtrapolation"] = "boolean";
     ret["S_UseCustomPointsRepartition"] = "boolean";
+    ret["S_UsePublicRecords"] = "boolean";
     ret["S_UseTieBreak"] = "boolean";
     ret["S_WarmUpDuration"] = "integer";
     ret["S_WarmUpNb"] = "integer";
@@ -653,6 +667,19 @@ string[][][]@ _GetScriptDefaults() {
     // tmp.InsertLast({"S_ApiUrl", ""});
     // tmp.InsertLast({"S_ApiCompetitionUid", ""});
     // tmp.InsertLast({"S_ApiAuthorizationHeader", ""});
+    @tmp = scriptDefaults[BRM::GameMode::CupEsport];
+    tmp.InsertLast({'S_PointsRepartition', ''});
+    tmp.InsertLast({'S_PointsLimit', '120'});
+    tmp.InsertLast({'S_FinishTimeout', '-1'});
+    tmp.InsertLast({'S_RoundsPerMap', '5'});
+    tmp.InsertLast({'S_NbOfWinners', '3'});
+    tmp.InsertLast({'S_WarmUpNb', '0'});
+    tmp.InsertLast({'S_WarmUpDuration', '0'});
+    tmp.InsertLast({'S_WarmUpTimeout', '-1'});
+    tmp.InsertLast({'S_CrashDetectionThreshold', '2000'});
+    tmp.InsertLast({'S_TournamentStatsApiUrl', ''});
+    tmp.InsertLast({'S_TournamentStatsApiCompetitionUid', ''});
+    tmp.InsertLast({'S_TournamentStatsApiAuthorizationHeader', ''});
 
     return scriptDefaults;
 }
