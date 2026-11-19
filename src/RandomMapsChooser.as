@@ -405,7 +405,7 @@ namespace RandomMapsChooser {
                 warn("Skipping map with difficulty: " + int(newMap['MapId']) + ", " + tostring(diff));
                 continue;
             }
-            int len = float(newMap['Length']) / 1000;
+            int len = int(float(newMap['Length']) / 1000);
             if (len < minLen || maxLen < len) {
                 warn("Skipping map with length: " + int(newMap['MapId']) + ", " + len);
                 continue;

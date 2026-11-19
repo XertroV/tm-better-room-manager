@@ -275,9 +275,9 @@ namespace BRM {
         }
 
         IRoomSettingsBuilder@ DisableWarmups() {
-            return this.SetModeSetting("S_WarmUpNb", "0");
-            return this.SetModeSetting("S_WarmUpDuration", "0");
-            return this.SetModeSetting("S_WarmUpTimeout", "-1");
+            return this.SetModeSetting("S_WarmUpNb", "0")
+                .SetModeSetting("S_WarmUpDuration", "0")
+                .SetModeSetting("S_WarmUpTimeout", "-1");
         }
     }
 
