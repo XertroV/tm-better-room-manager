@@ -207,12 +207,12 @@ namespace MapChooser {
             UI::ProgressBar(tmxDone / tmxTotal, vec2(-1, 0), "Loading Maps...");
         }
         UI::Separator();
-        SubHeading("TMX Track IDs (comma separated)");
+        SubHeading("TMX Map IDs (comma separated)");
         bool changed = false;
         tmxIds = UI::InputTextMultiline("##tmx-ids", tmxIds, changed, vec2(UI::GetContentRegionMax().x - UI::GetStyleVarVec2(UI::StyleVar::WindowPadding).x, UI::GetTextLineHeightWithSpacing() * 3));
-        if (UI::Button("Add maps from TMX via TrackIDs")) OnClickAddMapsTmxTrackIds();
+        if (UI::Button("Add maps from TMX via Map IDs")) OnClickAddMapsTmxMapIds();
         UI::Separator();
-        SubHeading("TMX Map Pack ID (only first 100 maps will be added)");
+        SubHeading("TMX Map Pack ID (only the first 100 maps will be added)");
         tmxMapPackId = UI::InputText("##tmx-map-pack-id", tmxMapPackId);
         if (UI::Button("Add maps from Map Pack via ID")) startnew(OnClickAddMapsTmxMapPack);
     }
@@ -240,16 +240,16 @@ namespace MapChooser {
         }
     }
 
-    void OnClickAddMapsTmxTrackIds() {
+    void OnClickAddMapsTmxMapIds() {
         loading = true;
         auto parts = tmxIds.Split(",");
-        string[] trackIds;
+        string[] mapIds;
         for (uint i = 0; i < parts.Length; i++) {
             auto s = parts[i].Trim();
             if (s.Length > 0)
-                trackIds.InsertLast(s);
+                mapIds.InsertLast(s);
         }
-        startnew(AddMapsFromTmxIds, trackIds);
+        startnew(AddMapsFromTmxIds, mapIds);
     }
 
     // Json::Value@[] tmpMapsTmx;
@@ -260,21 +260,22 @@ namespace MapChooser {
     float tmxDone = 0;
 
     void AddMapsFromTmxIds(ref@ r) {
-        auto trackIds = cast<string[]>(r);
+        auto mapIds = cast<string[]>(r);
         // tmpMapsTmx.RemoveRange(0, tmpMapsTmx.Length);
-        tmxTotal = trackIds.Length * 2.;
+        tmxTotal = mapIds.Length * 2.;
         tmxDone = 0;
         // get maps from tmx
-        uint chunkSize = 25;
+        uint chunkSize = 50;
         string[] uids;
         int[] tids;
-        for (uint i = 0; i < trackIds.Length; i += chunkSize) {
-            auto @chunk = Slice(trackIds, i, i + chunkSize);
-            Json::Value@ tracks = GetMapsByTrackIDs(chunk);
+        for (uint i = 0; i < mapIds.Length; i += chunkSize) {
+            auto @chunk = Slice(mapIds, i, i + chunkSize);
+            Json::Value@ tracksR = GetMapsByMapIDs(chunk);
+            Json::Value@ tracks = tracksR['Results'];
             for (uint t = 0; t < tracks.Length; t++) {
                 auto track = tracks[t];
-                uids.InsertLast(track['TrackUID']);
-                tids.InsertLast(track['TrackID']);
+                uids.InsertLast(track['MapUid']);
+                tids.InsertLast(track['MapId']);
             }
             tmxDone += chunk.Length;
         }

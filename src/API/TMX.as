@@ -3,16 +3,16 @@ const string DefaultTags = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,2
 const string DefaultOffTags = "23,40,46,71,72";
 
 const string MapUrl(Json::Value@ map) {
-    int trackId = map['TrackID'];
-    return MapUrlTmx(trackId);
+    int mapId = map['MapId'];
+    return MapUrlTmx(mapId);
 }
 
-const string MapUrlCgf(int TrackID) {
-    return "https://cgf.s3.nl-1.wasabisys.com/" + TrackID + ".Map.Gbx";
+const string MapUrlCgf(int MapID) {
+    return "https://cgf.s3.nl-1.wasabisys.com/" + MapID + ".Map.Gbx";
 }
 
-const string MapUrlTmx(int TrackID) {
-    return "https://trackmania.exchange/maps/download/" + TrackID;
+const string MapUrlTmx(int MapID) {
+    return "https://trackmania.exchange/mapgbx/" + MapID;
 }
 
 const string TMX_API_FIELDS = "MapId,MapUid,Difficulty,Length";
@@ -39,19 +39,20 @@ Json::Value@ GetARandomMap(const string &in tags = "", bool tagExclude = false, 
     return req.Json();
 }
 
-const string multiMapEndpoint = "https://trackmania.exchange/api/maps/get_map_info/multi/";
+const string multiMapEndpoint = "https://trackmania.exchange/api/maps?count=100&fields=" + TMX_API_FIELDS + "&{params_str}";
 
 // returns json array of maps
-Json::Value@ GetMapsByTrackIDs(string[] &in tids) {
-    string url = multiMapEndpoint + Text::Join(tids, ",");
+Json::Value@ GetMapsByMapIDs(string[] &in tids) {
+    string url = multiMapEndpoint.Replace("{params_str}", "id=" + Text::Join(tids, ","));
     auto req = PluginGetRequest(url);
     req.Start();
     while (!req.Finished()) yield();
     if (req.ResponseCode() >= 400 || req.ResponseCode() < 200 || req.Error().Length > 0) {
-        warn("[status:" + req.ResponseCode() + "] Error getting maps by TrackID from TMX: " + req.Error() + " / " + req.String());
+        warn("[status:" + req.ResponseCode() + "] Error getting maps by MapID from TMX: " + req.Error() + " / " + req.String());
         return null;
     }
-    return Json::Parse(req.String());
+
+    return req.Json();
 }
 
 const string mapPackMapsEndpoint = "https://trackmania.exchange/api/maps?count=100&fields="+TMX_API_FIELDS+"&{params_str}";
