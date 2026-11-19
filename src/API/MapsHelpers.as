@@ -79,33 +79,33 @@ const string GetLocalTmxMapFolder() {
     return IO::FromUserGameFolder('Maps/BetterRoomMgr-TMX/');
 }
 
-const string GetLocalTmxMapPath(int TrackID) {
+const string GetLocalTmxMapPath(int MapID) {
     auto tmxFolder = GetLocalTmxMapFolder();
     if (!IO::FolderExists(tmxFolder))
         IO::CreateFolder(tmxFolder, true);
-    return tmxFolder + TrackID + '.Map.Gbx';
+    return tmxFolder + MapID + '.Map.Gbx';
 }
 
-void DownloadTmxMapToLocal(int TrackID) {
-    auto outFile = GetLocalTmxMapPath(TrackID);
+void DownloadTmxMapToLocal(int MapID) {
+    auto outFile = GetLocalTmxMapPath(MapID);
     if (IO::FileExists(outFile)) return;
-    string url = MapUrlTmx(TrackID);
+    string url = MapUrlTmx(MapID);
     auto req = PluginGetRequest(url);
     req.Start();
     while (!req.Finished()) yield();
     if (req.ResponseCode() >= 400 || req.ResponseCode() < 200 || req.Error().Length > 0) {
         warn("Error downloading TMX map to local: " + req.Error());
-        @req = PluginGetRequest(MapUrlCgf(TrackID));
+        @req = PluginGetRequest(MapUrlCgf(MapID));
         req.Start();
         while (!req.Finished()) yield();
         if (req.ResponseCode() >= 400 || req.ResponseCode() < 200 || req.Error().Length > 0) {
             warn("Error downloading TMX map from mirror to local: " + req.Error());
-            NotifyWarning("Failed to download map with TrackID: " + TrackID);
+            NotifyWarning("Failed to download map with MapID: " + MapID);
             return;
         }
     }
     req.SaveToFile(outFile);
-    trace('Saved tmx map ' + TrackID + ' to ' + outFile);
+    trace('Saved tmx map ' + MapID + ' to ' + outFile);
 }
 
 void UploadMapFromLocal(const string &in uid) {
