@@ -1,6 +1,6 @@
 funcdef void RandomMapsCallback(LazyMap@[]@ maps);
 
-const int NUM_TAGS = 67;
+const int NUM_TAGS = 73;
 
 class Tag {
     bool checked;
@@ -18,14 +18,18 @@ class Tag {
 }
 
 enum TagTypes {
-    Altered = 49,
+    AlteredCommunity = 73,
+    AlteredNadeo = 49,
     Arena = 40,
     Backwards = 34,
+    Base = 72,
     Bobsleigh = 44,
     Bugslide = 56,
     Bumper = 20,
+    Clones = 69,
     Competitive = 13,
     CruiseControl = 62,
+    CustomCamera = 70,
     DesertCar = 59,
     Dirt = 15,
     Educational = 42,
@@ -58,6 +62,7 @@ enum TagTypes {
     Pipes = 65,
     Plastic = 39,
     Platform = 18,
+    Precision = 68,
     PressForward = 6,
     Puzzle = 47,
     Race = 1,
@@ -78,6 +83,7 @@ enum TagTypes {
     SpeedTech = 7,
     Stunt = 16,
     Tech = 3,
+    Tower = 71,
     Transitional = 32,
     Trial = 10,
     Turtle = 53,
@@ -118,7 +124,7 @@ void setAllTagsToDefault(Tag@[]& tags) {
     setAllTags(tags, false);
     // default off: 23,37,40,46,47
     // see API/TMX.as for list used in HTTP request formation
-    uint[] defaultOff = {23,40,46};
+    uint[] defaultOff = {23,40,46,71,72};
     for (uint i = 0; i < defaultOff.Length; i++) {
         if (defaultOff[i] > tags.Length) continue;
         tags[defaultOff[i] - 1].setChecked(true);
